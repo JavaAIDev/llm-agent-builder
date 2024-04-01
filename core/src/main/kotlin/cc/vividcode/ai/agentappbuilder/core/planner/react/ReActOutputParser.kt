@@ -8,7 +8,7 @@ import cc.vividcode.ai.agentappbuilder.core.planner.ParseResult
 import java.util.regex.Pattern
 
 class ReActOutputParser : OutputParser {
-    private val finalAnswerSection = "Final Answer:"
+    private val finalAnswerAction = "Final Answer:"
     private val pattern =
         Pattern.compile(
             ".*Action\\s*\\d*\\s*:\\s*(.*?)\\s*Action\\s*\\d*\\s*Input\\s*\\d*\\s*:\\s*(.*)",
@@ -28,11 +28,11 @@ class ReActOutputParser : OutputParser {
                     text
                 )
             )
-        } else if (text.contains(finalAnswerSection)) {
+        } else if (text.contains(finalAnswerAction)) {
             return ParseResult.finish(
                 AgentFinish(
                     mapOf(
-                        "output" to text.split(finalAnswerSection).last()
+                        "output" to text.split(finalAnswerAction).last()
                             .trim()
                     ),
                     text
