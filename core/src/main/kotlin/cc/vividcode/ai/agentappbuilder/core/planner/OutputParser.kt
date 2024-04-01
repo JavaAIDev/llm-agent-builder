@@ -1,4 +1,7 @@
-package cc.vividcode.ai.agentappbuilder.core
+package cc.vividcode.ai.agentappbuilder.core.planner
+
+import cc.vividcode.ai.agentappbuilder.core.AgentAction
+import cc.vividcode.ai.agentappbuilder.core.AgentFinish
 
 data class ParseResult(
     val action: AgentAction? = null,

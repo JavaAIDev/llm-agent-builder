@@ -1,4 +1,4 @@
-package cc.vividcode.ai.agentappbuilder.core.planner.structuredchat
+package cc.vividcode.ai.agentappbuilder.core.planner.reactjson
 
 import cc.vividcode.ai.agentappbuilder.core.AgentTools
 import cc.vividcode.ai.agentappbuilder.core.planner.LLMPlanner
@@ -7,7 +7,7 @@ import org.springframework.ai.chat.prompt.PromptTemplate
 import org.springframework.core.io.ClassPathResource
 import org.springframework.core.io.Resource
 
-class StructuredChatPlanner(
+class ReactJsonPlanner(
     userPromptResource: Resource,
     systemPromptResource: Resource,
     chatClient: ChatClient
@@ -15,14 +15,14 @@ class StructuredChatPlanner(
     chatClient,
     PromptTemplate(userPromptResource),
     AgentTools.agentTools.values.toList(),
-    StructuredChatOutputParser(),
+    ReactJsonOutputParser(),
     PromptTemplate(systemPromptResource),
 ) {
     companion object {
-        fun createDefault(chatClient: ChatClient): StructuredChatPlanner {
-            return StructuredChatPlanner(
-                ClassPathResource("prompts/structured-chat/user.st"),
-                ClassPathResource("prompts/structured-chat/system.st"),
+        fun createDefault(chatClient: ChatClient): ReactJsonPlanner {
+            return ReactJsonPlanner(
+                ClassPathResource("prompts/react-json/user.st"),
+                ClassPathResource("prompts/react-json/system.st"),
                 chatClient
             )
         }

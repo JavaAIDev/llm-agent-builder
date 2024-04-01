@@ -1,8 +1,11 @@
-package cc.vividcode.ai.agentappbuilder.core
+package cc.vividcode.ai.agentappbuilder.core.planner
 
 import cc.vividcode.ai.agent.dashscope.DashscopeChatClient
 import cc.vividcode.ai.agent.dashscope.DashscopeChatOptions
 import cc.vividcode.ai.agent.dashscope.api.DashscopeModelName
+import cc.vividcode.ai.agentappbuilder.core.AgentTool
+import cc.vividcode.ai.agentappbuilder.core.IntermediateAgentStep
+import cc.vividcode.ai.agentappbuilder.core.Planner
 import cc.vividcode.ai.agentappbuilder.core.executor.ActionPlanningResult
 import org.springframework.ai.chat.ChatClient
 import org.springframework.ai.chat.messages.SystemMessage

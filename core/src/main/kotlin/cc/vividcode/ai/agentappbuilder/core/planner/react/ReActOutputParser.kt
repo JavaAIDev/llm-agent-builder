@@ -1,6 +1,10 @@
 package cc.vividcode.ai.agentappbuilder.core.planner.react
 
-import cc.vividcode.ai.agentappbuilder.core.*
+import cc.vividcode.ai.agentappbuilder.core.AgentAction
+import cc.vividcode.ai.agentappbuilder.core.AgentFinish
+import cc.vividcode.ai.agentappbuilder.core.planner.OutputParser
+import cc.vividcode.ai.agentappbuilder.core.planner.OutputParserException
+import cc.vividcode.ai.agentappbuilder.core.planner.ParseResult
 import java.util.regex.Pattern
 
 class ReActOutputParser : OutputParser {
@@ -27,7 +31,7 @@ class ReActOutputParser : OutputParser {
         } else if (text.contains(finalAnswerSection)) {
             return ParseResult.finish(
                 AgentFinish(
-                    mutableMapOf(
+                    mapOf(
                         "output" to text.split(finalAnswerSection).last()
                             .trim()
                     ),

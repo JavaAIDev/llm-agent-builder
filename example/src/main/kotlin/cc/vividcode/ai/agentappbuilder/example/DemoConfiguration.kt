@@ -6,7 +6,7 @@ import cc.vividcode.ai.agent.dashscope.api.DashscopeApi
 import cc.vividcode.ai.agent.dashscope.api.DashscopeModelName
 import cc.vividcode.ai.agentappbuilder.core.Agent
 import cc.vividcode.ai.agentappbuilder.core.AgentFactory
-import cc.vividcode.ai.agentappbuilder.core.planner.structuredchat.StructuredChatPlanner
+import cc.vividcode.ai.agentappbuilder.core.planner.reactjson.ReactJsonPlanner
 import cc.vividcode.ai.agentappbuilder.springai.FunctionCallbackContextAdapter
 import org.springframework.ai.chat.ChatClient
 import org.springframework.context.annotation.Bean
@@ -32,7 +32,7 @@ class DemoConfiguration {
         return AgentFactory.create(
             "math",
             "Do basic math",
-            StructuredChatPlanner.createDefault(chatClient)
+            ReactJsonPlanner.createDefault(chatClient)
         ) { output -> MathAgentResponse((output["output"] ?: "").toString()) }
     }
 

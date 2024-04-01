@@ -1,7 +1,7 @@
 package cc.vividcode.ai.agentappbuilder.core.planner.react
 
 import cc.vividcode.ai.agentappbuilder.core.AgentTools
-import cc.vividcode.ai.agentappbuilder.core.LLMPlanner
+import cc.vividcode.ai.agentappbuilder.core.planner.LLMPlanner
 import org.springframework.ai.chat.ChatClient
 import org.springframework.ai.chat.prompt.PromptTemplate
 import org.springframework.core.io.ClassPathResource

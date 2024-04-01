@@ -1,6 +1,7 @@
 package cc.vividcode.ai.agentappbuilder.core.executor
 
 import cc.vividcode.ai.agentappbuilder.core.*
+import cc.vividcode.ai.agentappbuilder.core.planner.ParseResult
 import org.slf4j.LoggerFactory
 import org.springframework.ai.model.function.FunctionCallbackWrapper
 import java.time.Duration
