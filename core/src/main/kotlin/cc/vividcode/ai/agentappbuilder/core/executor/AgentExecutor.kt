@@ -1,6 +1,9 @@
 package cc.vividcode.ai.agentappbuilder.core.executor
 
 import cc.vividcode.ai.agentappbuilder.core.*
+import org.slf4j.LoggerFactory
+import org.springframework.ai.model.function.FunctionCallbackWrapper
+import java.time.Duration
 import java.util.*
 
 data class ActionPlanningResult(
@@ -23,16 +26,19 @@ data class ActionPlanningResult(
 data class NextStep(
     val steps: List<IntermediateAgentStep>? = null,
     val finish: AgentFinish? = null,
-)
+) {
+    fun finished() = finish != null
+}
 
 data class AgentExecutor(
     val agent: Planner,
-    val nameToToolMap: Map<String, AgentTool<*, *>>,
+    val nameToToolMap: Map<String, FunctionCallbackWrapper<*, *>>,
     val returnIntermediateSteps: Boolean = false,
     val maxIterations: Int? = 15,
     val maxExecutionTime: Long? = null,
     val earlyStoppingMethod: String? = "force",
 ) {
+    private val logger = LoggerFactory.getLogger(javaClass)
     fun call(inputs: Map<String, Any>): Map<String, Any> {
         val intermediateSteps = mutableListOf<IntermediateAgentStep>()
         var iterations = 0
@@ -51,6 +57,11 @@ data class AgentExecutor(
             iterations += 1
             timeElapsed = System.currentTimeMillis() - startTime
         }
+        logger.error(
+            "Agent execution failed in {} iterations in {}",
+            iterations,
+            Duration.ofMillis(timeElapsed)
+        )
         val output =
             agent.returnStoppedResponse(earlyStoppingMethod, intermediateSteps)
         return returnResult(output, intermediateSteps)
@@ -65,7 +76,7 @@ data class AgentExecutor(
 
     private fun takeNextStep(
         inputs: Map<String, Any>,
-        nameToToolMap: Map<String, AgentTool<*, *>>,
+        nameToToolMap: Map<String, FunctionCallbackWrapper<*, *>>,
         intermediateSteps: List<IntermediateAgentStep>
     ): NextStep {
         return consumeNextStep(
@@ -93,7 +104,7 @@ data class AgentExecutor(
 
     private fun iterateNextStep(
         inputs: Map<String, Any>,
-        nameToToolMap: Map<String, AgentTool<*, *>>,
+        nameToToolMap: Map<String, FunctionCallbackWrapper<*, *>>,
         intermediateSteps: List<IntermediateAgentStep>
     ): MutableList<Plannable> {
         val output = agent.plan(inputs, intermediateSteps)
@@ -112,12 +123,11 @@ data class AgentExecutor(
     }
 
     private fun performAgentAction(
-        nameToToolMap: Map<String, AgentTool<*, *>>,
+        nameToToolMap: Map<String, FunctionCallbackWrapper<*, *>>,
         agentAction: AgentAction
     ): AgentStep {
-        val observation = nameToToolMap[agentAction.tool]?.let { tool ->
-            tool.run(agentAction.toolInput)
-        } ?: "Invalid tool"
+        val observation =
+            nameToToolMap[agentAction.tool]?.call(agentAction.toolInput) ?: "Invalid tool"
         return AgentStep(agentAction, observation)
     }
 

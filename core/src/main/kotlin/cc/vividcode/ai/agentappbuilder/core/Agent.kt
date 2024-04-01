@@ -6,7 +6,7 @@ sealed interface Plannable
 
 data class AgentAction(
     val tool: String,
-    val toolInput: Map<String, Any>,
+    val toolInput: String,
     val log: String,
 ) : Plannable
 

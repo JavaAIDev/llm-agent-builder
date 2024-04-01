@@ -22,13 +22,6 @@
     <spring-ai.version>0.8.1</spring-ai.version>
   </properties>
 
-  <repositories>
-    <repository>
-      <id>mavenCentral</id>
-      <url>https://repo1.maven.org/maven2/</url>
-    </repository>
-  </repositories>
-
   <build>
     <sourceDirectory>src/main/kotlin</sourceDirectory>
     <testSourceDirectory>src/test/kotlin</testSourceDirectory>
@@ -61,14 +54,6 @@
       <plugin>
         <artifactId>maven-failsafe-plugin</artifactId>
         <version>2.22.2</version>
-      </plugin>
-      <plugin>
-        <groupId>org.codehaus.mojo</groupId>
-        <artifactId>exec-maven-plugin</artifactId>
-        <version>1.6.0</version>
-        <configuration>
-          <mainClass>MainKt</mainClass>
-        </configuration>
       </plugin>
     </plugins>
   </build>
@@ -110,5 +95,16 @@
       <version>1.9.23</version>
     </dependency>
   </dependencies>
+
+  <repositories>
+    <repository>
+      <id>spring-milestones</id>
+      <name>Spring Milestones</name>
+      <url>https://repo.spring.io/milestone</url>
+      <snapshots>
+        <enabled>false</enabled>
+      </snapshots>
+    </repository>
+  </repositories>
 
 </project>

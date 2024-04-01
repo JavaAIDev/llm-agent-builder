@@ -32,8 +32,8 @@ class DemoConfiguration {
         return AgentFactory.create(
             "math",
             "Do basic math",
-            ReActPlanner.createDefault(chatClient),
-            { output -> MathAgentResponse(0) })
+            ReActPlanner.createDefault(chatClient)
+        ) { output -> MathAgentResponse((output["output"] ?: "").toString()) }
     }
 
     @Bean

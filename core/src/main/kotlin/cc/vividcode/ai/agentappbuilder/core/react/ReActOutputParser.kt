@@ -20,7 +20,7 @@ class ReActOutputParser : OutputParser {
             return ParseResult.action(
                 AgentAction(
                     action,
-                    mutableMapOf("input" to toolInput),
+                    toolInput,
                     text
                 )
             )

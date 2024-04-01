@@ -9,7 +9,7 @@ object AgentFactory {
         planner: Planner,
         responseFactory: (Map<String, Any>) -> RESPONSE
     ): Agent<REQUEST, RESPONSE> {
-        val executor = AgentExecutor(planner, AgentTools.agentTools)
+        val executor = AgentExecutor(planner, AgentTools.agentToolWrappers)
         return object : Agent<REQUEST, RESPONSE> {
             override fun name() = name
 

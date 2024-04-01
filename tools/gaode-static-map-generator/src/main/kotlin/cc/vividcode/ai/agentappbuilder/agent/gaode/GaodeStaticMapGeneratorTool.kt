@@ -16,6 +16,10 @@ data class Request(val locations: List<Location>)
 data class Response(val url: String)
 
 class GaodeStaticMapGeneratorTool : AgentTool<Request, Response> {
+    override fun name() = "gaodeStaticMap"
+
+    override fun description() = "Generate URL of Gaode static maps"
+
     override fun apply(request: Request): Response {
         if (request.locations.isEmpty()) {
             return Response("")
