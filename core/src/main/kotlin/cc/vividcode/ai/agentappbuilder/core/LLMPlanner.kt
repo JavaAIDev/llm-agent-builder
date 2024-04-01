@@ -5,15 +5,17 @@ import cc.vividcode.ai.agent.dashscope.DashscopeChatOptions
 import cc.vividcode.ai.agent.dashscope.api.DashscopeModelName
 import cc.vividcode.ai.agentappbuilder.core.executor.ActionPlanningResult
 import org.springframework.ai.chat.ChatClient
+import org.springframework.ai.chat.messages.SystemMessage
 import org.springframework.ai.chat.prompt.ChatOptions
 import org.springframework.ai.chat.prompt.Prompt
 import org.springframework.ai.chat.prompt.PromptTemplate
 
 open class LLMPlanner(
     private val chatClient: ChatClient,
-    private val promptTemplate: PromptTemplate,
+    private val userPromptTemplate: PromptTemplate,
     private val tools: List<AgentTool<*, *>>,
-    private val outputParser: OutputParser
+    private val outputParser: OutputParser,
+    private val systemPromptTemplate: PromptTemplate? = null,
 ) : Planner {
     override fun plan(
         inputs: Map<String, Any>,
@@ -26,8 +28,12 @@ open class LLMPlanner(
             "tools" to renderTool(tools),
             "tool_names" to toolNames.joinToString(", ")
         )
+        val messages = mutableListOf(userPromptTemplate.createMessage(context))
+        systemPromptTemplate?.run {
+            messages.addFirst(SystemMessage(systemPromptTemplate.render(context)))
+        }
         val prompt = Prompt(
-            promptTemplate.createMessage(context),
+            messages,
             prepareChatClientOptions(chatClient, toolNames)
         )
         val response = chatClient.call(prompt)

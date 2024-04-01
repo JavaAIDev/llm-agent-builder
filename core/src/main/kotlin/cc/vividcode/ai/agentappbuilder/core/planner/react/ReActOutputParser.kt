@@ -1,4 +1,4 @@
-package cc.vividcode.ai.agentappbuilder.core.react
+package cc.vividcode.ai.agentappbuilder.core.planner.react
 
 import cc.vividcode.ai.agentappbuilder.core.*
 import java.util.regex.Pattern

@@ -1,4 +1,4 @@
-package cc.vividcode.ai.agentappbuilder.core.react
+package cc.vividcode.ai.agentappbuilder.core.planner.react
 
 import cc.vividcode.ai.agentappbuilder.core.AgentTools
 import cc.vividcode.ai.agentappbuilder.core.LLMPlanner
@@ -16,7 +16,7 @@ class ReActPlanner(promptResource: Resource, chatClient: ChatClient) :
     ) {
     companion object {
         fun createDefault(chatClient: ChatClient): ReActPlanner {
-            val promptResource = ClassPathResource("react-prompt.st")
+            val promptResource = ClassPathResource("prompts/react/user.st")
             return ReActPlanner(promptResource, chatClient)
         }
     }
