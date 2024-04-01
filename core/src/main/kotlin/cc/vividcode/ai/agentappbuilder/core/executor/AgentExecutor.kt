@@ -72,7 +72,9 @@ data class AgentExecutor(
         agentFinish: AgentFinish,
         intermediateSteps: List<IntermediateAgentStep>
     ): Map<String, Any> {
-        return agentFinish.returnValues
+        return agentFinish.returnValues + (if (returnIntermediateSteps) mapOf(
+            "intermediateSteps" to intermediateSteps
+        ) else mapOf())
     }
 
     private fun takeNextStep(
