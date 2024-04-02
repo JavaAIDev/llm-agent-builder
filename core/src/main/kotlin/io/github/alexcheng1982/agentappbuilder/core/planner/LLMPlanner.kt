@@ -6,6 +6,7 @@ import cc.vividcode.ai.agent.dashscope.api.DashscopeModelName
 import io.github.alexcheng1982.agentappbuilder.core.AgentTool
 import io.github.alexcheng1982.agentappbuilder.core.IntermediateAgentStep
 import io.github.alexcheng1982.agentappbuilder.core.Planner
+import io.github.alexcheng1982.agentappbuilder.core.chatmemory.ChatMemory
 import io.github.alexcheng1982.agentappbuilder.core.executor.ActionPlanningResult
 import org.springframework.ai.chat.ChatClient
 import org.springframework.ai.chat.messages.SystemMessage
@@ -19,6 +20,7 @@ open class LLMPlanner(
     private val tools: List<AgentTool<*, *>>,
     private val outputParser: OutputParser,
     private val systemPromptTemplate: PromptTemplate? = null,
+    private val chatMemory: ChatMemory? = null,
 ) : Planner {
     override fun plan(
         inputs: Map<String, Any>,
@@ -35,11 +37,18 @@ open class LLMPlanner(
         systemPromptTemplate?.run {
             messages.addFirst(SystemMessage(systemPromptTemplate.render(context)))
         }
+
+        chatMemory?.let { memory ->
+            messages.forEach(memory::add)
+        }
         val prompt = Prompt(
-            messages,
+            chatMemory?.messages() ?: messages,
             prepareChatClientOptions(chatClient, toolNames)
         )
         val response = chatClient.call(prompt)
+
+        chatMemory?.add(response.result.output)
+
         val text = response.result.output.content
         val result = outputParser.parse(text)
         return ActionPlanningResult.fromParseResult(result)

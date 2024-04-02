@@ -8,11 +8,15 @@ import io.github.alexcheng1982.agentappbuilder.core.Agent
 import io.github.alexcheng1982.agentappbuilder.core.AgentFactory
 import io.github.alexcheng1982.agentappbuilder.core.ChatAgentRequest
 import io.github.alexcheng1982.agentappbuilder.core.ChatAgentResponse
+import io.github.alexcheng1982.agentappbuilder.core.chatmemory.ChatMemoryStore
+import io.github.alexcheng1982.agentappbuilder.core.chatmemory.InMemoryChatMemoryStore
+import io.github.alexcheng1982.agentappbuilder.core.chatmemory.MessageWindowChatMemory
 import io.github.alexcheng1982.agentappbuilder.core.planner.reactjson.ReactJsonPlanner
 import io.github.alexcheng1982.agentappbuilder.springai.FunctionCallbackContextAdapter
 import org.springframework.ai.chat.ChatClient
 import org.springframework.context.annotation.Bean
 import org.springframework.context.annotation.Configuration
+import org.springframework.core.io.ClassPathResource
 
 @Configuration
 class DemoConfiguration {
@@ -30,11 +34,24 @@ class DemoConfiguration {
     }
 
     @Bean
-    fun agent(chatClient: ChatClient): Agent<ChatAgentRequest, ChatAgentResponse> {
+    fun chatMemoryStore(): ChatMemoryStore {
+        return InMemoryChatMemoryStore()
+    }
+
+    @Bean
+    fun agent(
+        chatClient: ChatClient,
+        chatMemoryStore: ChatMemoryStore
+    ): Agent<ChatAgentRequest, ChatAgentResponse> {
         return AgentFactory.createChatAgent(
-            "math",
-            "Do basic math",
-            ReactJsonPlanner.createDefault(chatClient)
+            "chat",
+            "Basic chat service",
+            ReactJsonPlanner.createDefault(
+                chatClient,
+                MessageWindowChatMemory(chatMemoryStore, "demo"),
+                ClassPathResource("prompts/chinese-idioms/user.st"),
+                ClassPathResource("prompts/chinese-idioms/system.st"),
+            )
         )
     }
 
