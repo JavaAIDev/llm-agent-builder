@@ -12,27 +12,29 @@ class ReactJsonPlanner(
     userPromptResource: Resource,
     systemPromptResource: Resource,
     chatClient: ChatClient,
-    chatMemory: ChatMemory? = null
+    systemInstruction: String? = null,
+    chatMemory: ChatMemory? = null,
 ) : LLMPlanner(
     chatClient,
     PromptTemplate(userPromptResource),
     AgentTools.agentTools.values.toList(),
     ReactJsonOutputParser(),
     PromptTemplate(systemPromptResource),
+    systemInstruction,
     chatMemory,
 ) {
     companion object {
         fun createDefault(
             chatClient: ChatClient,
+            systemInstruction: String? = null,
             chatMemory: ChatMemory? = null,
-            userPromptResource: Resource = ClassPathResource("prompts/react-json/user.st"),
-            systemPromptResource: Resource = ClassPathResource("prompts/react-json/system.st"),
         ): ReactJsonPlanner {
             return ReactJsonPlanner(
-                userPromptResource,
-                systemPromptResource,
+                ClassPathResource("prompts/react-json/user.st"),
+                ClassPathResource("prompts/react-json/system.st"),
                 chatClient,
-                chatMemory = chatMemory,
+                systemInstruction,
+                chatMemory,
             )
         }
     }

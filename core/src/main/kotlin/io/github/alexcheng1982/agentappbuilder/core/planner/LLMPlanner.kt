@@ -20,15 +20,19 @@ open class LLMPlanner(
     private val tools: List<AgentTool<*, *>>,
     private val outputParser: OutputParser,
     private val systemPromptTemplate: PromptTemplate? = null,
+    private val systemInstruction: String? = null,
     private val chatMemory: ChatMemory? = null,
 ) : Planner {
     override fun plan(
         inputs: Map<String, Any>,
         intermediateSteps: List<IntermediateAgentStep>
     ): ActionPlanningResult {
+        val systemInstruction = systemInstruction
+            ?: "Answer the following questions as best you can."
         val thoughts = constructScratchpad(intermediateSteps)
         val toolNames = tools.map { it.name() }
         val context = inputs + mutableMapOf(
+            "system_instruction" to systemInstruction,
             "agent_scratchpad" to thoughts,
             "tools" to renderTool(tools),
             "tool_names" to toolNames.joinToString(", ")

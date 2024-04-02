@@ -19,7 +19,7 @@ class StructuredChatPlanner(
     AgentTools.agentTools.values.toList(),
     StructuredChatOutputParser(),
     PromptTemplate(systemPromptResource),
-    chatMemory,
+    chatMemory = chatMemory,
 ) {
     companion object {
         fun createDefault(chatClient: ChatClient): StructuredChatPlanner {

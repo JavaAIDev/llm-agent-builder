@@ -1,4 +1,4 @@
-Answer the following questions as best you can. You have access to the following tools:
+{system_instruction} You have access to the following tools:
 
 {tools}
 
