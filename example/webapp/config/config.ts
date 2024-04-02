@@ -138,4 +138,7 @@ export default defineConfig({
   },
   esbuildMinifyIIFE: true,
   requestRecord: {},
+  history: {
+    type: 'hash',
+  },
 });
