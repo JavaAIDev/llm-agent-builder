@@ -142,6 +142,14 @@ data class AgentExecutor(
     ): AgentStep {
         val observation =
             nameToToolMap[agentAction.tool]?.call(agentAction.toolInput)
+                ?.also { toolResponse ->
+                    logger.info(
+                        "Tool {} executed with request {}, response is {}",
+                        agentAction.tool,
+                        agentAction.toolInput,
+                        toolResponse
+                    )
+                }
                 ?: "Invalid tool"
         return AgentStep(agentAction, observation)
     }

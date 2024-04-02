@@ -1,6 +1,5 @@
 package io.github.alexcheng1982.agentappbuilder.example
 
-import io.github.alexcheng1982.agentappbuilder.core.AgentRequest
 import io.github.alexcheng1982.agentappbuilder.core.AgentTool
 import io.github.alexcheng1982.agentappbuilder.core.AgentToolFactory
 import org.slf4j.LoggerFactory
@@ -30,7 +29,7 @@ class AddToolFactory : AgentToolFactory<AddTool> {
 class WriteFileTool : AgentTool<WriteFileRequest, WriteFileResponse> {
     private val logger = LoggerFactory.getLogger(javaClass)
     override fun name(): String {
-        return "write file"
+        return "writeFile"
     }
 
     override fun description(): String {
@@ -50,11 +49,3 @@ class WriteFileToolFactory : AgentToolFactory<WriteFileTool> {
         return WriteFileTool()
     }
 }
-
-data class MathAgentRequest(val input: String) : AgentRequest {
-    override fun toMap(): Map<String, Any> {
-        return mapOf("input" to input)
-    }
-}
-
-data class MathAgentResponse(val result: String)

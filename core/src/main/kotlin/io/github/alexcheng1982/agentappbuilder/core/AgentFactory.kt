@@ -5,6 +5,20 @@ import org.slf4j.LoggerFactory
 
 object AgentFactory {
     private val logger = LoggerFactory.getLogger(javaClass)
+
+    fun createChatAgent(
+        name: String,
+        description: String,
+        planner: Planner
+    ): Agent<ChatAgentRequest, ChatAgentResponse> {
+        return create(
+            name,
+            description,
+            planner,
+            ChatAgentResponse::fromMap
+        )
+    }
+
     fun <REQUEST : AgentRequest, RESPONSE> create(
         name: String,
         description: String,

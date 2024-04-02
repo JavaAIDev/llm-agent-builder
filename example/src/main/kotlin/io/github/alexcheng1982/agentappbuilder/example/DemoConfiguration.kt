@@ -6,6 +6,8 @@ import cc.vividcode.ai.agent.dashscope.api.DashscopeApi
 import cc.vividcode.ai.agent.dashscope.api.DashscopeModelName
 import io.github.alexcheng1982.agentappbuilder.core.Agent
 import io.github.alexcheng1982.agentappbuilder.core.AgentFactory
+import io.github.alexcheng1982.agentappbuilder.core.ChatAgentRequest
+import io.github.alexcheng1982.agentappbuilder.core.ChatAgentResponse
 import io.github.alexcheng1982.agentappbuilder.core.planner.reactjson.ReactJsonPlanner
 import io.github.alexcheng1982.agentappbuilder.springai.FunctionCallbackContextAdapter
 import org.springframework.ai.chat.ChatClient
@@ -28,16 +30,16 @@ class DemoConfiguration {
     }
 
     @Bean
-    fun agent(chatClient: ChatClient): Agent<MathAgentRequest, MathAgentResponse> {
-        return AgentFactory.create(
+    fun agent(chatClient: ChatClient): Agent<ChatAgentRequest, ChatAgentResponse> {
+        return AgentFactory.createChatAgent(
             "math",
             "Do basic math",
             ReactJsonPlanner.createDefault(chatClient)
-        ) { output -> MathAgentResponse((output["output"] ?: "").toString()) }
+        )
     }
 
     @Bean
-    fun agentService(agent: Agent<MathAgentRequest, MathAgentResponse>): AgentService {
+    fun agentService(agent: Agent<ChatAgentRequest, ChatAgentResponse>): AgentService {
         return AgentService(agent)
     }
 

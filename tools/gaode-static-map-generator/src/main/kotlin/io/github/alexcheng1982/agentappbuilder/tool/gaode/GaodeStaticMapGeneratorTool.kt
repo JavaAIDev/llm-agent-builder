@@ -1,6 +1,7 @@
-package io.github.alexcheng1982.agentappbuilder.agent.gaode
+package io.github.alexcheng1982.agentappbuilder.tool.gaode
 
 import io.github.alexcheng1982.agentappbuilder.core.AgentTool
+import io.github.alexcheng1982.agentappbuilder.core.AgentToolFactory
 import io.github.alexcheng1982.gaode.StaticMap
 import io.github.alexcheng1982.gaode.StaticMapGenerator
 import io.github.alexcheng1982.gaode.param.*
@@ -56,5 +57,12 @@ class GaodeStaticMapGeneratorTool : AgentTool<Request, Response> {
 
     private fun getApiKey(): String {
         return System.getenv("GAODE_API_KEY")
+    }
+}
+
+class GaodeStaticMapGeneratorToolFactory :
+    AgentToolFactory<GaodeStaticMapGeneratorTool> {
+    override fun create(): GaodeStaticMapGeneratorTool {
+        return GaodeStaticMapGeneratorTool()
     }
 }

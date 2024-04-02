@@ -50,9 +50,24 @@ interface AgentRequest {
     fun toMap(): Map<String, Any>
 }
 
-
 interface Agent<in REQUEST : AgentRequest, out RESPONSE> {
     fun name(): String
     fun description(): String
     fun call(request: REQUEST): RESPONSE
 }
+
+data class ChatAgentRequest(val input: String) : AgentRequest {
+    override fun toMap(): Map<String, Any> {
+        return mapOf("input" to input)
+    }
+}
+
+data class ChatAgentResponse(val output: String) {
+    companion object {
+        fun fromMap(map: Map<String, Any>): ChatAgentResponse {
+            return ChatAgentResponse(map["output"]?.toString() ?: "")
+        }
+    }
+}
+
+interface ChatAgent : Agent<ChatAgentRequest, ChatAgentResponse>

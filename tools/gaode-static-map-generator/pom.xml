@@ -40,20 +40,13 @@
       <plugin>
         <artifactId>maven-failsafe-plugin</artifactId>
       </plugin>
-      <plugin>
-        <groupId>org.codehaus.mojo</groupId>
-        <artifactId>exec-maven-plugin</artifactId>
-        <configuration>
-          <mainClass>MainKt</mainClass>
-        </configuration>
-      </plugin>
     </plugins>
   </build>
 
   <dependencies>
     <dependency>
       <groupId>io.github.alexcheng1982</groupId>
-      <artifactId>core</artifactId>
+      <artifactId>agent-app-builder-core</artifactId>
       <version>${project.version}</version>
     </dependency>
     <dependency>

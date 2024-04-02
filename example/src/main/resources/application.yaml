@@ -1,4 +1,6 @@
 spring:
+  application:
+    name: agent-app-builder-example
   threads:
     virtual:
       enabled: true
