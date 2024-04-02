@@ -7,16 +7,12 @@ object AgentFactory {
     private val logger = LoggerFactory.getLogger(javaClass)
 
     fun createChatAgent(
-        name: String,
-        description: String,
-        planner: Planner
-    ): Agent<ChatAgentRequest, ChatAgentResponse> {
-        return create(
-            name,
-            description,
-            planner,
-            ChatAgentResponse::fromMap
-        )
+        planner: Planner,
+        name: String = "ChatAgent",
+        description: String = "Converstional agent",
+    ): ChatAgent {
+        val executor = AgentExecutor(planner, AgentTools.agentToolWrappers)
+        return ExecutableChatAgent(executor, name, description)
     }
 
     fun <REQUEST : AgentRequest, RESPONSE> create(
@@ -26,25 +22,51 @@ object AgentFactory {
         responseFactory: (Map<String, Any>) -> RESPONSE
     ): Agent<REQUEST, RESPONSE> {
         val executor = AgentExecutor(planner, AgentTools.agentToolWrappers)
-        return object : Agent<REQUEST, RESPONSE> {
-            override fun name() = name
+        return ExecutableAgent(name, description, executor, responseFactory)
+    }
 
-            override fun description() = description
+    private open class ExecutableAgent<REQUEST : AgentRequest, RESPONSE>(
+        private val name: String,
+        private val description: String,
+        private val executor: AgentExecutor,
+        private val responseFactory: (Map<String, Any>) -> RESPONSE,
+    ) :
+        Agent<REQUEST, RESPONSE> {
+        override fun name(): String {
+            return name
+        }
 
-            override fun call(request: REQUEST): RESPONSE {
+        override fun description(): String {
+            return description
+        }
+
+        override fun call(request: REQUEST): RESPONSE {
+            logger.info(
+                "Start executing agent {} with request {}",
+                name(),
+                request
+            )
+            return responseFactory(executor.call(request.toMap())).also {
                 logger.info(
-                    "Start executing agent {} with request {}",
+                    "Finished executing agent {} with response {}",
                     name(),
-                    request
+                    it
                 )
-                return responseFactory(executor.call(request.toMap())).also {
-                    logger.info(
-                        "Finished executing agent {} with response {}",
-                        name(),
-                        it
-                    )
-                }
             }
         }
+
+    }
+
+    private class ExecutableChatAgent(
+        private val executor: AgentExecutor,
+        private val name: String,
+        private val description: String,
+    ) : ExecutableAgent<ChatAgentRequest, ChatAgentResponse>(
+        name,
+        description,
+        executor,
+        ChatAgentResponse::fromMap
+    ), ChatAgent {
+
     }
 }

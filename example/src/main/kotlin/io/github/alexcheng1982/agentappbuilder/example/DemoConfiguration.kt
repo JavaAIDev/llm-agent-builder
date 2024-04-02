@@ -4,10 +4,8 @@ import cc.vividcode.ai.agent.dashscope.DashscopeChatClient
 import cc.vividcode.ai.agent.dashscope.DashscopeChatOptions
 import cc.vividcode.ai.agent.dashscope.api.DashscopeApi
 import cc.vividcode.ai.agent.dashscope.api.DashscopeModelName
-import io.github.alexcheng1982.agentappbuilder.core.Agent
 import io.github.alexcheng1982.agentappbuilder.core.AgentFactory
-import io.github.alexcheng1982.agentappbuilder.core.ChatAgentRequest
-import io.github.alexcheng1982.agentappbuilder.core.ChatAgentResponse
+import io.github.alexcheng1982.agentappbuilder.core.ChatAgent
 import io.github.alexcheng1982.agentappbuilder.core.chatmemory.ChatMemoryStore
 import io.github.alexcheng1982.agentappbuilder.core.chatmemory.InMemoryChatMemoryStore
 import io.github.alexcheng1982.agentappbuilder.core.chatmemory.MessageWindowChatMemory
@@ -44,14 +42,12 @@ class DemoConfiguration {
     fun agent(
         chatClient: ChatClient,
         chatMemoryStore: ChatMemoryStore
-    ): Agent<ChatAgentRequest, ChatAgentResponse> {
+    ): ChatAgent {
         val instructions =
             ClassPathResource("chinese-idioms.txt").inputStream.use {
                 InputStreamReader(it).readText()
             }
         return AgentFactory.createChatAgent(
-            "chat",
-            "Basic chat service",
             ReactJsonPlanner.createDefault(
                 chatClient,
                 instructions,
@@ -64,7 +60,7 @@ class DemoConfiguration {
     }
 
     @Bean
-    fun agentService(agent: Agent<ChatAgentRequest, ChatAgentResponse>): AgentService {
+    fun agentService(agent: ChatAgent): AgentService {
         return AgentService(agent)
     }
 
