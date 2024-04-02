@@ -4,7 +4,7 @@ import io.github.alexcheng1982.agentappbuilder.core.executor.AgentExecutor
 import org.slf4j.LoggerFactory
 
 object AgentFactory {
-    private val logger = LoggerFactory.getLogger("Agent")
+    private val logger = LoggerFactory.getLogger(javaClass)
 
     fun createChatAgent(
         planner: Planner,
@@ -12,7 +12,13 @@ object AgentFactory {
         description: String = "Conversational agent",
     ): ChatAgent {
         val executor = AgentExecutor(planner, AgentTools.agentToolWrappers)
-        return ExecutableChatAgent(executor, name, description)
+        return ExecutableChatAgent(executor, name, description).also {
+            logger.info(
+                "Created ChatAgent [{}] with planner [{}]",
+                name,
+                planner.javaClass.simpleName
+            )
+        }
     }
 
     fun <REQUEST : AgentRequest, RESPONSE> create(
@@ -32,6 +38,7 @@ object AgentFactory {
         private val responseFactory: (Map<String, Any>) -> RESPONSE,
     ) :
         Agent<REQUEST, RESPONSE> {
+        private val logger = LoggerFactory.getLogger(javaClass)
         override fun name(): String {
             return name
         }
@@ -42,13 +49,13 @@ object AgentFactory {
 
         override fun call(request: REQUEST): RESPONSE {
             logger.info(
-                "Start executing agent {} with request {}",
+                "Start executing agent [{}] with request [{}]",
                 name(),
                 request
             )
             return responseFactory(executor.call(request.toMap())).also {
                 logger.info(
-                    "Finished executing agent {} with response {}",
+                    "Finished executing agent [{}] with response [{}]",
                     name(),
                     it
                 )

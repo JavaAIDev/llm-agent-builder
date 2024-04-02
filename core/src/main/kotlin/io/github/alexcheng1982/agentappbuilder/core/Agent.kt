@@ -56,9 +56,9 @@ interface Agent<in REQUEST : AgentRequest, out RESPONSE> {
     fun call(request: REQUEST): RESPONSE
 }
 
-data class ChatAgentRequest(val input: String) : AgentRequest {
+data class ChatAgentRequest(val input: String, val memoryId: String? = null) : AgentRequest {
     override fun toMap(): Map<String, Any> {
-        return mapOf("input" to input)
+        return mapOf("input" to input) + (memoryId?.let { mapOf("memory_id" to it) } ?: mapOf())
     }
 }
 

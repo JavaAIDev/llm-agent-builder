@@ -1,5 +1,6 @@
 package io.github.alexcheng1982.agentappbuilder.spring.autoconfigure.chatagent;
 
+import io.github.alexcheng1982.agentappbuilder.core.Agent;
 import io.github.alexcheng1982.agentappbuilder.core.AgentFactory;
 import io.github.alexcheng1982.agentappbuilder.core.ChatAgent;
 import io.github.alexcheng1982.agentappbuilder.core.Planner;
@@ -11,6 +12,7 @@ import org.apache.commons.lang3.StringUtils;
 import org.springframework.ai.chat.ChatClient;
 import org.springframework.boot.autoconfigure.AutoConfiguration;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnBean;
+import org.springframework.boot.autoconfigure.condition.ConditionalOnClass;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnMissingBean;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty;
 import org.springframework.boot.autoconfigure.web.servlet.WebMvcAutoConfiguration;
@@ -23,9 +25,9 @@ import org.springframework.context.annotation.Configuration;
 public class ChatAgentAutoConfiguration {
 
   @Configuration(proxyBeanMethods = false)
-//  @ConditionalOnClass(Agent.class)
-//  @ConditionalOnBean(ChatClient.class)
-//  @ConditionalOnMissingBean(Agent.class)
+  @ConditionalOnClass(Agent.class)
+  @ConditionalOnBean(ChatClient.class)
+  @ConditionalOnMissingBean(Agent.class)
   @EnableConfigurationProperties(ChatAgentProperties.class)
   public static class ChatAgentConfiguration {
 
@@ -37,13 +39,13 @@ public class ChatAgentAutoConfiguration {
 
     @Bean
     @ConditionalOnProperty(prefix = "io.github.alexcheng1982.agentappbuilder.chatagent.memory", name = "enabled", matchIfMissing = true)
-    @ConditionalOnMissingBean(ChatMemoryStore.class)
+    @ConditionalOnMissingBean
     public ChatMemoryStore chatMemoryStore() {
       return new InMemoryChatMemoryStore();
     }
 
     @Bean
-    @ConditionalOnMissingBean(Planner.class)
+    @ConditionalOnMissingBean
     @ConditionalOnBean(ChatMemoryStore.class)
     public Planner plannerWithMemory(ChatClient chatClient, ChatMemoryStore chatMemoryStore) {
       return ReactJsonPlanner.Companion.createDefault(
