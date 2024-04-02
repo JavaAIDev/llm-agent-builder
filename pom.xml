@@ -12,11 +12,9 @@
   <modules>
     <module>core</module>
     <module>example</module>
+    <module>spring</module>
     <module>tools/chinese-idioms</module>
     <module>tools/gaode-static-map-generator</module>
-    <module>spring-integration</module>
-    <module>spring-boot-autoconfigure</module>
-    <module>spring-boot-starter</module>
   </modules>
 
   <properties>

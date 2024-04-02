@@ -5,12 +5,12 @@
   <modelVersion>4.0.0</modelVersion>
   <parent>
     <groupId>io.github.alexcheng1982</groupId>
-    <artifactId>agent-app-builder</artifactId>
+    <artifactId>agent-app-builder-spring</artifactId>
     <version>0.1.0-SNAPSHOT</version>
   </parent>
 
   <artifactId>agent-app-builder-spring-integration</artifactId>
-  <name>Spring Integration</name>
+  <name>Spring Integration :: Library</name>
 
   <properties>
     <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>

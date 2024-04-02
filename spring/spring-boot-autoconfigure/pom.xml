@@ -5,12 +5,12 @@
   <modelVersion>4.0.0</modelVersion>
   <parent>
     <groupId>io.github.alexcheng1982</groupId>
-    <artifactId>agent-app-builder</artifactId>
+    <artifactId>agent-app-builder-spring</artifactId>
     <version>0.1.0-SNAPSHOT</version>
   </parent>
 
   <artifactId>agent-app-builder-spring-boot-autoconfigure</artifactId>
-  <name>Spring Boot Autoconfigure</name>
+  <name>Spring Integration :: Spring Boot Autoconfigure</name>
 
   <properties>
     <maven.compiler.source>21</maven.compiler.source>
@@ -22,7 +22,6 @@
     <dependency>
       <groupId>org.springframework.boot</groupId>
       <artifactId>spring-boot-starter</artifactId>
-      <version>3.2.3</version>
     </dependency>
     <dependency>
       <groupId>io.github.alexcheng1982</groupId>
