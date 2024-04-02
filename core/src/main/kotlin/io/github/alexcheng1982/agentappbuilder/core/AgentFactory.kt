@@ -4,12 +4,12 @@ import io.github.alexcheng1982.agentappbuilder.core.executor.AgentExecutor
 import org.slf4j.LoggerFactory
 
 object AgentFactory {
-    private val logger = LoggerFactory.getLogger(javaClass)
+    private val logger = LoggerFactory.getLogger("Agent")
 
     fun createChatAgent(
         planner: Planner,
         name: String = "ChatAgent",
-        description: String = "Converstional agent",
+        description: String = "Conversational agent",
     ): ChatAgent {
         val executor = AgentExecutor(planner, AgentTools.agentToolWrappers)
         return ExecutableChatAgent(executor, name, description)
@@ -58,15 +58,13 @@ object AgentFactory {
     }
 
     private class ExecutableChatAgent(
-        private val executor: AgentExecutor,
-        private val name: String,
-        private val description: String,
+        executor: AgentExecutor,
+        name: String,
+        description: String,
     ) : ExecutableAgent<ChatAgentRequest, ChatAgentResponse>(
         name,
         description,
         executor,
         ChatAgentResponse::fromMap
-    ), ChatAgent {
-
-    }
+    ), ChatAgent
 }

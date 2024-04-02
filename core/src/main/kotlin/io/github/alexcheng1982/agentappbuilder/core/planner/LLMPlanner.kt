@@ -7,6 +7,8 @@ import io.github.alexcheng1982.agentappbuilder.core.AgentTool
 import io.github.alexcheng1982.agentappbuilder.core.IntermediateAgentStep
 import io.github.alexcheng1982.agentappbuilder.core.Planner
 import io.github.alexcheng1982.agentappbuilder.core.chatmemory.ChatMemory
+import io.github.alexcheng1982.agentappbuilder.core.chatmemory.ChatMemoryStore
+import io.github.alexcheng1982.agentappbuilder.core.chatmemory.MessageWindowChatMemory
 import io.github.alexcheng1982.agentappbuilder.core.executor.ActionPlanningResult
 import org.springframework.ai.chat.ChatClient
 import org.springframework.ai.chat.messages.SystemMessage
@@ -21,7 +23,12 @@ open class LLMPlanner(
     private val outputParser: OutputParser,
     private val systemPromptTemplate: PromptTemplate? = null,
     private val systemInstruction: String? = null,
-    private val chatMemory: ChatMemory? = null,
+    private val chatMemoryStore: ChatMemoryStore? = null,
+    private val chatMemoryProvider: ((ChatMemoryStore, Map<String, Any>) -> ChatMemory?)? = { store, inputs ->
+        inputs["memory_id"]?.let { memoryId ->
+            MessageWindowChatMemory(store, memoryId.toString(), 10)
+        }
+    },
 ) : Planner {
     override fun plan(
         inputs: Map<String, Any>,
@@ -40,6 +47,10 @@ open class LLMPlanner(
         val messages = mutableListOf(userPromptTemplate.createMessage(context))
         systemPromptTemplate?.run {
             messages.addFirst(SystemMessage(systemPromptTemplate.render(context)))
+        }
+
+        val chatMemory = chatMemoryStore?.let { store ->
+            chatMemoryProvider?.invoke(store, inputs)
         }
 
         chatMemory?.let { memory ->

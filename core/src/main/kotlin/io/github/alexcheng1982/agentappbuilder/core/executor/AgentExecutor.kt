@@ -144,7 +144,7 @@ data class AgentExecutor(
             nameToToolMap[agentAction.tool]?.call(agentAction.toolInput)
                 ?.also { toolResponse ->
                     logger.info(
-                        "Tool {} executed with request {}, response is {}",
+                        "Tool [{}] executed with request [{}], response is [{}]",
                         agentAction.tool,
                         agentAction.toolInput,
                         toolResponse

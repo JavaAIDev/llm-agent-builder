@@ -1,7 +1,7 @@
 package io.github.alexcheng1982.agentappbuilder.core.planner.structuredchat
 
 import io.github.alexcheng1982.agentappbuilder.core.AgentTools
-import io.github.alexcheng1982.agentappbuilder.core.chatmemory.ChatMemory
+import io.github.alexcheng1982.agentappbuilder.core.chatmemory.ChatMemoryStore
 import io.github.alexcheng1982.agentappbuilder.core.planner.LLMPlanner
 import org.springframework.ai.chat.ChatClient
 import org.springframework.ai.chat.prompt.PromptTemplate
@@ -12,14 +12,14 @@ class StructuredChatPlanner(
     userPromptResource: Resource,
     systemPromptResource: Resource,
     chatClient: ChatClient,
-    chatMemory: ChatMemory? = null
+    chatMemoryStore: ChatMemoryStore? = null,
 ) : LLMPlanner(
     chatClient,
     PromptTemplate(userPromptResource),
     AgentTools.agentTools.values.toList(),
     StructuredChatOutputParser(),
     PromptTemplate(systemPromptResource),
-    chatMemory = chatMemory,
+    chatMemoryStore = chatMemoryStore,
 ) {
     companion object {
         fun createDefault(chatClient: ChatClient): StructuredChatPlanner {

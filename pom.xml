@@ -14,6 +14,9 @@
     <module>example</module>
     <module>tools/chinese-idioms</module>
     <module>tools/gaode-static-map-generator</module>
+    <module>spring-integration</module>
+    <module>spring-boot-autoconfigure</module>
+    <module>spring-boot-starter</module>
   </modules>
 
   <properties>
@@ -26,8 +29,6 @@
   </properties>
 
   <build>
-    <sourceDirectory>src/main/kotlin</sourceDirectory>
-    <testSourceDirectory>src/test/kotlin</testSourceDirectory>
     <plugins>
       <plugin>
         <groupId>org.jetbrains.kotlin</groupId>

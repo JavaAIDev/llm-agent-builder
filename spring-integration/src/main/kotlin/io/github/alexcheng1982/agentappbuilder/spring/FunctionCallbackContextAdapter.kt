@@ -1,4 +1,4 @@
-package io.github.alexcheng1982.agentappbuilder.springai
+package io.github.alexcheng1982.agentappbuilder.spring
 
 import io.github.alexcheng1982.agentappbuilder.core.AgentTools
 import org.springframework.ai.model.function.FunctionCallback

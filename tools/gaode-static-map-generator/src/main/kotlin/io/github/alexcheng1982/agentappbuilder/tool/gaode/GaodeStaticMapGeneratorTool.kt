@@ -1,7 +1,7 @@
 package io.github.alexcheng1982.agentappbuilder.tool.gaode
 
-import io.github.alexcheng1982.agentappbuilder.core.AgentTool
-import io.github.alexcheng1982.agentappbuilder.core.AgentToolFactory
+import io.github.alexcheng1982.agentappbuilder.core.BaseConfigurableAgentToolFactory
+import io.github.alexcheng1982.agentappbuilder.core.ConfigurableAgentTool
 import io.github.alexcheng1982.gaode.StaticMap
 import io.github.alexcheng1982.gaode.StaticMapGenerator
 import io.github.alexcheng1982.gaode.param.*
@@ -16,7 +16,8 @@ data class Request(val locations: List<Location>)
 
 data class Response(val url: String)
 
-class GaodeStaticMapGeneratorTool : AgentTool<Request, Response> {
+class GaodeStaticMapGeneratorTool(private val config: ToolConfig) :
+    ConfigurableAgentTool<Request, Response, ToolConfig> {
     override fun name() = "gaodeStaticMap"
 
     override fun description() = "Generate URL of Gaode static maps"
@@ -56,13 +57,23 @@ class GaodeStaticMapGeneratorTool : AgentTool<Request, Response> {
     }
 
     private fun getApiKey(): String {
-        return System.getenv("GAODE_API_KEY")
+        return config.apiKey
     }
 }
 
+data class ToolConfig(
+    val apiKey: String
+)
+
 class GaodeStaticMapGeneratorToolFactory :
-    AgentToolFactory<GaodeStaticMapGeneratorTool> {
-    override fun create(): GaodeStaticMapGeneratorTool {
-        return GaodeStaticMapGeneratorTool()
+    BaseConfigurableAgentToolFactory<ToolConfig, GaodeStaticMapGeneratorTool>({
+        ToolConfig(
+            System.getenv(
+                "GAODE_API_KEY"
+            )
+        )
+    }) {
+    override fun create(config: ToolConfig): GaodeStaticMapGeneratorTool {
+        return GaodeStaticMapGeneratorTool(config)
     }
 }
