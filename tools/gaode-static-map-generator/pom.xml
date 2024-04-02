@@ -4,13 +4,14 @@
   xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
   <modelVersion>4.0.0</modelVersion>
   <parent>
-    <groupId>cc.vividcode.ai.agent-app-builder</groupId>
+    <groupId>io.github.alexcheng1982</groupId>
     <artifactId>agent-app-builder</artifactId>
     <version>1.0.0-SNAPSHOT</version>
     <relativePath>../../pom.xml</relativePath>
   </parent>
 
-  <artifactId>gaode-static-map-generator</artifactId>
+  <artifactId>agent-tool-gaode-static-map-generator</artifactId>
+  <name>Agent Tool :: Gaode Static Map Generator</name>
 
   <properties>
     <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
@@ -51,7 +52,7 @@
 
   <dependencies>
     <dependency>
-      <groupId>cc.vividcode.ai.agent-app-builder</groupId>
+      <groupId>io.github.alexcheng1982</groupId>
       <artifactId>core</artifactId>
       <version>${project.version}</version>
     </dependency>
