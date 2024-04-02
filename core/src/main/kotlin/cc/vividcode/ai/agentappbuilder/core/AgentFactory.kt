@@ -1,8 +1,10 @@
 package cc.vividcode.ai.agentappbuilder.core
 
 import cc.vividcode.ai.agentappbuilder.core.executor.AgentExecutor
+import org.slf4j.LoggerFactory
 
 object AgentFactory {
+    private val logger = LoggerFactory.getLogger(javaClass)
     fun <REQUEST : AgentRequest, RESPONSE> create(
         name: String,
         description: String,
@@ -16,7 +18,18 @@ object AgentFactory {
             override fun description() = description
 
             override fun call(request: REQUEST): RESPONSE {
-                return responseFactory(executor.call(request.toMap()))
+                logger.info(
+                    "Start executing agent {} with request {}",
+                    name(),
+                    request
+                )
+                return responseFactory(executor.call(request.toMap())).also {
+                    logger.info(
+                        "Finished executing agent {} with response {}",
+                        name(),
+                        it
+                    )
+                }
             }
         }
     }

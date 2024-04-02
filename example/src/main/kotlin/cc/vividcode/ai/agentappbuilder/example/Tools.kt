@@ -3,6 +3,7 @@ package cc.vividcode.ai.agentappbuilder.example
 import cc.vividcode.ai.agentappbuilder.core.AgentRequest
 import cc.vividcode.ai.agentappbuilder.core.AgentTool
 import cc.vividcode.ai.agentappbuilder.core.AgentToolFactory
+import org.slf4j.LoggerFactory
 import java.nio.file.Files
 
 class AddTool : AgentTool<AddRequest, AddResponse> {
@@ -27,6 +28,7 @@ class AddToolFactory : AgentToolFactory<AddTool> {
 }
 
 class WriteFileTool : AgentTool<WriteFileRequest, WriteFileResponse> {
+    private val logger = LoggerFactory.getLogger(javaClass)
     override fun name(): String {
         return "write file"
     }
@@ -38,6 +40,7 @@ class WriteFileTool : AgentTool<WriteFileRequest, WriteFileResponse> {
     override fun apply(t: WriteFileRequest): WriteFileResponse {
         val file = Files.createTempFile("tmp_", t.filename)
         Files.writeString(file, t.content)
+        logger.info("Write file to {}", file.toAbsolutePath().toString())
         return WriteFileResponse(file.toAbsolutePath().toString())
     }
 }
