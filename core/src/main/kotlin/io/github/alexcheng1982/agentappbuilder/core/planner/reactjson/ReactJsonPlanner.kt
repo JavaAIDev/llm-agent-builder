@@ -9,16 +9,16 @@ import org.springframework.core.io.ClassPathResource
 import org.springframework.core.io.Resource
 
 class ReactJsonPlanner(
+    chatClient: ChatClient,
     userPromptResource: Resource,
     systemPromptResource: Resource,
-    chatClient: ChatClient,
     systemInstruction: String? = null,
     chatMemoryStore: ChatMemoryStore? = null,
 ) : LLMPlanner(
     chatClient,
-    PromptTemplate(userPromptResource),
     AgentTools.agentTools.values.toList(),
     ReactJsonOutputParser(),
+    PromptTemplate(userPromptResource),
     PromptTemplate(systemPromptResource),
     systemInstruction,
     chatMemoryStore,
@@ -30,9 +30,9 @@ class ReactJsonPlanner(
             chatMemoryStore: ChatMemoryStore? = null,
         ): ReactJsonPlanner {
             return ReactJsonPlanner(
+                chatClient,
                 ClassPathResource("prompts/react-json/user.st"),
                 ClassPathResource("prompts/react-json/system.st"),
-                chatClient,
                 systemInstruction,
                 chatMemoryStore,
             )

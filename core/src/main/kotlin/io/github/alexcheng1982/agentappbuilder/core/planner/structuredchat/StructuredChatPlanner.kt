@@ -9,24 +9,24 @@ import org.springframework.core.io.ClassPathResource
 import org.springframework.core.io.Resource
 
 class StructuredChatPlanner(
+    chatClient: ChatClient,
     userPromptResource: Resource,
     systemPromptResource: Resource,
-    chatClient: ChatClient,
     chatMemoryStore: ChatMemoryStore? = null,
 ) : LLMPlanner(
     chatClient,
-    PromptTemplate(userPromptResource),
     AgentTools.agentTools.values.toList(),
     StructuredChatOutputParser(),
+    PromptTemplate(userPromptResource),
     PromptTemplate(systemPromptResource),
     chatMemoryStore = chatMemoryStore,
 ) {
     companion object {
         fun createDefault(chatClient: ChatClient): StructuredChatPlanner {
             return StructuredChatPlanner(
+                chatClient,
                 ClassPathResource("prompts/structured-chat/user.st"),
-                ClassPathResource("prompts/structured-chat/system.st"),
-                chatClient
+                ClassPathResource("prompts/structured-chat/system.st")
             )
         }
     }

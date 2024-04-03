@@ -9,21 +9,26 @@ import org.springframework.core.io.ClassPathResource
 import org.springframework.core.io.Resource
 
 class ReActPlanner(
-    promptResource: Resource,
     chatClient: ChatClient,
+    userPromptResource: Resource,
+    systemPromptResource: Resource,
     chatMemoryStore: ChatMemoryStore? = null,
 ) :
     LLMPlanner(
         chatClient,
-        PromptTemplate(promptResource),
         AgentTools.agentTools.values.toList(),
         ReActOutputParser(),
+        PromptTemplate(userPromptResource),
+        PromptTemplate(systemPromptResource),
         chatMemoryStore = chatMemoryStore
     ) {
     companion object {
         fun createDefault(chatClient: ChatClient): ReActPlanner {
-            val promptResource = ClassPathResource("prompts/react/user.st")
-            return ReActPlanner(promptResource, chatClient)
+            return ReActPlanner(
+                chatClient,
+                ClassPathResource("prompts/react/user.st"),
+                ClassPathResource("prompts/react/system.st"),
+            )
         }
     }
 }

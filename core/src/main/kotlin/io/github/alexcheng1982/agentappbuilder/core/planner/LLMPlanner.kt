@@ -18,9 +18,9 @@ import org.springframework.ai.chat.prompt.PromptTemplate
 
 open class LLMPlanner(
     private val chatClient: ChatClient,
-    private val userPromptTemplate: PromptTemplate,
     private val tools: List<AgentTool<*, *>>,
     private val outputParser: OutputParser,
+    private val userPromptTemplate: PromptTemplate,
     private val systemPromptTemplate: PromptTemplate? = null,
     private val systemInstruction: String? = null,
     private val chatMemoryStore: ChatMemoryStore? = null,
