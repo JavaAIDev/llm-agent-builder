@@ -17,6 +17,7 @@
     <module>spring-integration</module>
     <module>spring-boot-autoconfigure</module>
     <module>spring-boot-starter</module>
+    <module>spring-dev</module>
   </modules>
 
   <properties>

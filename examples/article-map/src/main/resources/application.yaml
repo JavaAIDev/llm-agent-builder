@@ -18,6 +18,9 @@ io:
     alexcheng1982:
       agentappbuilder:
         chatagent:
+          name: 网页转地图
+          description: 从网页中提取位置信息，生成静态地图
+          usageInstruction: 直接输入网页的地址
           reActJson:
             systemInstructions: |
-              对于用户输入的网址，提取网页中的坐标信息，转换为数字形式的经纬度格式，并在 Gaode 地图上画出路径，把地图url的内容以PNG文件的格式保存在本地磁盘上，返回地图url的保存路径。
+              对于用户输入的网址，提取网页中的坐标信息，转换为数字形式的经纬度格式，通过 Gaode 生成静态地图 url，把地图url的内容以PNG文件的格式保存在本地磁盘上，返回地图url的保存路径。只需要输出保存路径。

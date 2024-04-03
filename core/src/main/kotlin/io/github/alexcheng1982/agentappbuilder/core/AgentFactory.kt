@@ -9,10 +9,16 @@ object AgentFactory {
     fun createChatAgent(
         planner: Planner,
         name: String = "ChatAgent",
-        description: String = "Conversational agent",
+        description: String = "A conversational chat agent",
+        usageInstruction: String = "Ask me anything",
     ): ChatAgent {
         val executor = AgentExecutor(planner, AgentTools.agentToolWrappers)
-        return ExecutableChatAgent(executor, name, description).also {
+        return ExecutableChatAgent(
+            executor,
+            name,
+            description,
+            usageInstruction
+        ).also {
             logger.info(
                 "Created ChatAgent [{}] with planner [{}]",
                 name,
@@ -24,16 +30,24 @@ object AgentFactory {
     fun <REQUEST : AgentRequest, RESPONSE> create(
         name: String,
         description: String,
+        usageInstruction: String,
         planner: Planner,
         responseFactory: (Map<String, Any>) -> RESPONSE
     ): Agent<REQUEST, RESPONSE> {
         val executor = AgentExecutor(planner, AgentTools.agentToolWrappers)
-        return ExecutableAgent(name, description, executor, responseFactory)
+        return ExecutableAgent(
+            name,
+            description,
+            usageInstruction,
+            executor,
+            responseFactory
+        )
     }
 
     private open class ExecutableAgent<REQUEST : AgentRequest, RESPONSE>(
         private val name: String,
         private val description: String,
+        private val usageInstruction: String,
         private val executor: AgentExecutor,
         private val responseFactory: (Map<String, Any>) -> RESPONSE,
     ) :
@@ -45,6 +59,10 @@ object AgentFactory {
 
         override fun description(): String {
             return description
+        }
+
+        override fun usageInstruction(): String {
+            return usageInstruction
         }
 
         override fun call(request: REQUEST): RESPONSE {
@@ -68,9 +86,11 @@ object AgentFactory {
         executor: AgentExecutor,
         name: String,
         description: String,
+        usageInstruction: String,
     ) : ExecutableAgent<ChatAgentRequest, ChatAgentResponse>(
         name,
         description,
+        usageInstruction,
         executor,
         ChatAgentResponse::fromMap
     ), ChatAgent

@@ -37,7 +37,7 @@ data class AgentExecutor(
     val agent: Planner,
     val nameToToolMap: Map<String, FunctionCallbackWrapper<*, *>>,
     val returnIntermediateSteps: Boolean = false,
-    val maxIterations: Int? = 15,
+    val maxIterations: Int? = 10,
     val maxExecutionTime: Long? = null,
     val earlyStoppingMethod: String? = "force",
     val parsingErrorHandler: OutputParserExceptionHandler? = null,

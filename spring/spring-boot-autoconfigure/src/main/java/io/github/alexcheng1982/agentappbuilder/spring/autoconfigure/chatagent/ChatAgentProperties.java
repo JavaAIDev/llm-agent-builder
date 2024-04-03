@@ -7,6 +7,12 @@ public class ChatAgentProperties {
 
   private boolean enabled = true;
 
+  private String name = "ChatAgent";
+
+  private String description = "A conversational chat agent";
+
+  private String usageInstruction = "Ask me anything";
+
   private ReActJson reActJson = new ReActJson();
 
   private Memory memory = new Memory();
@@ -17,6 +23,30 @@ public class ChatAgentProperties {
 
   public void setEnabled(boolean enabled) {
     this.enabled = enabled;
+  }
+
+  public String getName() {
+    return name;
+  }
+
+  public void setName(String name) {
+    this.name = name;
+  }
+
+  public String getDescription() {
+    return description;
+  }
+
+  public void setDescription(String description) {
+    this.description = description;
+  }
+
+  public String getUsageInstruction() {
+    return usageInstruction;
+  }
+
+  public void setUsageInstruction(String usageInstruction) {
+    this.usageInstruction = usageInstruction;
   }
 
   public ReActJson getReActJson() {

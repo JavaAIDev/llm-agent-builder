@@ -76,8 +76,10 @@ public class ChatAgentAutoConfiguration {
     @Bean
     @ConditionalOnBean(Planner.class)
     public ChatAgent chatAgent(Planner planner) {
-      return AgentFactory.INSTANCE.createChatAgent(planner, "ChatAgent",
-          "Auto-configured chat agent");
+      return AgentFactory.INSTANCE.createChatAgent(planner,
+          properties.getName(),
+          properties.getDescription(),
+          properties.getUsageInstruction());
     }
 
     @Bean
