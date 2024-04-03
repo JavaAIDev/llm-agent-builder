@@ -4,8 +4,10 @@ import cc.vividcode.ai.agent.dashscope.DashscopeChatClient
 import cc.vividcode.ai.agent.dashscope.DashscopeChatOptions
 import cc.vividcode.ai.agent.dashscope.api.DashscopeApi
 import cc.vividcode.ai.agent.dashscope.api.DashscopeModelName
-import io.github.alexcheng1982.agentappbuilder.spring.FunctionCallbackContextAdapter
+import io.github.alexcheng1982.agentappbuilder.spring.AgentToolFunctionCallbackContext
 import org.springframework.ai.chat.ChatClient
+import org.springframework.ai.model.function.FunctionCallbackContext
+import org.springframework.context.ApplicationContext
 import org.springframework.context.annotation.Bean
 import org.springframework.context.annotation.Configuration
 import org.springframework.context.annotation.Primary
@@ -15,7 +17,7 @@ class DemoConfiguration {
 
     @Bean
     @Primary
-    fun chatClient(functionCallbackContext: FunctionCallbackContextAdapter): ChatClient {
+    fun chatClient(functionCallbackContext: FunctionCallbackContext): ChatClient {
         return DashscopeChatClient(
             DashscopeApi(),
             DashscopeChatOptions.builder()
@@ -27,7 +29,9 @@ class DemoConfiguration {
     }
 
     @Bean
-    fun functionCallbackContext(): FunctionCallbackContextAdapter {
-        return FunctionCallbackContextAdapter()
+    fun functionCallbackContext(context: ApplicationContext): FunctionCallbackContext {
+        val manager = AgentToolFunctionCallbackContext()
+        manager.setApplicationContext(context)
+        return manager
     }
 }

@@ -4,7 +4,7 @@ import io.github.alexcheng1982.agentappbuilder.core.AgentTools
 import org.springframework.ai.model.function.FunctionCallback
 import org.springframework.ai.model.function.FunctionCallbackContext
 
-class FunctionCallbackContextAdapter : FunctionCallbackContext() {
+class AgentToolFunctionCallbackContext : FunctionCallbackContext() {
 
     override fun getFunctionCallback(
         beanName: String,
