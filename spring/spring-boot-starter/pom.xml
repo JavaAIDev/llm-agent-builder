@@ -13,12 +13,6 @@
   <name>Spring Integration :: Spring Boot Starter</name>
   <packaging>jar</packaging>
 
-  <properties>
-    <maven.compiler.source>21</maven.compiler.source>
-    <maven.compiler.target>21</maven.compiler.target>
-    <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
-  </properties>
-
   <dependencies>
     <dependency>
       <groupId>io.github.alexcheng1982</groupId>
