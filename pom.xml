@@ -14,11 +14,7 @@
     <module>example</module>
     <module>spring</module>
     <module>examples</module>
-    <module>tools/chinese-idioms</module>
-    <module>tools/gaode-static-map-generator</module>
-    <module>tools/write-local-file</module>
-    <module>tools/extract-webpage-content</module>
-    <module>examples/agent-app-builder-example-chinese-idioms-game</module>
+    <module>tools</module>
   </modules>
 
   <properties>

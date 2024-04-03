@@ -9,13 +9,15 @@
     <version>0.1.0-SNAPSHOT</version>
   </parent>
 
-  <artifactId>agent-app-builder-examples</artifactId>
-  <name>Examples</name>
+  <artifactId>agent-app-builder-tools</artifactId>
+  <name>Tools</name>
   <packaging>pom</packaging>
 
   <modules>
-    <module>article-map</module>
-    <module>chinese-idioms-game</module>
+    <module>chinese-idioms</module>
+    <module>extract-webpage-content</module>
+    <module>gaode-static-map-generator</module>
+    <module>write-local-file</module>
   </modules>
 
   <properties>
