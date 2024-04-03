@@ -11,6 +11,7 @@
   </parent>
 
   <artifactId>agent-tool-extract-webpage-content</artifactId>
+  <name>Agent Tool :: Extract Web Page Content</name>
 
   <properties>
     <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>

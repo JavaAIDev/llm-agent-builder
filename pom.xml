@@ -18,6 +18,7 @@
     <module>tools/gaode-static-map-generator</module>
     <module>tools/write-local-file</module>
     <module>tools/extract-webpage-content</module>
+    <module>examples/agent-app-builder-example-chinese-idioms-game</module>
   </modules>
 
   <properties>

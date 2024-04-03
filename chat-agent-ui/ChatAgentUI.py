@@ -1,6 +1,4 @@
-import json
 import uuid
-from json import JSONDecodeError
 
 import requests
 import streamlit as st
@@ -46,14 +44,4 @@ if prompt := st.chat_input():
     response = requests.post(chat_server_url, json={"input": prompt, "memoryId": memory_id})
     msg = response.json()
     st.session_state.messages.append({"role": "assistant", "content": msg})
-    image_saved = False
-    if msg["output"]:
-        try:
-            data = json.loads(msg["output"])
-            if data["path"] and data["path"].endswith(".png"):
-                st.image(data["path"])
-                image_saved = True
-        except JSONDecodeError:
-            pass
-    if not image_saved:
-        st.chat_message("assistant").write(msg)
+    st.chat_message("assistant").write(msg)
