@@ -50,10 +50,28 @@ interface AgentRequest {
     fun toMap(): Map<String, Any>
 }
 
+/**
+ * LLM based agent
+ */
 interface Agent<in REQUEST : AgentRequest, out RESPONSE> {
+    /**
+     * Name of the agent
+     */
     fun name(): String
+
+    /**
+     * Description of the agent
+     */
     fun description(): String
+
+    /**
+     * Usage instruction for user to interact with the agent
+     */
     fun usageInstruction() = "Ask me anything"
+
+    /**
+     * Call the agent and get the response
+     */
     fun call(request: REQUEST): RESPONSE
 }
 
