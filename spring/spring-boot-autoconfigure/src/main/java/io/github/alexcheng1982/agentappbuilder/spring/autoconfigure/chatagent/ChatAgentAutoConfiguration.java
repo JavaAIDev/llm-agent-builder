@@ -10,6 +10,8 @@ import io.github.alexcheng1982.agentappbuilder.core.planner.reactjson.ReActJsonP
 import io.github.alexcheng1982.agentappbuilder.spring.AgentToolFunctionCallbackContext;
 import io.github.alexcheng1982.agentappbuilder.spring.chatagent.ChatAgentService;
 import org.apache.commons.lang3.StringUtils;
+import org.springframework.ai.autoconfigure.ollama.OllamaAutoConfiguration;
+import org.springframework.ai.autoconfigure.openai.OpenAiAutoConfiguration;
 import org.springframework.ai.chat.ChatClient;
 import org.springframework.ai.model.function.FunctionCallbackContext;
 import org.springframework.boot.autoconfigure.AutoConfiguration;
@@ -23,7 +25,8 @@ import org.springframework.context.ApplicationContext;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 
-@AutoConfiguration(before = WebMvcAutoConfiguration.class)
+@AutoConfiguration(before = WebMvcAutoConfiguration.class, after = {
+    OllamaAutoConfiguration.class, OpenAiAutoConfiguration.class})
 @ConditionalOnProperty(prefix = "io.github.alexcheng1982.agentappbuilder.chatagent", name = "enabled", matchIfMissing = true)
 public class ChatAgentAutoConfiguration {
 

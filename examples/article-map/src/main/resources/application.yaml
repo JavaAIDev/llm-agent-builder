@@ -1,0 +1,23 @@
+spring:
+  application:
+    name: article-map-agent
+  threads:
+    virtual:
+      enabled: true
+  ai:
+    ollama:
+      embedding:
+        options:
+          model: "qwen:0.5b"
+      chat:
+        options:
+          model: "qwen:0.5b"
+          temperature: 0.1
+io:
+  github:
+    alexcheng1982:
+      agentappbuilder:
+        chatagent:
+          reActJson:
+            systemInstructions: |
+              对于用户输入的网址，提取网页中的坐标信息，转换为数字形式的经纬度格式，并在 Gaode 地图上画出路径，把地图url的内容以PNG文件的格式保存在本地磁盘上，返回地图url的保存路径。

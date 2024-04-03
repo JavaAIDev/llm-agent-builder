@@ -11,7 +11,7 @@ interface ConfigurableAgentToolFactory<CONFIG, out T : ConfigurableAgentTool<*, 
     fun create(config: CONFIG): T
 }
 
-abstract class BaseConfigurableAgentToolFactory<CONFIG, out T : ConfigurableAgentTool<*, *, CONFIG>>(
+abstract class BaseConfigurableAgentToolFactory<out T : ConfigurableAgentTool<*, *, CONFIG>, CONFIG>(
     private val configProvider: Supplier<CONFIG>
 ) : ConfigurableAgentToolFactory<CONFIG, T> {
     override fun create(): T {

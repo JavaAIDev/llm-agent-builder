@@ -13,8 +13,11 @@
     <module>core</module>
     <module>example</module>
     <module>spring</module>
+    <module>examples</module>
     <module>tools/chinese-idioms</module>
     <module>tools/gaode-static-map-generator</module>
+    <module>tools/write-local-file</module>
+    <module>tools/extract-webpage-content</module>
   </modules>
 
   <properties>
@@ -68,6 +71,16 @@
         <version>${spring-ai.version}</version>
         <type>pom</type>
         <scope>import</scope>
+      </dependency>
+      <dependency>
+        <groupId>org.apache.commons</groupId>
+        <artifactId>commons-lang3</artifactId>
+        <version>3.14.0</version>
+      </dependency>
+      <dependency>
+        <groupId>commons-io</groupId>
+        <artifactId>commons-io</artifactId>
+        <version>2.15.1</version>
       </dependency>
     </dependencies>
   </dependencyManagement>

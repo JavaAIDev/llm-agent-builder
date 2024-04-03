@@ -52,6 +52,12 @@
       <groupId>cc.vividcode.ai</groupId>
       <artifactId>agents</artifactId>
       <version>0.0.2-SNAPSHOT</version>
+      <exclusions>
+        <exclusion>
+          <groupId>org.slf4j</groupId>
+          <artifactId>slf4j-simple</artifactId>
+        </exclusion>
+      </exclusions>
     </dependency>
     <dependency>
       <groupId>com.fasterxml.jackson.module</groupId>
