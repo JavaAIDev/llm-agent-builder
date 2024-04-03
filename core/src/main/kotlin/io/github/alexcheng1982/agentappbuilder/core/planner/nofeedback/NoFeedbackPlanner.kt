@@ -1,4 +1,4 @@
-package io.github.alexcheng1982.agentappbuilder.core.planner.zeroshot
+package io.github.alexcheng1982.agentappbuilder.core.planner.nofeedback
 
 import io.github.alexcheng1982.agentappbuilder.core.AgentTools
 import io.github.alexcheng1982.agentappbuilder.core.chatmemory.ChatMemoryStore
@@ -8,15 +8,19 @@ import org.springframework.ai.chat.prompt.PromptTemplate
 import org.springframework.core.io.ClassPathResource
 import org.springframework.core.io.Resource
 
-class ZeroShotPlanner(
+/**
+ * Planning without feedback
+ */
+class NoFeedbackPlanner(
     chatClient: ChatClient,
     userPromptResource: Resource,
     systemPromptResource: Resource,
     systemInstruction: String? = null,
     chatMemoryStore: ChatMemoryStore? = null,
 ) : LLMPlanner(
-    chatClient, AgentTools.agentTools.values.toList(),
-    ZeroShotOutputParser(),
+    chatClient,
+    AgentTools.agentTools.values.toList(),
+    NoFeedbackOutputParser(),
     PromptTemplate(userPromptResource),
     PromptTemplate(systemPromptResource),
     systemInstruction,
@@ -27,11 +31,11 @@ class ZeroShotPlanner(
             chatClient: ChatClient,
             systemInstruction: String? = null,
             chatMemoryStore: ChatMemoryStore? = null,
-        ): ZeroShotPlanner {
-            return ZeroShotPlanner(
+        ): NoFeedbackPlanner {
+            return NoFeedbackPlanner(
                 chatClient,
-                ClassPathResource("prompts/zero-shot/user.st"),
-                ClassPathResource("prompts/zero-shot/system.st"),
+                ClassPathResource("prompts/no-feedback/user.st"),
+                ClassPathResource("prompts/no-feedback/system.st"),
                 systemInstruction,
                 chatMemoryStore,
             )

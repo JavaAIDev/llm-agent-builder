@@ -26,13 +26,13 @@ class MessageWindowChatMemory(
     }
 
     private fun messagesWithLimit(messages: List<Message>): List<Message> {
-        val limit = Math.max(1, maxMessages)
+        val limit = 1.coerceAtLeast(maxMessages)
         if (messages.size <= limit) {
             return messages
         }
         val systemMessages = messages.filterIsInstance<SystemMessage>()
         return systemMessages + messages.filterNot { it is SystemMessage }
-            .takeLast(Math.max(limit - systemMessages.size, 0))
+            .takeLast((limit - systemMessages.size).coerceAtLeast(0))
     }
 
     override fun clear() {
