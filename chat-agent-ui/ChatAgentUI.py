@@ -18,7 +18,7 @@ with st.sidebar:
         caption = agent_info["description"]
         usage_instruction = agent_info["usageInstruction"]
         tools = agent_info["tools"]
-    except RequestException as e:
+    except (RequestException, KeyError) as e:
         title = "ChatAgent UI"
         caption = "A simple UI for ChatAgent"
         usage_instruction = "How can I help you?"

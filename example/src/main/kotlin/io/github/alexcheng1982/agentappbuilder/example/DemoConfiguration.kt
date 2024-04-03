@@ -4,6 +4,8 @@ import cc.vividcode.ai.agent.dashscope.DashscopeChatClient
 import cc.vividcode.ai.agent.dashscope.DashscopeChatOptions
 import cc.vividcode.ai.agent.dashscope.api.DashscopeApi
 import cc.vividcode.ai.agent.dashscope.api.DashscopeModelName
+import io.github.alexcheng1982.agentappbuilder.core.Planner
+import io.github.alexcheng1982.agentappbuilder.core.planner.zeroshot.ZeroShotPlanner
 import io.github.alexcheng1982.agentappbuilder.spring.AgentToolFunctionCallbackContext
 import org.springframework.ai.chat.ChatClient
 import org.springframework.ai.model.function.FunctionCallbackContext
@@ -34,4 +36,10 @@ class DemoConfiguration {
         manager.setApplicationContext(context)
         return manager
     }
+
+    @Bean
+    fun planner(chatClient: ChatClient): Planner {
+        return ZeroShotPlanner.createDefault(chatClient)
+    }
+
 }

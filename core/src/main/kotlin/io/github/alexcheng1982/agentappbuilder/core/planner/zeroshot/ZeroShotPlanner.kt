@@ -1,4 +1,4 @@
-package io.github.alexcheng1982.agentappbuilder.core.planner.react
+package io.github.alexcheng1982.agentappbuilder.core.planner.zeroshot
 
 import io.github.alexcheng1982.agentappbuilder.core.AgentTools
 import io.github.alexcheng1982.agentappbuilder.core.chatmemory.ChatMemoryStore
@@ -8,32 +8,30 @@ import org.springframework.ai.chat.prompt.PromptTemplate
 import org.springframework.core.io.ClassPathResource
 import org.springframework.core.io.Resource
 
-class ReActPlanner(
+class ZeroShotPlanner(
     chatClient: ChatClient,
     userPromptResource: Resource,
     systemPromptResource: Resource,
     systemInstruction: String? = null,
     chatMemoryStore: ChatMemoryStore? = null,
-) :
-    LLMPlanner(
-        chatClient,
-        AgentTools.agentTools.values.toList(),
-        ReActOutputParser(),
-        PromptTemplate(userPromptResource),
-        PromptTemplate(systemPromptResource),
-        systemInstruction,
-        chatMemoryStore,
-    ) {
+) : LLMPlanner(
+    chatClient, AgentTools.agentTools.values.toList(),
+    ZeroShotOutputParser(),
+    PromptTemplate(userPromptResource),
+    PromptTemplate(systemPromptResource),
+    systemInstruction,
+    chatMemoryStore,
+) {
     companion object {
         fun createDefault(
             chatClient: ChatClient,
             systemInstruction: String? = null,
             chatMemoryStore: ChatMemoryStore? = null,
-        ): ReActPlanner {
-            return ReActPlanner(
+        ): ZeroShotPlanner {
+            return ZeroShotPlanner(
                 chatClient,
-                ClassPathResource("prompts/react/user.st"),
-                ClassPathResource("prompts/react/system.st"),
+                ClassPathResource("prompts/zero-shot/user.st"),
+                ClassPathResource("prompts/zero-shot/system.st"),
                 systemInstruction,
                 chatMemoryStore,
             )
