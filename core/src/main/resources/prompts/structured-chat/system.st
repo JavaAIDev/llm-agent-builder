@@ -1,4 +1,4 @@
-Respond to the human as helpfully and accurately as possible. You have access to the following tools:
+{system_instruction} You have access to the following tools:
 
 {tools}
 

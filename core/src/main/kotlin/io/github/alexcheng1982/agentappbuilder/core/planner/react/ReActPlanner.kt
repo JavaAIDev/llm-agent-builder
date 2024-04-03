@@ -12,6 +12,7 @@ class ReActPlanner(
     chatClient: ChatClient,
     userPromptResource: Resource,
     systemPromptResource: Resource,
+    systemInstruction: String? = null,
     chatMemoryStore: ChatMemoryStore? = null,
 ) :
     LLMPlanner(
@@ -20,14 +21,21 @@ class ReActPlanner(
         ReActOutputParser(),
         PromptTemplate(userPromptResource),
         PromptTemplate(systemPromptResource),
+        systemInstruction,
         chatMemoryStore = chatMemoryStore
     ) {
     companion object {
-        fun createDefault(chatClient: ChatClient): ReActPlanner {
+        fun createDefault(
+            chatClient: ChatClient,
+            systemInstruction: String? = null,
+            chatMemoryStore: ChatMemoryStore? = null,
+        ): ReActPlanner {
             return ReActPlanner(
                 chatClient,
                 ClassPathResource("prompts/react/user.st"),
                 ClassPathResource("prompts/react/system.st"),
+                systemInstruction,
+                chatMemoryStore,
             )
         }
     }

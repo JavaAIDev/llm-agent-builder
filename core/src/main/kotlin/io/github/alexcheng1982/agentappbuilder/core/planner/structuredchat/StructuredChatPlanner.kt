@@ -12,6 +12,7 @@ class StructuredChatPlanner(
     chatClient: ChatClient,
     userPromptResource: Resource,
     systemPromptResource: Resource,
+    systemInstruction: String? = null,
     chatMemoryStore: ChatMemoryStore? = null,
 ) : LLMPlanner(
     chatClient,
@@ -19,14 +20,21 @@ class StructuredChatPlanner(
     StructuredChatOutputParser(),
     PromptTemplate(userPromptResource),
     PromptTemplate(systemPromptResource),
-    chatMemoryStore = chatMemoryStore,
+    systemInstruction,
+    chatMemoryStore,
 ) {
     companion object {
-        fun createDefault(chatClient: ChatClient): StructuredChatPlanner {
+        fun createDefault(
+            chatClient: ChatClient,
+            systemInstruction: String? = null,
+            chatMemoryStore: ChatMemoryStore? = null,
+        ): StructuredChatPlanner {
             return StructuredChatPlanner(
                 chatClient,
                 ClassPathResource("prompts/structured-chat/user.st"),
-                ClassPathResource("prompts/structured-chat/system.st")
+                ClassPathResource("prompts/structured-chat/system.st"),
+                systemInstruction,
+                chatMemoryStore,
             )
         }
     }

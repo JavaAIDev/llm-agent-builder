@@ -4,7 +4,11 @@ import cc.vividcode.ai.agent.dashscope.DashscopeChatClient;
 import cc.vividcode.ai.agent.dashscope.DashscopeChatOptions;
 import cc.vividcode.ai.agent.dashscope.api.DashscopeApi;
 import cc.vividcode.ai.agent.dashscope.api.DashscopeModelName;
+import io.github.alexcheng1982.agentappbuilder.core.Planner;
+import io.github.alexcheng1982.agentappbuilder.core.chatmemory.ChatMemoryStore;
+import io.github.alexcheng1982.agentappbuilder.core.planner.react.ReActPlanner;
 import io.github.alexcheng1982.agentappbuilder.spring.AgentToolFunctionCallbackContext;
+import io.github.alexcheng1982.agentappbuilder.spring.autoconfigure.chatagent.ChatAgentProperties;
 import io.github.alexcheng1982.agentappbuilder.spring.dev.AgentDevConfiguration;
 import org.springframework.ai.chat.ChatClient;
 import org.springframework.ai.model.function.FunctionCallbackContext;
@@ -38,5 +42,13 @@ public class AppConfiguration {
     var manager = new AgentToolFunctionCallbackContext();
     manager.setApplicationContext(context);
     return manager;
+  }
+
+  @Bean
+  public Planner agentPlanner(ChatClient chatClient,
+      ChatMemoryStore chatMemoryStore, ChatAgentProperties properties) {
+    return ReActPlanner.Companion.createDefault(chatClient,
+        properties.getReActJson().getSystemInstructions(),
+        chatMemoryStore);
   }
 }

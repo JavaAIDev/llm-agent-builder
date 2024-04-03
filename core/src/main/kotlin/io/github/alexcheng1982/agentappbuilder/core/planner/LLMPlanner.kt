@@ -72,7 +72,7 @@ open class LLMPlanner(
     private fun constructScratchpad(intermediateSteps: List<IntermediateAgentStep>): String {
         return intermediateSteps.joinToString(" ") {
             val (action, observation) = it
-            "${action.log} \n$observation\n"
+            "${action.log} \nObservation: $observation\n"
         }
     }
 
