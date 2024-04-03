@@ -9,7 +9,7 @@ import io.github.alexcheng1982.agentappbuilder.core.planner.OutputParserExceptio
 import io.github.alexcheng1982.agentappbuilder.core.planner.ParseResult
 import java.util.regex.Pattern
 
-class ReactJsonOutputParser : OutputParser {
+class ReActJsonOutputParser : OutputParser {
     private val pattern =
         Pattern.compile(
             ".*```(?:json\\s+)?(\\W.*?)```",

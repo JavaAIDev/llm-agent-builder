@@ -6,7 +6,7 @@ import io.github.alexcheng1982.agentappbuilder.core.ChatAgent;
 import io.github.alexcheng1982.agentappbuilder.core.Planner;
 import io.github.alexcheng1982.agentappbuilder.core.chatmemory.ChatMemoryStore;
 import io.github.alexcheng1982.agentappbuilder.core.chatmemory.InMemoryChatMemoryStore;
-import io.github.alexcheng1982.agentappbuilder.core.planner.reactjson.ReactJsonPlanner;
+import io.github.alexcheng1982.agentappbuilder.core.planner.reactjson.ReActJsonPlanner;
 import io.github.alexcheng1982.agentappbuilder.spring.AgentToolFunctionCallbackContext;
 import io.github.alexcheng1982.agentappbuilder.spring.chatagent.ChatAgentService;
 import org.apache.commons.lang3.StringUtils;
@@ -52,7 +52,7 @@ public class ChatAgentAutoConfiguration {
     @ConditionalOnBean(ChatMemoryStore.class)
     public Planner plannerWithMemory(ChatClient chatClient,
         ChatMemoryStore chatMemoryStore) {
-      return ReactJsonPlanner.Companion.createDefault(
+      return ReActJsonPlanner.Companion.createDefault(
           chatClient,
           properties.getReActJson().getSystemInstructions(),
           chatMemoryStore
@@ -62,7 +62,7 @@ public class ChatAgentAutoConfiguration {
     @Bean
     @ConditionalOnMissingBean({Planner.class, ChatMemoryStore.class})
     public Planner plannerWithoutMemory(ChatClient chatClient) {
-      return ReactJsonPlanner.Companion.createDefault(
+      return ReActJsonPlanner.Companion.createDefault(
           chatClient,
           StringUtils.trimToNull(
               properties.getReActJson().getSystemInstructions()),
