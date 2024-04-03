@@ -1,4 +1,4 @@
-package io.github.alexcheng1982.agentappbuilder.example.articlemap;
+package io.github.alexcheng1982.agentappbuilder.spring.agentcontroller;
 
 import io.github.alexcheng1982.agentappbuilder.core.ChatAgentRequest;
 import io.github.alexcheng1982.agentappbuilder.core.ChatAgentResponse;

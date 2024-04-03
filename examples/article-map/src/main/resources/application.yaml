@@ -4,15 +4,6 @@ spring:
   threads:
     virtual:
       enabled: true
-  ai:
-    ollama:
-      embedding:
-        options:
-          model: "qwen:0.5b"
-      chat:
-        options:
-          model: "qwen:0.5b"
-          temperature: 0.1
 io:
   github:
     alexcheng1982:

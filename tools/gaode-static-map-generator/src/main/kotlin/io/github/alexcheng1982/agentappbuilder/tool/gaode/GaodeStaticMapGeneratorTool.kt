@@ -114,7 +114,7 @@ class GaodeStaticMapGeneratorToolFactory :
         ToolConfig(
             System.getenv(
                 "GAODE_API_KEY"
-            )
+            ) ?: ""
         )
     }) {
     override fun create(config: ToolConfig): GaodeStaticMapGeneratorTool {
