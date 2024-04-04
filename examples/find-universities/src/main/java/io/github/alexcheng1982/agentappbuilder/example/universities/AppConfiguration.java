@@ -5,12 +5,10 @@ import cc.vividcode.ai.agent.dashscope.DashscopeChatOptions;
 import cc.vividcode.ai.agent.dashscope.api.DashscopeApi;
 import cc.vividcode.ai.agent.dashscope.api.DashscopeModelName;
 import io.github.alexcheng1982.agentappbuilder.core.Planner;
-import io.github.alexcheng1982.agentappbuilder.core.chatmemory.ChatMemoryStore;
-import io.github.alexcheng1982.agentappbuilder.core.planner.react.ReActPlanner;
+import io.github.alexcheng1982.agentappbuilder.core.planner.nofeedback.NoFeedbackPlanner;
 import io.github.alexcheng1982.agentappbuilder.core.tool.AgentToolsProvider;
 import io.github.alexcheng1982.agentappbuilder.spring.AgentToolFunctionCallbackContext;
 import io.github.alexcheng1982.agentappbuilder.spring.agentcontroller.AgentControllerConfiguration;
-import io.github.alexcheng1982.agentappbuilder.spring.autoconfigure.chatagent.ChatAgentProperties;
 import io.github.alexcheng1982.agentappbuilder.spring.dev.AgentDevConfiguration;
 import io.github.alexcheng1982.agentbuilder.tool.universities.client.api.UniversitiesApi;
 import io.github.alexcheng1982.agentbuilder.tool.universities.client.api.UniversitiesApiAgentToolConfiguration;
@@ -53,13 +51,12 @@ public class AppConfiguration {
 
   @Bean
   public Planner agentPlanner(ChatClient chatClient,
-      ChatMemoryStore chatMemoryStore, ChatAgentProperties properties,
       AgentToolsProvider agentToolsProvider) {
-    return ReActPlanner.Companion.createDefault(
+    return NoFeedbackPlanner.Companion.createDefault(
         chatClient,
         agentToolsProvider,
-        properties.getReActJson().getSystemInstructions(),
-        chatMemoryStore);
+        null,
+        null);
   }
 
   @Bean
