@@ -9,16 +9,11 @@
     <version>0.1.0-SNAPSHOT</version>
   </parent>
 
-  <artifactId>agent-app-builder-tools</artifactId>
-  <name>Agent Tools</name>
+  <artifactId>agent-builder-tool-builders</artifactId>
   <packaging>pom</packaging>
-
+  <name>Agent Tool Builders</name>
   <modules>
-    <module>chinese-idioms</module>
-    <module>extract-webpage-content</module>
-    <module>gaode-static-map-generator</module>
-    <module>write-local-file</module>
-    <module>query-universities</module>
+    <module>openapi</module>
   </modules>
 
 </project>

@@ -1,0 +1,67 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project xmlns="http://maven.apache.org/POM/4.0.0"
+  xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+  xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+  <modelVersion>4.0.0</modelVersion>
+  <parent>
+    <groupId>io.github.alexcheng1982</groupId>
+    <artifactId>agent-app-builder-tools</artifactId>
+    <version>0.1.0-SNAPSHOT</version>
+    <relativePath>../pom.xml</relativePath>
+  </parent>
+
+  <artifactId>agent-tool-builder-query-universities</artifactId>
+  <name>Agent Tool :: Query Universities</name>
+  <packaging>pom</packaging>
+
+  <properties>
+    <openapi-generator-version>7.4.0</openapi-generator-version>
+  </properties>
+
+  <build>
+    <plugins>
+      <plugin>
+        <groupId>org.openapitools</groupId>
+        <artifactId>openapi-generator-maven-plugin</artifactId>
+        <version>${openapi-generator-version}</version>
+        <executions>
+          <execution>
+            <id>generate-client-code</id>
+            <goals>
+              <goal>generate</goal>
+            </goals>
+            <configuration>
+              <generatorName>Java</generatorName>
+              <library>native</library>
+              <inputSpec>${project.basedir}/universities.yaml</inputSpec>
+              <groupId>io.github.alexcheng1982</groupId>
+              <artifactId>agent-tool-query-universities
+              </artifactId>
+              <artifactVersion>${project.version}</artifactVersion>
+              <apiPackage>
+                io.github.alexcheng1982.agentbuilder.tool.universities.client.api
+              </apiPackage>
+              <modelPackage>
+                io.github.alexcheng1982.agentbuilder.tool.universities.client.model
+              </modelPackage>
+              <invokerPackage>
+                io.github.alexcheng1982.agentbuilder.tool.universities.client
+              </invokerPackage>
+              <additionalProperties>
+                <agentBuilderVersion>${project.version}</agentBuilderVersion>
+              </additionalProperties>
+            </configuration>
+          </execution>
+        </executions>
+        <dependencies>
+          <dependency>
+            <groupId>io.github.alexcheng1982</groupId>
+            <artifactId>agent-builder-tool-builder-openapi</artifactId>
+            <version>${project.version}</version>
+          </dependency>
+        </dependencies>
+      </plugin>
+    </plugins>
+  </build>
+
+</project>

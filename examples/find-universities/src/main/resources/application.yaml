@@ -1,0 +1,14 @@
+spring:
+  application:
+    name: find-universities
+  threads:
+    virtual:
+      enabled: true
+io:
+  github:
+    alexcheng1982:
+      agentappbuilder:
+        chatagent:
+          name: Query Universities
+          description: Universities information
+          usageInstruction: Ask me anything about universities

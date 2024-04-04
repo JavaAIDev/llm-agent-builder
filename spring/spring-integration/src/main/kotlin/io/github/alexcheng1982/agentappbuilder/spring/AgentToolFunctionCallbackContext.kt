@@ -22,10 +22,12 @@ class AgentToolFunctionCallbackContext(
         try {
             return super.getFunctionCallback(beanName, defaultDescription)
         } catch (e: Exception) {
-            logger.warn(
-                "Failed to get bean {} from application context, ignoring",
-                beanName
-            )
+            if (logger.isDebugEnabled) {
+                logger.debug(
+                    "Failed to get bean {} from application context, ignoring",
+                    beanName
+                )
+            }
         }
         return agentToolWrappersProvider.get()[beanName]
             ?: throw IllegalArgumentException("Function $beanName not found")
