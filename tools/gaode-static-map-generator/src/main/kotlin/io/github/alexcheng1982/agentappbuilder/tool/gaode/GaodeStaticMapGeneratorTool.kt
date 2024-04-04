@@ -1,7 +1,7 @@
 package io.github.alexcheng1982.agentappbuilder.tool.gaode
 
-import io.github.alexcheng1982.agentappbuilder.core.BaseConfigurableAgentToolFactory
-import io.github.alexcheng1982.agentappbuilder.core.ConfigurableAgentTool
+import io.github.alexcheng1982.agentappbuilder.core.tool.BaseConfigurableAgentToolFactory
+import io.github.alexcheng1982.agentappbuilder.core.tool.ConfigurableAgentTool
 import io.github.alexcheng1982.gaode.StaticMap
 import io.github.alexcheng1982.gaode.StaticMapGenerator
 import io.github.alexcheng1982.gaode.param.*

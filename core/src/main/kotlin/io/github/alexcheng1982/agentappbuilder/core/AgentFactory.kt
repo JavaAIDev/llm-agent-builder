@@ -1,6 +1,9 @@
 package io.github.alexcheng1982.agentappbuilder.core
 
 import io.github.alexcheng1982.agentappbuilder.core.executor.AgentExecutor
+import io.github.alexcheng1982.agentappbuilder.core.tool.AgentToolWrappersProvider
+import io.github.alexcheng1982.agentappbuilder.core.tool.AgentToolsProvider
+import io.github.alexcheng1982.agentappbuilder.core.tool.AutoDiscoveredAgentToolsProvider
 import org.slf4j.LoggerFactory
 
 object AgentFactory {
@@ -11,8 +14,9 @@ object AgentFactory {
         name: String = "ChatAgent",
         description: String = "A conversational chat agent",
         usageInstruction: String = "Ask me anything",
+        agentToolsProvider: AgentToolsProvider = AutoDiscoveredAgentToolsProvider,
     ): ChatAgent {
-        val executor = AgentExecutor(planner, AgentTools.agentToolWrappers)
+        val executor = createAgentExecutor(planner, agentToolsProvider)
         return ExecutableChatAgent(
             executor,
             name,
@@ -32,15 +36,26 @@ object AgentFactory {
         description: String,
         usageInstruction: String,
         planner: Planner,
-        responseFactory: (Map<String, Any>) -> RESPONSE
+        responseFactory: (Map<String, Any>) -> RESPONSE,
+        agentToolsProvider: AgentToolsProvider = AutoDiscoveredAgentToolsProvider,
     ): Agent<REQUEST, RESPONSE> {
-        val executor = AgentExecutor(planner, AgentTools.agentToolWrappers)
+        val executor = createAgentExecutor(planner, agentToolsProvider)
         return ExecutableAgent(
             name,
             description,
             usageInstruction,
             executor,
             responseFactory
+        )
+    }
+
+    private fun createAgentExecutor(
+        planner: Planner,
+        agentToolsProvider: AgentToolsProvider
+    ): AgentExecutor {
+        return AgentExecutor(
+            planner,
+            AgentToolWrappersProvider(agentToolsProvider).get()
         )
     }
 

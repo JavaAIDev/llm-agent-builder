@@ -1,6 +1,6 @@
 package io.github.alexcheng1982.agentappbuilder.tool.writelocalfile;
 
-import io.github.alexcheng1982.agentappbuilder.core.BaseConfigurableAgentToolFactory;
+import io.github.alexcheng1982.agentappbuilder.core.tool.BaseConfigurableAgentToolFactory;
 import org.jetbrains.annotations.NotNull;
 
 public class WriteLocalFileToolFactory extends

@@ -1,4 +1,4 @@
-package io.github.alexcheng1982.agentappbuilder.core
+package io.github.alexcheng1982.agentappbuilder.core.tool
 
 import java.util.function.Supplier
 

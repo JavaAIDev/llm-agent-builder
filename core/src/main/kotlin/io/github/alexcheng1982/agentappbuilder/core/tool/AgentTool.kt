@@ -1,4 +1,4 @@
-package io.github.alexcheng1982.agentappbuilder.core
+package io.github.alexcheng1982.agentappbuilder.core.tool
 
 import java.util.function.Function
 
@@ -7,7 +7,8 @@ interface AgentTool<REQUEST, RESPONSE> : Function<REQUEST, RESPONSE> {
     fun description(): String
 }
 
-interface ConfigurableAgentTool<REQUEST, RESPONSE, CONFIG> : AgentTool<REQUEST, RESPONSE> {
+interface ConfigurableAgentTool<REQUEST, RESPONSE, CONFIG> :
+    AgentTool<REQUEST, RESPONSE> {
 
 }
 

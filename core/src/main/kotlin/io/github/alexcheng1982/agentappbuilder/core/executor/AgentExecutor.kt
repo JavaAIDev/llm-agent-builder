@@ -4,6 +4,7 @@ import io.github.alexcheng1982.agentappbuilder.core.*
 import io.github.alexcheng1982.agentappbuilder.core.planner.OutputParserException
 import io.github.alexcheng1982.agentappbuilder.core.planner.OutputParserExceptionHandler
 import io.github.alexcheng1982.agentappbuilder.core.planner.ParseResult
+import io.github.alexcheng1982.agentappbuilder.core.tool.ExceptionTool
 import org.slf4j.LoggerFactory
 import org.springframework.ai.model.function.FunctionCallbackWrapper
 import java.time.Duration

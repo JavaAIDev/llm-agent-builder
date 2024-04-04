@@ -1,7 +1,7 @@
 package io.github.alexcheng1982.agentappbuilder.tool.extractwebpagecontent
 
-import io.github.alexcheng1982.agentappbuilder.core.BaseConfigurableAgentToolFactory
-import io.github.alexcheng1982.agentappbuilder.core.ConfigurableAgentTool
+import io.github.alexcheng1982.agentappbuilder.core.tool.BaseConfigurableAgentToolFactory
+import io.github.alexcheng1982.agentappbuilder.core.tool.ConfigurableAgentTool
 import org.jsoup.Jsoup
 import org.jsoup.safety.Safelist
 

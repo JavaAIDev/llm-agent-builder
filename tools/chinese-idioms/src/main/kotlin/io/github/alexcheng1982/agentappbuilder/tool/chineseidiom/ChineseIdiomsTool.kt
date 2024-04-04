@@ -1,7 +1,7 @@
 package io.github.alexcheng1982.agentappbuilder.tool.chineseidiom
 
-import io.github.alexcheng1982.agentappbuilder.core.AgentTool
-import io.github.alexcheng1982.agentappbuilder.core.AgentToolFactory
+import io.github.alexcheng1982.agentappbuilder.core.tool.AgentTool
+import io.github.alexcheng1982.agentappbuilder.core.tool.AgentToolFactory
 
 
 class ChineseIdiomsCheckTool :

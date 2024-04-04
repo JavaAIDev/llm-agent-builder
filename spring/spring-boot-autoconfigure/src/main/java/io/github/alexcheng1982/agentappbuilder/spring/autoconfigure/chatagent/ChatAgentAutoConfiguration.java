@@ -7,8 +7,13 @@ import io.github.alexcheng1982.agentappbuilder.core.Planner;
 import io.github.alexcheng1982.agentappbuilder.core.chatmemory.ChatMemoryStore;
 import io.github.alexcheng1982.agentappbuilder.core.chatmemory.InMemoryChatMemoryStore;
 import io.github.alexcheng1982.agentappbuilder.core.planner.reactjson.ReActJsonPlanner;
+import io.github.alexcheng1982.agentappbuilder.core.tool.AgentToolsProvider;
+import io.github.alexcheng1982.agentappbuilder.core.tool.AutoDiscoveredAgentToolsProvider;
+import io.github.alexcheng1982.agentappbuilder.core.tool.CompositeAgentToolsProvider;
 import io.github.alexcheng1982.agentappbuilder.spring.AgentToolFunctionCallbackContext;
+import io.github.alexcheng1982.agentappbuilder.spring.SpringAgentToolsProvider;
 import io.github.alexcheng1982.agentappbuilder.spring.chatagent.ChatAgentService;
+import java.util.List;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.ai.autoconfigure.ollama.OllamaAutoConfiguration;
 import org.springframework.ai.autoconfigure.openai.OpenAiAutoConfiguration;
@@ -54,9 +59,11 @@ public class ChatAgentAutoConfiguration {
     @ConditionalOnMissingBean
     @ConditionalOnBean(ChatMemoryStore.class)
     public Planner plannerWithMemory(ChatClient chatClient,
-        ChatMemoryStore chatMemoryStore) {
+        ChatMemoryStore chatMemoryStore,
+        AgentToolsProvider agentToolsProvider) {
       return ReActJsonPlanner.Companion.createDefault(
           chatClient,
+          agentToolsProvider,
           properties.getReActJson().getSystemInstructions(),
           chatMemoryStore
       );
@@ -64,9 +71,11 @@ public class ChatAgentAutoConfiguration {
 
     @Bean
     @ConditionalOnMissingBean({Planner.class, ChatMemoryStore.class})
-    public Planner plannerWithoutMemory(ChatClient chatClient) {
+    public Planner plannerWithoutMemory(ChatClient chatClient,
+        AgentToolsProvider agentToolsProvider) {
       return ReActJsonPlanner.Companion.createDefault(
           chatClient,
+          agentToolsProvider,
           StringUtils.trimToNull(
               properties.getReActJson().getSystemInstructions()),
           null
@@ -75,11 +84,14 @@ public class ChatAgentAutoConfiguration {
 
     @Bean
     @ConditionalOnBean(Planner.class)
-    public ChatAgent chatAgent(Planner planner) {
-      return AgentFactory.INSTANCE.createChatAgent(planner,
+    public ChatAgent chatAgent(Planner planner,
+        AgentToolsProvider agentToolsProvider) {
+      return AgentFactory.INSTANCE.createChatAgent(
+          planner,
           properties.getName(),
           properties.getDescription(),
-          properties.getUsageInstruction());
+          properties.getUsageInstruction(),
+          agentToolsProvider);
     }
 
     @Bean
@@ -91,10 +103,22 @@ public class ChatAgentAutoConfiguration {
     @Bean
     @ConditionalOnMissingBean
     public FunctionCallbackContext springAiFunctionManager(
+        AgentToolsProvider agentToolsProvider,
         ApplicationContext context) {
-      var manager = new AgentToolFunctionCallbackContext();
+      var manager = new AgentToolFunctionCallbackContext(agentToolsProvider);
       manager.setApplicationContext(context);
       return manager;
+    }
+
+    @Bean
+    @ConditionalOnMissingBean
+    public AgentToolsProvider agentToolsProvider(ApplicationContext context) {
+      var springAgentToolsProvider = new SpringAgentToolsProvider();
+      springAgentToolsProvider.setApplicationContext(context);
+      return new CompositeAgentToolsProvider(List.of(
+          AutoDiscoveredAgentToolsProvider.INSTANCE,
+          springAgentToolsProvider
+      ));
     }
   }
 }

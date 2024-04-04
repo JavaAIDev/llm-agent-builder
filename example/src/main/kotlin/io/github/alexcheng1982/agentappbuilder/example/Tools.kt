@@ -1,7 +1,7 @@
 package io.github.alexcheng1982.agentappbuilder.example
 
-import io.github.alexcheng1982.agentappbuilder.core.AgentTool
-import io.github.alexcheng1982.agentappbuilder.core.AgentToolFactory
+import io.github.alexcheng1982.agentappbuilder.core.tool.AgentTool
+import io.github.alexcheng1982.agentappbuilder.core.tool.AgentToolFactory
 import org.slf4j.LoggerFactory
 import java.nio.file.Files
 

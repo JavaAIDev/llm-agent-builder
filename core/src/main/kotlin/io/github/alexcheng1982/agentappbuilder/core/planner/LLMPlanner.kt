@@ -3,13 +3,14 @@ package io.github.alexcheng1982.agentappbuilder.core.planner
 import cc.vividcode.ai.agent.dashscope.DashscopeChatClient
 import cc.vividcode.ai.agent.dashscope.DashscopeChatOptions
 import cc.vividcode.ai.agent.dashscope.api.DashscopeModelName
-import io.github.alexcheng1982.agentappbuilder.core.AgentTool
 import io.github.alexcheng1982.agentappbuilder.core.IntermediateAgentStep
 import io.github.alexcheng1982.agentappbuilder.core.Planner
 import io.github.alexcheng1982.agentappbuilder.core.chatmemory.ChatMemory
 import io.github.alexcheng1982.agentappbuilder.core.chatmemory.ChatMemoryStore
 import io.github.alexcheng1982.agentappbuilder.core.chatmemory.MessageWindowChatMemory
 import io.github.alexcheng1982.agentappbuilder.core.executor.ActionPlanningResult
+import io.github.alexcheng1982.agentappbuilder.core.tool.AgentTool
+import io.github.alexcheng1982.agentappbuilder.core.tool.AgentToolsProvider
 import org.springframework.ai.chat.ChatClient
 import org.springframework.ai.chat.messages.SystemMessage
 import org.springframework.ai.chat.prompt.ChatOptions
@@ -18,7 +19,7 @@ import org.springframework.ai.chat.prompt.PromptTemplate
 
 open class LLMPlanner(
     private val chatClient: ChatClient,
-    private val tools: List<AgentTool<*, *>>,
+    private val toolsProvider: AgentToolsProvider,
     private val outputParser: OutputParser,
     private val userPromptTemplate: PromptTemplate,
     private val systemPromptTemplate: PromptTemplate? = null,
@@ -37,11 +38,12 @@ open class LLMPlanner(
         val systemInstruction = systemInstruction
             ?: "Answer the following questions as best you can."
         val thoughts = constructScratchpad(intermediateSteps)
-        val toolNames = tools.map { it.name() }
+        val tools = toolsProvider.get()
+        val toolNames = tools.keys
         val context = inputs + mutableMapOf(
             "system_instruction" to systemInstruction,
             "agent_scratchpad" to thoughts,
-            "tools" to renderTool(tools),
+            "tools" to renderTools(tools.values),
             "tool_names" to toolNames.joinToString(", ")
         )
         val messages = mutableListOf(userPromptTemplate.createMessage(context))
@@ -76,7 +78,7 @@ open class LLMPlanner(
         }
     }
 
-    private fun renderTool(tools: List<AgentTool<*, *>>): String {
+    private fun renderTools(tools: Collection<AgentTool<*, *>>): String {
         return tools.joinToString("\n") {
             "${it.name()}: ${it.description()}"
         }
@@ -84,13 +86,13 @@ open class LLMPlanner(
 
     private fun prepareChatClientOptions(
         chatClient: ChatClient,
-        toolNames: List<String>
+        toolNames: Set<String>
     ): ChatOptions? {
         if (chatClient is DashscopeChatClient) {
             return DashscopeChatOptions.builder()
                 .withModel(DashscopeModelName.QWEN_MAX)
                 .withTemperature(0.2f)
-                .withFunctions(toolNames.toSet())
+                .withFunctions(toolNames)
                 .build()
         }
         return null
