@@ -4,6 +4,8 @@ import io.github.alexcheng1982.agentappbuilder.core.executor.AgentExecutor
 import io.github.alexcheng1982.agentappbuilder.core.tool.AgentToolWrappersProvider
 import io.github.alexcheng1982.agentappbuilder.core.tool.AgentToolsProvider
 import io.github.alexcheng1982.agentappbuilder.core.tool.AutoDiscoveredAgentToolsProvider
+import io.micrometer.observation.Observation
+import io.micrometer.observation.ObservationRegistry
 import org.slf4j.LoggerFactory
 
 object AgentFactory {
@@ -15,13 +17,15 @@ object AgentFactory {
         description: String = "A conversational chat agent",
         usageInstruction: String = "Ask me anything",
         agentToolsProvider: AgentToolsProvider = AutoDiscoveredAgentToolsProvider,
+        observationRegistry: ObservationRegistry? = null,
     ): ChatAgent {
-        val executor = createAgentExecutor(planner, agentToolsProvider)
+        val executor = createAgentExecutor(planner, agentToolsProvider, observationRegistry)
         return ExecutableChatAgent(
             executor,
             name,
             description,
-            usageInstruction
+            usageInstruction,
+            observationRegistry,
         ).also {
             logger.info(
                 "Created ChatAgent [{}] with planner [{}]",
@@ -38,24 +42,28 @@ object AgentFactory {
         planner: Planner,
         responseFactory: (Map<String, Any>) -> RESPONSE,
         agentToolsProvider: AgentToolsProvider = AutoDiscoveredAgentToolsProvider,
+        observationRegistry: ObservationRegistry? = null,
     ): Agent<REQUEST, RESPONSE> {
-        val executor = createAgentExecutor(planner, agentToolsProvider)
+        val executor = createAgentExecutor(planner, agentToolsProvider, observationRegistry)
         return ExecutableAgent(
             name,
             description,
             usageInstruction,
             executor,
-            responseFactory
+            responseFactory,
+            observationRegistry,
         )
     }
 
     private fun createAgentExecutor(
         planner: Planner,
-        agentToolsProvider: AgentToolsProvider
+        agentToolsProvider: AgentToolsProvider,
+        observationRegistry: ObservationRegistry? = null,
     ): AgentExecutor {
         return AgentExecutor(
             planner,
-            AgentToolWrappersProvider(agentToolsProvider).get()
+            AgentToolWrappersProvider(agentToolsProvider, observationRegistry).get(),
+            observationRegistry = observationRegistry,
         )
     }
 
@@ -65,6 +73,7 @@ object AgentFactory {
         private val usageInstruction: String,
         private val executor: AgentExecutor,
         private val responseFactory: (Map<String, Any>) -> RESPONSE,
+        private val observationRegistry: ObservationRegistry? = null,
     ) :
         Agent<REQUEST, RESPONSE> {
         private val logger = LoggerFactory.getLogger(javaClass)
@@ -86,13 +95,18 @@ object AgentFactory {
                 name(),
                 request
             )
-            return responseFactory(executor.call(request.toMap())).also {
-                logger.info(
-                    "Finished executing agent [{}] with response [{}]",
-                    name(),
-                    it
-                )
-            }
+            val action = { responseFactory(executor.call(request.toMap())) }
+            val response = observationRegistry?.let { registry ->
+                Observation.createNotStarted("agent.execution", registry)
+                    .lowCardinalityKeyValue("agent.name", name())
+                    .observe(action)
+            } ?: action.invoke()
+            logger.info(
+                "Finished executing agent [{}] with response [{}]",
+                name(),
+                response
+            )
+            return response
         }
 
     }
@@ -102,11 +116,13 @@ object AgentFactory {
         name: String,
         description: String,
         usageInstruction: String,
+        observationRegistry: ObservationRegistry? = null,
     ) : ExecutableAgent<ChatAgentRequest, ChatAgentResponse>(
         name,
         description,
         usageInstruction,
         executor,
-        ChatAgentResponse::fromMap
+        ChatAgentResponse::fromMap,
+        observationRegistry,
     ), ChatAgent
 }

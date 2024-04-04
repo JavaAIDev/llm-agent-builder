@@ -2,16 +2,18 @@ package io.github.alexcheng1982.agentappbuilder.spring
 
 import io.github.alexcheng1982.agentappbuilder.core.tool.AgentToolWrappersProvider
 import io.github.alexcheng1982.agentappbuilder.core.tool.AgentToolsProvider
+import io.micrometer.observation.ObservationRegistry
 import org.slf4j.LoggerFactory
 import org.springframework.ai.model.function.FunctionCallback
 import org.springframework.ai.model.function.FunctionCallbackContext
 
 class AgentToolFunctionCallbackContext(
     agentToolsProvider: AgentToolsProvider,
+    observationRegistry: ObservationRegistry? = null,
 ) :
     FunctionCallbackContext() {
     private val agentToolWrappersProvider =
-        AgentToolWrappersProvider(agentToolsProvider)
+        AgentToolWrappersProvider(agentToolsProvider, observationRegistry)
 
     private val logger = LoggerFactory.getLogger(javaClass)
 

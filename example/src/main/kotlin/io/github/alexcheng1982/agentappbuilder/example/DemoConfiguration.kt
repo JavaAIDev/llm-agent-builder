@@ -6,7 +6,9 @@ import cc.vividcode.ai.agent.dashscope.api.DashscopeApi
 import cc.vividcode.ai.agent.dashscope.api.DashscopeModelName
 import io.github.alexcheng1982.agentappbuilder.core.Planner
 import io.github.alexcheng1982.agentappbuilder.core.planner.nofeedback.NoFeedbackPlanner
+import io.github.alexcheng1982.agentappbuilder.core.tool.AgentToolsProvider
 import io.github.alexcheng1982.agentappbuilder.spring.AgentToolFunctionCallbackContext
+import io.micrometer.observation.ObservationRegistry
 import org.springframework.ai.chat.ChatClient
 import org.springframework.ai.model.function.FunctionCallbackContext
 import org.springframework.context.ApplicationContext
@@ -31,8 +33,12 @@ class DemoConfiguration {
     }
 
     @Bean
-    fun functionCallbackContext(context: ApplicationContext): FunctionCallbackContext {
-        val manager = AgentToolFunctionCallbackContext()
+    fun functionCallbackContext(
+        agentToolsProvider: AgentToolsProvider,
+        observationRegistry: ObservationRegistry,
+        context: ApplicationContext
+    ): FunctionCallbackContext {
+        val manager = AgentToolFunctionCallbackContext(agentToolsProvider, observationRegistry)
         manager.setApplicationContext(context)
         return manager
     }

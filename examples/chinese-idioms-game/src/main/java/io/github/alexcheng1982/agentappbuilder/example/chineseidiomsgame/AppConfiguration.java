@@ -12,6 +12,7 @@ import io.github.alexcheng1982.agentappbuilder.spring.AgentToolFunctionCallbackC
 import io.github.alexcheng1982.agentappbuilder.spring.agentcontroller.AgentControllerConfiguration;
 import io.github.alexcheng1982.agentappbuilder.spring.autoconfigure.chatagent.ChatAgentProperties;
 import io.github.alexcheng1982.agentappbuilder.spring.dev.AgentDevConfiguration;
+import io.micrometer.observation.ObservationRegistry;
 import org.springframework.ai.chat.ChatClient;
 import org.springframework.ai.model.function.FunctionCallbackContext;
 import org.springframework.context.ApplicationContext;
@@ -41,8 +42,9 @@ public class AppConfiguration {
   @Bean
   public FunctionCallbackContext springAiFunctionManager(
       AgentToolsProvider agentToolsProvider,
+      ObservationRegistry observationRegistry,
       ApplicationContext context) {
-    var manager = new AgentToolFunctionCallbackContext(agentToolsProvider);
+    var manager = new AgentToolFunctionCallbackContext(agentToolsProvider, observationRegistry);
     manager.setApplicationContext(context);
     return manager;
   }

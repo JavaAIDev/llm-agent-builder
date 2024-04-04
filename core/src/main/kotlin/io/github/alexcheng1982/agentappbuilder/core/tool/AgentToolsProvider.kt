@@ -2,7 +2,10 @@ package io.github.alexcheng1982.agentappbuilder.core.tool
 
 import com.fasterxml.jackson.databind.ObjectMapper
 import com.fasterxml.jackson.module.kotlin.KotlinModule
+import io.micrometer.observation.Observation
+import io.micrometer.observation.ObservationRegistry
 import org.slf4j.LoggerFactory
+import org.springframework.ai.model.function.FunctionCallback
 import org.springframework.ai.model.function.FunctionCallbackWrapper
 import org.springframework.core.GenericTypeResolver
 import java.util.*
@@ -11,9 +14,12 @@ import kotlin.streams.asSequence
 
 interface AgentToolsProvider : Supplier<Map<String, AgentTool<*, *>>>
 
-class AgentToolWrappersProvider(private val agentToolsProvider: AgentToolsProvider) :
-    Supplier<Map<String, FunctionCallbackWrapper<*, *>>> {
-    override fun get(): Map<String, FunctionCallbackWrapper<*, *>> {
+class AgentToolWrappersProvider(
+    private val agentToolsProvider: AgentToolsProvider,
+    private val observationRegistry: ObservationRegistry? = null
+) :
+    Supplier<Map<String, FunctionCallback>> {
+    override fun get(): Map<String, FunctionCallback> {
         val objectMapper =
             ObjectMapper().registerModule(KotlinModule.Builder().build())
         return agentToolsProvider.get().mapValues { (_, tool) ->
@@ -22,17 +28,48 @@ class AgentToolWrappersProvider(private val agentToolsProvider: AgentToolsProvid
                     tool.javaClass,
                     AgentTool::class.java
                 )
-            FunctionCallbackWrapper.builder(tool)
-                .withName(tool.name())
-                .withSchemaType(FunctionCallbackWrapper.Builder.SchemaType.JSON_SCHEMA)
-                .withDescription(tool.description())
-                .withInputType(
-                    types?.get(0) ?: throw IllegalArgumentException("Bad type")
-                )
-                .withObjectMapper(objectMapper)
-                .build()
+            InstrumentedFunctionCallbackWrapper(
+                FunctionCallbackWrapper.builder(tool)
+                    .withName(tool.name())
+                    .withSchemaType(FunctionCallbackWrapper.Builder.SchemaType.JSON_SCHEMA)
+                    .withDescription(tool.description())
+                    .withInputType(
+                        types?.get(0) ?: throw IllegalArgumentException("Bad type")
+                    )
+                    .withObjectMapper(objectMapper)
+                    .build(), observationRegistry
+            )
         }
     }
+
+    private class InstrumentedFunctionCallbackWrapper<I, O>(
+        private val functionCallbackWrapper: FunctionCallbackWrapper<I, O>,
+        private val observationRegistry: ObservationRegistry? = null
+    ) :
+        FunctionCallback {
+        override fun getName(): String {
+            return functionCallbackWrapper.name
+        }
+
+        override fun getDescription(): String {
+            return functionCallbackWrapper.description
+        }
+
+        override fun getInputTypeSchema(): String {
+            return functionCallbackWrapper.inputTypeSchema
+        }
+
+        override fun call(functionInput: String?): String {
+            val action = { functionCallbackWrapper.call(functionInput) }
+            return observationRegistry?.let { registry ->
+                Observation.createNotStarted("agent.tool.execution", registry)
+                    .lowCardinalityKeyValue("tool", name)
+                    .highCardinalityKeyValue("tool.input", functionInput ?: "")
+                    .observe(action)
+            } ?: action.invoke()
+        }
+    }
+
 }
 
 class CompositeAgentToolsProvider(private val providers: List<AgentToolsProvider>) :

@@ -29,6 +29,8 @@
     <kotlin.version>1.9.23</kotlin.version>
     <spring-boot.version>3.2.4</spring-boot.version>
     <jackson.version>2.16.1</jackson.version>
+    <micrometer.version>1.12.4</micrometer.version>
+    <micrometer-tracing.version>1.2.4</micrometer-tracing.version>
   </properties>
 
   <build>
@@ -196,6 +198,20 @@
         <groupId>com.fasterxml.jackson.module</groupId>
         <artifactId>jackson-module-kotlin</artifactId>
         <version>${jackson.version}</version>
+      </dependency>
+      <dependency>
+        <groupId>io.micrometer</groupId>
+        <artifactId>micrometer-bom</artifactId>
+        <version>${micrometer.version}</version>
+        <type>pom</type>
+        <scope>import</scope>
+      </dependency>
+      <dependency>
+        <groupId>io.micrometer</groupId>
+        <artifactId>micrometer-tracing-bom</artifactId>
+        <version>${micrometer-tracing.version}</version>
+        <type>pom</type>
+        <scope>import</scope>
       </dependency>
     </dependencies>
   </dependencyManagement>

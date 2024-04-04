@@ -5,8 +5,10 @@ import io.github.alexcheng1982.agentappbuilder.core.planner.OutputParserExceptio
 import io.github.alexcheng1982.agentappbuilder.core.planner.OutputParserExceptionHandler
 import io.github.alexcheng1982.agentappbuilder.core.planner.ParseResult
 import io.github.alexcheng1982.agentappbuilder.core.tool.ExceptionTool
+import io.micrometer.observation.Observation
+import io.micrometer.observation.ObservationRegistry
 import org.slf4j.LoggerFactory
-import org.springframework.ai.model.function.FunctionCallbackWrapper
+import org.springframework.ai.model.function.FunctionCallback
 import java.time.Duration
 import java.util.*
 
@@ -36,12 +38,13 @@ data class NextStep(
 
 data class AgentExecutor(
     val agent: Planner,
-    val nameToToolMap: Map<String, FunctionCallbackWrapper<*, *>>,
+    val nameToToolMap: Map<String, FunctionCallback>,
     val returnIntermediateSteps: Boolean = false,
     val maxIterations: Int? = 10,
     val maxExecutionTime: Long? = null,
     val earlyStoppingMethod: String? = "force",
     val parsingErrorHandler: OutputParserExceptionHandler? = null,
+    val observationRegistry: ObservationRegistry? = null,
 ) {
     private val logger = LoggerFactory.getLogger(javaClass)
     fun call(inputs: Map<String, Any>): Map<String, Any> {
@@ -83,7 +86,7 @@ data class AgentExecutor(
 
     private fun takeNextStep(
         inputs: Map<String, Any>,
-        nameToToolMap: Map<String, FunctionCallbackWrapper<*, *>>,
+        nameToToolMap: Map<String, FunctionCallback>,
         intermediateSteps: List<IntermediateAgentStep>
     ): NextStep {
         return consumeNextStep(
@@ -111,12 +114,16 @@ data class AgentExecutor(
 
     private fun iterateNextStep(
         inputs: Map<String, Any>,
-        nameToToolMap: Map<String, FunctionCallbackWrapper<*, *>>,
+        nameToToolMap: Map<String, FunctionCallback>,
         intermediateSteps: List<IntermediateAgentStep>
     ): MutableList<Plannable> {
         val result = mutableListOf<Plannable>()
         try {
-            val output = agent.plan(inputs, intermediateSteps)
+            val action = { agent.plan(inputs, intermediateSteps) }
+            val output = observationRegistry?.let { registry ->
+                Observation.createNotStarted("agent.execution.plan", registry)
+                    .observe(action)
+            } ?: action.invoke()
             if (output.finish != null) {
                 result.add(output.finish)
                 return result
@@ -138,26 +145,24 @@ data class AgentExecutor(
     }
 
     private fun performAgentAction(
-        nameToToolMap: Map<String, FunctionCallbackWrapper<*, *>>,
+        nameToToolMap: Map<String, FunctionCallback>,
         agentAction: AgentAction
     ): AgentStep {
-        val observation =
-            nameToToolMap[agentAction.tool]?.also {
-                logger.info(
-                    "Start executing tool [{}] with request [{}]",
-                    agentAction.tool,
-                    agentAction.toolInput
-                )
-            }?.call(agentAction.toolInput)
-                ?.also { toolResponse ->
-                    logger.info(
-                        "Tool [{}] executed with request [{}], response is [{}]",
-                        agentAction.tool,
-                        agentAction.toolInput,
-                        toolResponse
-                    )
-                }
-                ?: "Invalid tool"
+        val agentTool =
+            nameToToolMap[agentAction.tool] ?: return AgentStep(agentAction, "Invalid tool")
+        val (tool, toolInput) = agentAction
+        logger.info(
+            "Start executing tool [{}] with request [{}]",
+            tool,
+            toolInput
+        )
+        val observation = agentTool.call(toolInput)
+        logger.info(
+            "Tool [{}] executed with request [{}], response is [{}]",
+            tool,
+            toolInput,
+            observation
+        )
         return AgentStep(agentAction, observation)
     }
 
