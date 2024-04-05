@@ -4,6 +4,7 @@ import io.github.alexcheng1982.agentappbuilder.core.chatmemory.ChatMemoryStore
 import io.github.alexcheng1982.agentappbuilder.core.planner.LLMPlanner
 import io.github.alexcheng1982.agentappbuilder.core.tool.AgentToolsProvider
 import io.github.alexcheng1982.agentappbuilder.core.tool.AutoDiscoveredAgentToolsProvider
+import io.micrometer.observation.ObservationRegistry
 import org.springframework.ai.chat.ChatClient
 import org.springframework.ai.chat.prompt.PromptTemplate
 import org.springframework.core.io.ClassPathResource
@@ -16,6 +17,7 @@ class StructuredChatPlanner(
     systemPromptResource: Resource,
     systemInstruction: String? = null,
     chatMemoryStore: ChatMemoryStore? = null,
+    observationRegistry: ObservationRegistry? = null,
 ) : LLMPlanner(
     chatClient,
     agentToolsProvider,
@@ -24,6 +26,7 @@ class StructuredChatPlanner(
     PromptTemplate(systemPromptResource),
     systemInstruction,
     chatMemoryStore,
+    observationRegistry = observationRegistry,
 ) {
     companion object {
         fun createDefault(
@@ -31,6 +34,7 @@ class StructuredChatPlanner(
             agentToolsProvider: AgentToolsProvider = AutoDiscoveredAgentToolsProvider,
             systemInstruction: String? = null,
             chatMemoryStore: ChatMemoryStore? = null,
+            observationRegistry: ObservationRegistry? = null,
         ): StructuredChatPlanner {
             return StructuredChatPlanner(
                 chatClient,
@@ -39,6 +43,7 @@ class StructuredChatPlanner(
                 ClassPathResource("prompts/structured-chat/system.st"),
                 systemInstruction,
                 chatMemoryStore,
+                observationRegistry,
             )
         }
     }

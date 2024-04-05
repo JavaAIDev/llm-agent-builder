@@ -37,7 +37,7 @@ data class NextStep(
 }
 
 data class AgentExecutor(
-    val agent: Planner,
+    val planner: Planner,
     val nameToToolMap: Map<String, FunctionCallback>,
     val returnIntermediateSteps: Boolean = false,
     val maxIterations: Int? = 10,
@@ -71,7 +71,10 @@ data class AgentExecutor(
             Duration.ofMillis(timeElapsed)
         )
         val output =
-            agent.returnStoppedResponse(earlyStoppingMethod, intermediateSteps)
+            planner.returnStoppedResponse(
+                earlyStoppingMethod,
+                intermediateSteps
+            )
         return returnResult(output, intermediateSteps)
     }
 
@@ -119,7 +122,7 @@ data class AgentExecutor(
     ): MutableList<Plannable> {
         val result = mutableListOf<Plannable>()
         try {
-            val action = { agent.plan(inputs, intermediateSteps) }
+            val action = { planner.plan(inputs, intermediateSteps) }
             val output = observationRegistry?.let { registry ->
                 Observation.createNotStarted("agent.execution.plan", registry)
                     .observe(action)
@@ -149,7 +152,10 @@ data class AgentExecutor(
         agentAction: AgentAction
     ): AgentStep {
         val agentTool =
-            nameToToolMap[agentAction.tool] ?: return AgentStep(agentAction, "Invalid tool")
+            nameToToolMap[agentAction.tool] ?: return AgentStep(
+                agentAction,
+                "Invalid tool"
+            )
         val (tool, toolInput) = agentAction
         logger.info(
             "Start executing tool [{}] with request [{}]",

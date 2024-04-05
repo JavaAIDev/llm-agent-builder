@@ -1,0 +1,27 @@
+package io.github.alexcheng1982.agentappbuilder.core.planner.reactjson
+
+import org.junit.jupiter.api.Test
+import kotlin.test.assertNotNull
+
+class ReActJsonOutputParserTest {
+
+    @Test
+    fun parse() {
+        val text = """
+            Thought: I need to find a list of 10 universities in Thailand. The appropriate tool for this task is 'searchUniversities'.
+            Action:
+            ```json
+            {
+              "action": "searchUniversities",
+              "action_input": {
+                "country": "Thailand",
+                "limit": 10
+              }
+            }
+            ```
+        """.trimIndent()
+        val parser = ReActJsonOutputParser()
+        val result = parser.parse(text)
+        assertNotNull(result.action)
+    }
+}

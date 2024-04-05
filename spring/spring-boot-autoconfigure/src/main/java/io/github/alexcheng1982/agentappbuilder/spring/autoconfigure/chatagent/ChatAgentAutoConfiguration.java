@@ -63,25 +63,29 @@ public class ChatAgentAutoConfiguration {
     @ConditionalOnBean(ChatMemoryStore.class)
     public Planner plannerWithMemory(ChatClient chatClient,
         ChatMemoryStore chatMemoryStore,
-        AgentToolsProvider agentToolsProvider) {
+        AgentToolsProvider agentToolsProvider,
+        ObservationRegistry observationRegistry) {
       return ReActJsonPlanner.Companion.createDefault(
           chatClient,
           agentToolsProvider,
           properties.getReActJson().getSystemInstructions(),
-          chatMemoryStore
+          chatMemoryStore,
+          observationRegistry
       );
     }
 
     @Bean
     @ConditionalOnMissingBean({Planner.class, ChatMemoryStore.class})
     public Planner plannerWithoutMemory(ChatClient chatClient,
-        AgentToolsProvider agentToolsProvider) {
+        AgentToolsProvider agentToolsProvider,
+        ObservationRegistry observationRegistry) {
       return ReActJsonPlanner.Companion.createDefault(
           chatClient,
           agentToolsProvider,
           StringUtils.trimToNull(
               properties.getReActJson().getSystemInstructions()),
-          null
+          null,
+          observationRegistry
       );
     }
 
@@ -118,7 +122,8 @@ public class ChatAgentAutoConfiguration {
         AgentToolsProvider agentToolsProvider,
         ObservationRegistry observationRegistry,
         ApplicationContext context) {
-      var manager = new AgentToolFunctionCallbackContext(agentToolsProvider, observationRegistry);
+      var manager = new AgentToolFunctionCallbackContext(agentToolsProvider,
+          observationRegistry);
       manager.setApplicationContext(context);
       return manager;
     }

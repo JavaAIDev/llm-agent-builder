@@ -46,19 +46,22 @@ public class AppConfiguration {
       AgentToolsProvider agentToolsProvider,
       ObservationRegistry observationRegistry,
       ApplicationContext context) {
-    var manager = new AgentToolFunctionCallbackContext(agentToolsProvider, observationRegistry);
+    var manager = new AgentToolFunctionCallbackContext(agentToolsProvider,
+        observationRegistry);
     manager.setApplicationContext(context);
     return manager;
   }
 
   @Bean
   public Planner agentPlanner(ChatClient chatClient,
-      AgentToolsProvider agentToolsProvider) {
+      AgentToolsProvider agentToolsProvider,
+      ObservationRegistry observationRegistry) {
     return NoFeedbackPlanner.Companion.createDefault(
         chatClient,
         agentToolsProvider,
         null,
-        null);
+        null,
+        observationRegistry);
   }
 
   @Bean

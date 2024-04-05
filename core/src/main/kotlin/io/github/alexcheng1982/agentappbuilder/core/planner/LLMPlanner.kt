@@ -9,8 +9,10 @@ import io.github.alexcheng1982.agentappbuilder.core.chatmemory.ChatMemory
 import io.github.alexcheng1982.agentappbuilder.core.chatmemory.ChatMemoryStore
 import io.github.alexcheng1982.agentappbuilder.core.chatmemory.MessageWindowChatMemory
 import io.github.alexcheng1982.agentappbuilder.core.executor.ActionPlanningResult
+import io.github.alexcheng1982.agentappbuilder.core.observation.InstrumentedChatClient
 import io.github.alexcheng1982.agentappbuilder.core.tool.AgentTool
 import io.github.alexcheng1982.agentappbuilder.core.tool.AgentToolsProvider
+import io.micrometer.observation.ObservationRegistry
 import org.springframework.ai.chat.ChatClient
 import org.springframework.ai.chat.messages.SystemMessage
 import org.springframework.ai.chat.prompt.ChatOptions
@@ -18,7 +20,7 @@ import org.springframework.ai.chat.prompt.Prompt
 import org.springframework.ai.chat.prompt.PromptTemplate
 
 open class LLMPlanner(
-    private val chatClient: ChatClient,
+    private var chatClient: ChatClient,
     private val toolsProvider: AgentToolsProvider,
     private val outputParser: OutputParser,
     private val userPromptTemplate: PromptTemplate,
@@ -30,7 +32,15 @@ open class LLMPlanner(
             MessageWindowChatMemory(store, memoryId.toString(), 10)
         }
     },
+    observationRegistry: ObservationRegistry? = null,
 ) : Planner {
+    init {
+        chatClient =
+            if (chatClient is InstrumentedChatClient) chatClient else InstrumentedChatClient(
+                chatClient, observationRegistry
+            )
+    }
+
     override fun plan(
         inputs: Map<String, Any>,
         intermediateSteps: List<IntermediateAgentStep>
