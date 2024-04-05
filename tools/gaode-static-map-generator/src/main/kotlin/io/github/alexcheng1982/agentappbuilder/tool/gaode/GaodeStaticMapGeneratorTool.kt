@@ -13,7 +13,8 @@ class GaodeStaticMapGeneratorTool(private val config: ToolConfig) :
 
     override fun name() = "gaodeStaticMap"
 
-    override fun description() = "Generate URL of Gaode static maps"
+    override fun description() =
+        "Generate URL of Gaode static maps from a list of geo locations"
 
     override fun apply(request: GaodeStaticMapGenerationRequest): GaodeStaticMapGenerationResponse {
         logger.info("Generate static map with request {}", request)

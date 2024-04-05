@@ -24,4 +24,21 @@ class ReActJsonOutputParserTest {
         val result = parser.parse(text)
         assertNotNull(result.action)
     }
+
+    @Test
+    fun parseWithCode() {
+        val text = """
+            
+{
+    "action": "writeLocalFile",
+    "action_input": {
+        "url": "http://www.example.com",
+        "filename": "static_map.png"
+    }
+}
+        """.trimIndent()
+        val parser = ReActJsonOutputParser()
+        val result = parser.parse(text)
+        assertNotNull(result.action)
+    }
 }

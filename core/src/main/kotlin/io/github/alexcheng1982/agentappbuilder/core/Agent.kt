@@ -18,7 +18,14 @@ data class AgentStep(
 data class AgentFinish(
     val returnValues: Map<String, Any>,
     val log: String,
-) : Plannable
+) : Plannable {
+    companion object {
+        fun fromOutput(output: String, log: String) = AgentFinish(
+            mapOf("output" to output),
+            log
+        )
+    }
+}
 
 data class IntermediateAgentStep(
     val action: AgentAction,

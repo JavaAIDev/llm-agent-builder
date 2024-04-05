@@ -28,6 +28,10 @@
       <artifactId>spring-boot-starter-web</artifactId>
     </dependency>
     <dependency>
+      <groupId>org.springframework.boot</groupId>
+      <artifactId>spring-boot-starter-actuator</artifactId>
+    </dependency>
+    <dependency>
       <groupId>io.github.alexcheng1982</groupId>
       <artifactId>agent-app-builder-spring-integration</artifactId>
       <version>${project.version}</version>
@@ -56,6 +60,26 @@
       <groupId>io.github.alexcheng1982</groupId>
       <artifactId>agent-tool-extract-webpage-content</artifactId>
       <version>${project.version}</version>
+    </dependency>
+    <dependency>
+      <groupId>io.micrometer</groupId>
+      <artifactId>micrometer-registry-prometheus</artifactId>
+    </dependency>
+    <dependency>
+      <groupId>io.micrometer</groupId>
+      <artifactId>micrometer-observation</artifactId>
+    </dependency>
+    <dependency>
+      <groupId>io.micrometer</groupId>
+      <artifactId>micrometer-tracing</artifactId>
+    </dependency>
+    <dependency>
+      <groupId>io.micrometer</groupId>
+      <artifactId>micrometer-tracing-bridge-otel</artifactId>
+    </dependency>
+    <dependency>
+      <groupId>io.opentelemetry</groupId>
+      <artifactId>opentelemetry-exporter-otlp</artifactId>
     </dependency>
   </dependencies>
 

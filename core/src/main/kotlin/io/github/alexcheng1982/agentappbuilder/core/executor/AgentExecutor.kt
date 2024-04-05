@@ -1,11 +1,13 @@
 package io.github.alexcheng1982.agentappbuilder.core.executor
 
 import io.github.alexcheng1982.agentappbuilder.core.*
+import io.github.alexcheng1982.agentappbuilder.core.observation.AgentPlanningObservationContext
+import io.github.alexcheng1982.agentappbuilder.core.observation.AgentPlanningObservationDocumentation
+import io.github.alexcheng1982.agentappbuilder.core.observation.DefaultAgentPlanningObservationConvention
 import io.github.alexcheng1982.agentappbuilder.core.planner.OutputParserException
 import io.github.alexcheng1982.agentappbuilder.core.planner.OutputParserExceptionHandler
 import io.github.alexcheng1982.agentappbuilder.core.planner.ParseResult
 import io.github.alexcheng1982.agentappbuilder.core.tool.ExceptionTool
-import io.micrometer.observation.Observation
 import io.micrometer.observation.ObservationRegistry
 import org.slf4j.LoggerFactory
 import org.springframework.ai.model.function.FunctionCallback
@@ -124,8 +126,7 @@ data class AgentExecutor(
         try {
             val action = { planner.plan(inputs, intermediateSteps) }
             val output = observationRegistry?.let { registry ->
-                Observation.createNotStarted("agent.execution.plan", registry)
-                    .observe(action)
+                instrumentedPlan(inputs, action, registry)
             } ?: action.invoke()
             if (output.finish != null) {
                 result.add(output.finish)
@@ -138,6 +139,7 @@ data class AgentExecutor(
                 result.add(performAgentAction(nameToToolMap, it))
             }
         } catch (e: OutputParserException) {
+            logger.error("Output parsing error for input {}", inputs, e)
             val text = e.llmOutput()
             var observation = parsingErrorHandler?.apply(e) ?: e.observation()
             val output = AgentAction("_Exception", observation, text)
@@ -145,6 +147,34 @@ data class AgentExecutor(
             result.add(AgentStep(output, observation))
         }
         return result
+    }
+
+    private fun instrumentedPlan(
+        input: Map<String, Any>,
+        action: () -> ActionPlanningResult,
+        registry: ObservationRegistry
+    ): ActionPlanningResult {
+        val observationContext =
+            AgentPlanningObservationContext(input)
+        val observation =
+            AgentPlanningObservationDocumentation.AGENT_PLANNING.observation(
+                null,
+                DefaultAgentPlanningObservationConvention(),
+                { observationContext },
+                registry
+            ).start()
+        return try {
+            observation.openScope().use {
+                val response = action.invoke()
+                observationContext.setResponse(response)
+                response
+            }
+        } catch (e: Exception) {
+            observation.error(e)
+            throw e
+        } finally {
+            observation.stop()
+        }
     }
 
     private fun performAgentAction(

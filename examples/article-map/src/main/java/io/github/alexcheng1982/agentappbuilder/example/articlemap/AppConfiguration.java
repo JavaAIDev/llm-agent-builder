@@ -29,7 +29,7 @@ public class AppConfiguration {
         new DashscopeApi(),
         DashscopeChatOptions.builder()
             .withModel(DashscopeModelName.QWEN_MAX)
-            .withTemperature(0.2f)
+            .withTemperature(0.0f)
             .build(),
         functionCallbackContext
     );
@@ -40,7 +40,8 @@ public class AppConfiguration {
       AgentToolsProvider agentToolsProvider,
       ObservationRegistry observationRegistry,
       ApplicationContext context) {
-    var manager = new AgentToolFunctionCallbackContext(agentToolsProvider, observationRegistry);
+    var manager = new AgentToolFunctionCallbackContext(agentToolsProvider,
+        observationRegistry);
     manager.setApplicationContext(context);
     return manager;
   }

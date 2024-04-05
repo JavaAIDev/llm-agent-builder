@@ -32,12 +32,12 @@ enum class ChatClientObservationDocumentation : ObservationDocumentation {
     enum class HighCardinalityKeyNames : KeyName {
         PROMPT_CONTENT {
             override fun asString(): String {
-                return "prompt.content"
+                return "agent.prompt.content"
             }
         },
         RESPONSE_CONTENT {
             override fun asString(): String {
-                return "response.content"
+                return "agent.response.content"
             }
 
         }
@@ -46,7 +46,7 @@ enum class ChatClientObservationDocumentation : ObservationDocumentation {
 
 class DefaultChatClientObservationConvention(private val name: String? = null) :
     ChatClientObservationConvention {
-    private val defaultName = "chat.client.call"
+    private val defaultName = "agent.chat-client.call"
 
     private val promptContentNone: KeyValue = KeyValue.of(
         ChatClientObservationDocumentation.HighCardinalityKeyNames.PROMPT_CONTENT,
@@ -110,7 +110,7 @@ class ChatClientRequestObservationContext(val prompt: Prompt) :
 }
 
 class InstrumentedChatClient(
-    private val chatClient: ChatClient,
+    val chatClient: ChatClient,
     private val observationRegistry: ObservationRegistry? = null,
 ) : ChatClient {
     override fun call(prompt: Prompt): ChatResponse {

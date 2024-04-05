@@ -2,7 +2,9 @@ package io.github.alexcheng1982.agentappbuilder.core.tool
 
 import com.fasterxml.jackson.databind.ObjectMapper
 import com.fasterxml.jackson.module.kotlin.KotlinModule
-import io.micrometer.observation.Observation
+import io.github.alexcheng1982.agentappbuilder.core.observation.AgentToolExecutionObservationContext
+import io.github.alexcheng1982.agentappbuilder.core.observation.AgentToolExecutionObservationDocumentation
+import io.github.alexcheng1982.agentappbuilder.core.observation.DefaultAgentToolExecutionObservationConvention
 import io.micrometer.observation.ObservationRegistry
 import org.slf4j.LoggerFactory
 import org.springframework.ai.model.function.FunctionCallback
@@ -34,7 +36,8 @@ class AgentToolWrappersProvider(
                     .withSchemaType(FunctionCallbackWrapper.Builder.SchemaType.JSON_SCHEMA)
                     .withDescription(tool.description())
                     .withInputType(
-                        types?.get(0) ?: throw IllegalArgumentException("Bad type")
+                        types?.get(0)
+                            ?: throw IllegalArgumentException("Bad type")
                     )
                     .withObjectMapper(objectMapper)
                     .build(), observationRegistry
@@ -59,14 +62,39 @@ class AgentToolWrappersProvider(
             return functionCallbackWrapper.inputTypeSchema
         }
 
-        override fun call(functionInput: String?): String {
+        override fun call(functionInput: String): String {
             val action = { functionCallbackWrapper.call(functionInput) }
             return observationRegistry?.let { registry ->
-                Observation.createNotStarted("agent.tool.execution", registry)
-                    .lowCardinalityKeyValue("tool", name)
-                    .highCardinalityKeyValue("tool.input", functionInput ?: "")
-                    .observe(action)
+                instrumentedCall(functionInput, action, registry)
             } ?: action.invoke()
+        }
+
+        private fun instrumentedCall(
+            input: String,
+            action: () -> String,
+            registry: ObservationRegistry
+        ): String {
+            val observationContext =
+                AgentToolExecutionObservationContext(input)
+            val observation =
+                AgentToolExecutionObservationDocumentation.AGENT_TOOL_EXECUTION.observation(
+                    null,
+                    DefaultAgentToolExecutionObservationConvention(),
+                    { observationContext },
+                    registry
+                ).start()
+            return try {
+                observation.openScope().use {
+                    val response = action.invoke()
+                    observationContext.setResponse(response)
+                    response
+                }
+            } catch (e: Exception) {
+                observation.error(e)
+                throw e
+            } finally {
+                observation.stop()
+            }
         }
     }
 

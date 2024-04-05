@@ -16,6 +16,7 @@
   <modules>
     <module>article-map</module>
     <module>chinese-idioms-game</module>
+    <module>find-universities</module>
   </modules>
 
   <properties>

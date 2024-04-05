@@ -32,7 +32,7 @@ class WebPageExtractionTool(private val config: WebPageExtractionToolConfig) :
         }
         doc.select("a").unwrap()
         val body = doc.body()
-        val text = Jsoup.clean(body.html(), Safelist.none())
+        val text = Jsoup.clean(body.html(), Safelist.none()).trim()
         return WebPageExtractionResponse(
             text.take(config.limit)
         )

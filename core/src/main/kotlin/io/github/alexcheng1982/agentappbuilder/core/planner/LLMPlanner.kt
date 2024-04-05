@@ -3,6 +3,7 @@ package io.github.alexcheng1982.agentappbuilder.core.planner
 import cc.vividcode.ai.agent.dashscope.DashscopeChatClient
 import cc.vividcode.ai.agent.dashscope.DashscopeChatOptions
 import cc.vividcode.ai.agent.dashscope.api.DashscopeModelName
+import io.github.alexcheng1982.agentappbuilder.core.AgentFinish
 import io.github.alexcheng1982.agentappbuilder.core.IntermediateAgentStep
 import io.github.alexcheng1982.agentappbuilder.core.Planner
 import io.github.alexcheng1982.agentappbuilder.core.chatmemory.ChatMemory
@@ -73,10 +74,16 @@ open class LLMPlanner(
             prepareChatClientOptions(chatClient, toolNames)
         )
         val response = chatClient.call(prompt)
-
+        val text = response.result?.output?.content?.trim() ?: ""
+        if (text.isEmpty()) {
+            return ActionPlanningResult.finish(
+                AgentFinish.fromOutput(
+                    "No response from LLM",
+                    text
+                )
+            )
+        }
         chatMemory?.add(response.result.output)
-
-        val text = response.result.output.content
         val result = outputParser.parse(text)
         return ActionPlanningResult.fromParseResult(result)
     }
@@ -98,7 +105,9 @@ open class LLMPlanner(
         chatClient: ChatClient,
         toolNames: Set<String>
     ): ChatOptions? {
-        if (chatClient is DashscopeChatClient) {
+        val client =
+            if (chatClient is InstrumentedChatClient) chatClient.chatClient else chatClient
+        if (client is DashscopeChatClient) {
             return DashscopeChatOptions.builder()
                 .withModel(DashscopeModelName.QWEN_MAX)
                 .withTemperature(0.2f)

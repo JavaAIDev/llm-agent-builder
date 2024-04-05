@@ -4,6 +4,17 @@ spring:
   threads:
     virtual:
       enabled: true
+management:
+  endpoints:
+    web:
+      exposure:
+        include: "health,metrics"
+  tracing:
+    sampling:
+      probability: 1.0
+  otlp:
+    tracing:
+      endpoint: http://localhost:4318/v1/traces
 io:
   github:
     alexcheng1982:
@@ -16,4 +27,4 @@ io:
             enabled: false
           reActJson:
             systemInstructions: |
-              对于用户输入的网址，提取网页中的坐标信息，转换为数字形式的经纬度格式，通过 Gaode 生成静态地图 url，把地图url的内容以PNG文件的格式保存在本地磁盘上，返回地图url的保存路径。只需要输出保存路径。
+              对于用户输入的网址，提取网页中的全部经纬度坐标信息，转换为数字形式的经纬度格式。通过 Gaode 生成静态地图 url，把地图url的内容以PNG文件的格式保存在本地磁盘上，返回地图url的保存路径。只需要输出保存路径。
