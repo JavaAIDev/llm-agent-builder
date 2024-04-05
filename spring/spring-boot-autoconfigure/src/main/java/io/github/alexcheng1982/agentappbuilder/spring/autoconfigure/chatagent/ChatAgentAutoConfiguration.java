@@ -13,6 +13,8 @@ import io.github.alexcheng1982.agentappbuilder.core.tool.CompositeAgentToolsProv
 import io.github.alexcheng1982.agentappbuilder.spring.AgentToolFunctionCallbackContext;
 import io.github.alexcheng1982.agentappbuilder.spring.SpringAgentToolsProvider;
 import io.github.alexcheng1982.agentappbuilder.spring.chatagent.ChatAgentService;
+import io.micrometer.core.instrument.MeterRegistry;
+import io.micrometer.core.instrument.simple.SimpleMeterRegistry;
 import io.micrometer.observation.ObservationRegistry;
 import java.util.List;
 import org.apache.commons.lang3.StringUtils;
@@ -64,13 +66,15 @@ public class ChatAgentAutoConfiguration {
     public Planner plannerWithMemory(ChatClient chatClient,
         ChatMemoryStore chatMemoryStore,
         AgentToolsProvider agentToolsProvider,
-        ObservationRegistry observationRegistry) {
+        ObservationRegistry observationRegistry,
+        MeterRegistry meterRegistry) {
       return ReActJsonPlanner.Companion.createDefault(
           chatClient,
           agentToolsProvider,
           properties.getReActJson().getSystemInstructions(),
           chatMemoryStore,
-          observationRegistry
+          observationRegistry,
+          meterRegistry
       );
     }
 
@@ -78,14 +82,16 @@ public class ChatAgentAutoConfiguration {
     @ConditionalOnMissingBean({Planner.class, ChatMemoryStore.class})
     public Planner plannerWithoutMemory(ChatClient chatClient,
         AgentToolsProvider agentToolsProvider,
-        ObservationRegistry observationRegistry) {
+        ObservationRegistry observationRegistry,
+        MeterRegistry meterRegistry) {
       return ReActJsonPlanner.Companion.createDefault(
           chatClient,
           agentToolsProvider,
           StringUtils.trimToNull(
               properties.getReActJson().getSystemInstructions()),
           null,
-          observationRegistry
+          observationRegistry,
+          meterRegistry
       );
     }
 
@@ -94,6 +100,13 @@ public class ChatAgentAutoConfiguration {
     @ConditionalOnMissingBean
     public ObservationRegistry observationRegistry() {
       return ObservationRegistry.NOOP;
+    }
+
+    @Bean
+    @ConditionalOnBean(Planner.class)
+    @ConditionalOnMissingBean
+    public MeterRegistry meterRegistry() {
+      return new SimpleMeterRegistry();
     }
 
     @Bean

@@ -4,6 +4,7 @@ import io.github.alexcheng1982.agentappbuilder.core.chatmemory.ChatMemoryStore
 import io.github.alexcheng1982.agentappbuilder.core.planner.LLMPlanner
 import io.github.alexcheng1982.agentappbuilder.core.tool.AgentToolsProvider
 import io.github.alexcheng1982.agentappbuilder.core.tool.AutoDiscoveredAgentToolsProvider
+import io.micrometer.core.instrument.MeterRegistry
 import io.micrometer.observation.ObservationRegistry
 import org.springframework.ai.chat.ChatClient
 import org.springframework.ai.chat.prompt.PromptTemplate
@@ -21,6 +22,7 @@ class NoFeedbackPlanner(
     systemInstruction: String? = null,
     chatMemoryStore: ChatMemoryStore? = null,
     observationRegistry: ObservationRegistry? = null,
+    meterRegistry: MeterRegistry? = null,
 ) : LLMPlanner(
     chatClient,
     agentToolsProvider,
@@ -30,6 +32,7 @@ class NoFeedbackPlanner(
     systemInstruction,
     chatMemoryStore,
     observationRegistry = observationRegistry,
+    meterRegistry = meterRegistry,
 ) {
     companion object {
         fun createDefault(
@@ -38,6 +41,7 @@ class NoFeedbackPlanner(
             systemInstruction: String? = null,
             chatMemoryStore: ChatMemoryStore? = null,
             observationRegistry: ObservationRegistry? = null,
+            meterRegistry: MeterRegistry? = null,
         ): NoFeedbackPlanner {
             return NoFeedbackPlanner(
                 chatClient,
@@ -47,6 +51,7 @@ class NoFeedbackPlanner(
                 systemInstruction,
                 chatMemoryStore,
                 observationRegistry,
+                meterRegistry,
             )
         }
     }

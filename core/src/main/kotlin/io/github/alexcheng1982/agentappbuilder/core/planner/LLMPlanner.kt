@@ -13,6 +13,7 @@ import io.github.alexcheng1982.agentappbuilder.core.executor.ActionPlanningResul
 import io.github.alexcheng1982.agentappbuilder.core.observation.InstrumentedChatClient
 import io.github.alexcheng1982.agentappbuilder.core.tool.AgentTool
 import io.github.alexcheng1982.agentappbuilder.core.tool.AgentToolsProvider
+import io.micrometer.core.instrument.MeterRegistry
 import io.micrometer.observation.ObservationRegistry
 import org.springframework.ai.chat.ChatClient
 import org.springframework.ai.chat.messages.SystemMessage
@@ -34,11 +35,12 @@ open class LLMPlanner(
         }
     },
     observationRegistry: ObservationRegistry? = null,
+    meterRegistry: MeterRegistry? = null,
 ) : Planner {
     init {
         chatClient =
             if (chatClient is InstrumentedChatClient) chatClient else InstrumentedChatClient(
-                chatClient, observationRegistry
+                chatClient, observationRegistry, meterRegistry
             )
     }
 
