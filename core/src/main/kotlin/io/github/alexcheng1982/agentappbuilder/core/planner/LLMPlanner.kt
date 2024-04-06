@@ -41,16 +41,8 @@ open class LLMPlanner(
         }
     },
     private val observationRegistry: ObservationRegistry? = null,
+    private val meterRegistry: MeterRegistry? = null,
 ) : Planner {
-    observationRegistry: ObservationRegistry? = null,
-    meterRegistry: MeterRegistry? = null,
-) : Planner {
-    init {
-        chatClient =
-            if (chatClient is InstrumentedChatClient) chatClient else InstrumentedChatClient(
-                chatClient, observationRegistry, meterRegistry
-            )
-    }
 
     override fun plan(
         inputs: Map<String, Any>,
@@ -173,6 +165,7 @@ open class LLMPlanner(
         private var toolsProvider: AgentToolsProvider? = null
         private var outputParser: OutputParser = NoFeedbackOutputParser.INSTANCE
         private var observationRegistry: ObservationRegistry? = null
+        private var meterRegistry: MeterRegistry? = null
         private var userPromptTemplate: PromptTemplate =
             PromptTemplate("{input}")
         private var systemPromptTemplate: PromptTemplate =
@@ -198,6 +191,11 @@ open class LLMPlanner(
 
         fun withObservationRegistry(observationRegistry: ObservationRegistry?): Builder {
             this.observationRegistry = observationRegistry
+            return this
+        }
+
+        fun withMeterRegistry(meterRegistry: MeterRegistry?): Builder {
+            this.meterRegistry = meterRegistry
             return this
         }
 
@@ -234,7 +232,7 @@ open class LLMPlanner(
             }
             val chatClient =
                 if (chatClient is InstrumentedChatClient) chatClient else InstrumentedChatClient(
-                    chatClient, observationRegistry
+                    chatClient, observationRegistry, meterRegistry
                 )
             return LLMPlanner(
                 chatClient,
@@ -253,6 +251,7 @@ open class LLMPlanner(
                     }
                 },
                 observationRegistry,
+                meterRegistry,
             )
         }
     }
@@ -267,6 +266,7 @@ abstract class LLMPlannerFactory {
         systemInstruction: String? = null,
         chatMemoryStore: ChatMemoryStore? = null,
         observationRegistry: ObservationRegistry? = null,
+        meterRegistry: MeterRegistry? = null,
     ): LLMPlanner {
         return defaultBuilder()
             .withChatClient(chatClient)
@@ -274,6 +274,7 @@ abstract class LLMPlannerFactory {
             .withSystemInstruction(systemInstruction)
             .withChatMemoryStore(chatMemoryStore)
             .withObservationRegistry(observationRegistry)
+            .withMeterRegistry(meterRegistry)
             .build()
     }
 }

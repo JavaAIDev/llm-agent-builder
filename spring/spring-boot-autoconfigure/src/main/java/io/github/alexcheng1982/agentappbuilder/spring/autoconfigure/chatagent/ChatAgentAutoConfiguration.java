@@ -66,7 +66,8 @@ public class ChatAgentAutoConfiguration {
     public Planner plannerWithMemory(ChatClient chatClient,
         ChatMemoryStore chatMemoryStore,
         AgentToolsProvider agentToolsProvider,
-        ObservationRegistry observationRegistry) {
+        ObservationRegistry observationRegistry,
+        MeterRegistry meterRegistry) {
       return ReActJsonPlannerFactory.INSTANCE.create(
           chatClient,
           agentToolsProvider,
@@ -81,7 +82,8 @@ public class ChatAgentAutoConfiguration {
     @ConditionalOnMissingBean({Planner.class, ChatMemoryStore.class})
     public Planner plannerWithoutMemory(ChatClient chatClient,
         AgentToolsProvider agentToolsProvider,
-        ObservationRegistry observationRegistry) {
+        ObservationRegistry observationRegistry,
+        MeterRegistry meterRegistry) {
       return ReActJsonPlannerFactory.INSTANCE.create(
           chatClient,
           agentToolsProvider,
