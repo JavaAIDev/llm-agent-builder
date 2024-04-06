@@ -11,13 +11,10 @@
   <name>LLM Agent App Builder</name>
   <modules>
     <module>core</module>
-    <module>example</module>
     <module>spring</module>
     <module>examples</module>
     <module>tools</module>
     <module>tool-builders</module>
-    <module>tools/query-universities</module>
-    <module>examples/find-universities</module>
   </modules>
 
   <properties>
