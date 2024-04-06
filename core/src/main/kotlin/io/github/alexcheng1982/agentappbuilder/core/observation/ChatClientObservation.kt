@@ -3,6 +3,8 @@ package io.github.alexcheng1982.agentappbuilder.core.observation
 import io.micrometer.common.KeyValue
 import io.micrometer.common.KeyValues
 import io.micrometer.common.docs.KeyName
+import io.micrometer.core.instrument.Counter
+import io.micrometer.core.instrument.MeterRegistry
 import io.micrometer.observation.Observation
 import io.micrometer.observation.ObservationConvention
 import io.micrometer.observation.ObservationRegistry
@@ -40,7 +42,22 @@ enum class ChatClientObservationDocumentation : ObservationDocumentation {
                 return "agent.response.content"
             }
 
-        }
+        },
+        PROMPT_TOKENS_COUNT {
+            override fun asString(): String {
+                return "agent.prompt.tokens.count"
+            }
+        },
+        GENERATION_TOKENS_COUNT {
+            override fun asString(): String {
+                return "agent.generation.tokens.count"
+            }
+        },
+        TOTAL_TOKENS_COUNT {
+            override fun asString(): String {
+                return "agent.total.tokens.count"
+            }
+        },
     }
 }
 
@@ -58,6 +75,21 @@ class DefaultChatClientObservationConvention(private val name: String? = null) :
         KeyValue.NONE_VALUE
     )
 
+    private val promptTokensCountNone: KeyValue = KeyValue.of(
+        ChatClientObservationDocumentation.HighCardinalityKeyNames.PROMPT_TOKENS_COUNT,
+        KeyValue.NONE_VALUE
+    )
+
+    private val generationTokensCountNone: KeyValue = KeyValue.of(
+        ChatClientObservationDocumentation.HighCardinalityKeyNames.GENERATION_TOKENS_COUNT,
+        KeyValue.NONE_VALUE
+    )
+
+    private val totalTokensCountNone: KeyValue = KeyValue.of(
+        ChatClientObservationDocumentation.HighCardinalityKeyNames.TOTAL_TOKENS_COUNT,
+        KeyValue.NONE_VALUE
+    )
+
     override fun getName(): String {
         return name ?: defaultName
     }
@@ -67,7 +99,13 @@ class DefaultChatClientObservationConvention(private val name: String? = null) :
     }
 
     override fun getHighCardinalityKeyValues(context: ChatClientRequestObservationContext): KeyValues {
-        return KeyValues.of(promptContent(context), responseContent(context))
+        return KeyValues.of(
+            promptContent(context),
+            responseContent(context),
+            promptTokensCount(context),
+            generationTokensCount(context),
+            totalTokensCount(context)
+        )
     }
 
     private fun promptContent(context: ChatClientRequestObservationContext): KeyValue {
@@ -89,6 +127,33 @@ class DefaultChatClientObservationConvention(private val name: String? = null) :
                     )
                 }
         } ?: responseContentNone
+    }
+
+    private fun promptTokensCount(context: ChatClientRequestObservationContext): KeyValue {
+        return context.response?.metadata?.usage?.promptTokens?.let { tokens ->
+            KeyValue.of(
+                ChatClientObservationDocumentation.HighCardinalityKeyNames.PROMPT_TOKENS_COUNT,
+                tokens.toString()
+            )
+        } ?: promptTokensCountNone
+    }
+
+    private fun generationTokensCount(context: ChatClientRequestObservationContext): KeyValue {
+        return context.response?.metadata?.usage?.generationTokens?.let { tokens ->
+            KeyValue.of(
+                ChatClientObservationDocumentation.HighCardinalityKeyNames.GENERATION_TOKENS_COUNT,
+                tokens.toString()
+            )
+        } ?: generationTokensCountNone
+    }
+
+    private fun totalTokensCount(context: ChatClientRequestObservationContext): KeyValue {
+        return context.response?.metadata?.usage?.totalTokens?.let { tokens ->
+            KeyValue.of(
+                ChatClientObservationDocumentation.HighCardinalityKeyNames.TOTAL_TOKENS_COUNT,
+                tokens.toString()
+            )
+        } ?: totalTokensCountNone
     }
 }
 
@@ -112,12 +177,17 @@ class ChatClientRequestObservationContext(val prompt: Prompt) :
 class InstrumentedChatClient(
     val chatClient: ChatClient,
     private val observationRegistry: ObservationRegistry? = null,
+    private val meterRegistry: MeterRegistry? = null,
 ) : ChatClient {
     override fun call(prompt: Prompt): ChatResponse {
         val action = { chatClient.call(prompt) }
-        return observationRegistry?.let { registry ->
+        val response = observationRegistry?.let { registry ->
             instrumentedCall(prompt, action, registry)
         } ?: action.invoke()
+        meterRegistry?.run {
+            updateMetrics(response, this)
+        }
+        return response
     }
 
     private fun instrumentedCall(
@@ -146,5 +216,23 @@ class InstrumentedChatClient(
         } finally {
             observation.stop()
         }
+    }
+
+    private fun updateMetrics(
+        chatResponse: ChatResponse,
+        registry: MeterRegistry,
+    ) {
+        chatResponse.metadata?.usage?.run {
+            listOf(
+                "prompt" to { this.promptTokens ?: 0 },
+                "generation" to { this.generationTokens ?: 0 },
+                "total" to { this.totalTokens ?: 0 },
+            ).forEach { (name, provider) ->
+                val counter = Counter.builder("agent.$name.tokens.count")
+                    .register(registry)
+                counter.increment(provider.invoke().toDouble())
+            }
+        }
+
     }
 }

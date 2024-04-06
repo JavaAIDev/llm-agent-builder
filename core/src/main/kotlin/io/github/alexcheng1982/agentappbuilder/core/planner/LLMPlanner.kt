@@ -19,6 +19,7 @@ import io.github.alexcheng1982.agentappbuilder.core.planner.nofeedback.NoFeedbac
 import io.github.alexcheng1982.agentappbuilder.core.tool.AgentTool
 import io.github.alexcheng1982.agentappbuilder.core.tool.AgentToolsProvider
 import io.github.alexcheng1982.agentappbuilder.core.tool.AutoDiscoveredAgentToolsProvider
+import io.micrometer.core.instrument.MeterRegistry
 import io.micrometer.observation.ObservationRegistry
 import org.springframework.ai.chat.ChatClient
 import org.springframework.ai.chat.messages.SystemMessage
@@ -41,6 +42,16 @@ open class LLMPlanner(
     },
     private val observationRegistry: ObservationRegistry? = null,
 ) : Planner {
+    observationRegistry: ObservationRegistry? = null,
+    meterRegistry: MeterRegistry? = null,
+) : Planner {
+    init {
+        chatClient =
+            if (chatClient is InstrumentedChatClient) chatClient else InstrumentedChatClient(
+                chatClient, observationRegistry, meterRegistry
+            )
+    }
+
     override fun plan(
         inputs: Map<String, Any>,
         intermediateSteps: List<IntermediateAgentStep>
