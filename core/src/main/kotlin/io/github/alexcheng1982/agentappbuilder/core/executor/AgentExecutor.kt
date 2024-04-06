@@ -1,9 +1,6 @@
 package io.github.alexcheng1982.agentappbuilder.core.executor
 
 import io.github.alexcheng1982.agentappbuilder.core.*
-import io.github.alexcheng1982.agentappbuilder.core.observation.AgentPlanningObservationContext
-import io.github.alexcheng1982.agentappbuilder.core.observation.AgentPlanningObservationDocumentation
-import io.github.alexcheng1982.agentappbuilder.core.observation.DefaultAgentPlanningObservationConvention
 import io.github.alexcheng1982.agentappbuilder.core.planner.OutputParserException
 import io.github.alexcheng1982.agentappbuilder.core.planner.OutputParserExceptionHandler
 import io.github.alexcheng1982.agentappbuilder.core.planner.ParseResult
@@ -124,10 +121,7 @@ data class AgentExecutor(
     ): MutableList<Plannable> {
         val result = mutableListOf<Plannable>()
         try {
-            val action = { planner.plan(inputs, intermediateSteps) }
-            val output = observationRegistry?.let { registry ->
-                instrumentedPlan(inputs, action, registry)
-            } ?: action.invoke()
+            val output = planner.plan(inputs, intermediateSteps)
             if (output.finish != null) {
                 result.add(output.finish)
                 return result
@@ -147,34 +141,6 @@ data class AgentExecutor(
             result.add(AgentStep(output, observation))
         }
         return result
-    }
-
-    private fun instrumentedPlan(
-        input: Map<String, Any>,
-        action: () -> ActionPlanningResult,
-        registry: ObservationRegistry
-    ): ActionPlanningResult {
-        val observationContext =
-            AgentPlanningObservationContext(input)
-        val observation =
-            AgentPlanningObservationDocumentation.AGENT_PLANNING.observation(
-                null,
-                DefaultAgentPlanningObservationConvention(),
-                { observationContext },
-                registry
-            ).start()
-        return try {
-            observation.openScope().use {
-                val response = action.invoke()
-                observationContext.setResponse(response)
-                response
-            }
-        } catch (e: Exception) {
-            observation.error(e)
-            throw e
-        } finally {
-            observation.stop()
-        }
     }
 
     private fun performAgentAction(

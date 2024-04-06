@@ -6,7 +6,7 @@ import io.github.alexcheng1982.agentappbuilder.core.ChatAgent;
 import io.github.alexcheng1982.agentappbuilder.core.Planner;
 import io.github.alexcheng1982.agentappbuilder.core.chatmemory.ChatMemoryStore;
 import io.github.alexcheng1982.agentappbuilder.core.chatmemory.InMemoryChatMemoryStore;
-import io.github.alexcheng1982.agentappbuilder.core.planner.reactjson.ReActJsonPlanner;
+import io.github.alexcheng1982.agentappbuilder.core.planner.reactjson.ReActJsonPlannerFactory;
 import io.github.alexcheng1982.agentappbuilder.core.tool.AgentToolsProvider;
 import io.github.alexcheng1982.agentappbuilder.core.tool.AutoDiscoveredAgentToolsProvider;
 import io.github.alexcheng1982.agentappbuilder.core.tool.CompositeAgentToolsProvider;
@@ -65,7 +65,7 @@ public class ChatAgentAutoConfiguration {
         ChatMemoryStore chatMemoryStore,
         AgentToolsProvider agentToolsProvider,
         ObservationRegistry observationRegistry) {
-      return ReActJsonPlanner.Companion.createDefault(
+      return ReActJsonPlannerFactory.INSTANCE.create(
           chatClient,
           agentToolsProvider,
           properties.getReActJson().getSystemInstructions(),
@@ -79,7 +79,7 @@ public class ChatAgentAutoConfiguration {
     public Planner plannerWithoutMemory(ChatClient chatClient,
         AgentToolsProvider agentToolsProvider,
         ObservationRegistry observationRegistry) {
-      return ReActJsonPlanner.Companion.createDefault(
+      return ReActJsonPlannerFactory.INSTANCE.create(
           chatClient,
           agentToolsProvider,
           StringUtils.trimToNull(

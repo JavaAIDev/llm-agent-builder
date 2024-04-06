@@ -73,4 +73,8 @@ class ReActOutputParser : OutputParser {
         }
         throw OutputParserException("Could not parse LLM output: $text")
     }
+
+    companion object {
+        val INSTANCE = ReActOutputParser()
+    }
 }

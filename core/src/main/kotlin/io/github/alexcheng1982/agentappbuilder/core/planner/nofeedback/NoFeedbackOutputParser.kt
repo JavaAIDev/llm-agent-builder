@@ -18,4 +18,8 @@ class NoFeedbackOutputParser : OutputParser {
             )
         )
     }
+
+    companion object {
+        val INSTANCE = NoFeedbackOutputParser()
+    }
 }

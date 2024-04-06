@@ -58,4 +58,8 @@ class ReActJsonOutputParser : OutputParser {
             true
         )
     }
+
+    companion object {
+        val INSTANCE = ReActJsonOutputParser()
+    }
 }

@@ -19,7 +19,11 @@ object AgentFactory {
         agentToolsProvider: AgentToolsProvider = AutoDiscoveredAgentToolsProvider,
         observationRegistry: ObservationRegistry? = null,
     ): ChatAgent {
-        val executor = createAgentExecutor(planner, agentToolsProvider, observationRegistry)
+        val executor = createAgentExecutor(
+            planner,
+            agentToolsProvider,
+            observationRegistry
+        )
         return ExecutableChatAgent(
             executor,
             name,
@@ -30,7 +34,7 @@ object AgentFactory {
             logger.info(
                 "Created ChatAgent [{}] with planner [{}]",
                 name,
-                planner.javaClass.simpleName
+                planner
             )
         }
     }
@@ -44,7 +48,11 @@ object AgentFactory {
         agentToolsProvider: AgentToolsProvider = AutoDiscoveredAgentToolsProvider,
         observationRegistry: ObservationRegistry? = null,
     ): Agent<REQUEST, RESPONSE> {
-        val executor = createAgentExecutor(planner, agentToolsProvider, observationRegistry)
+        val executor = createAgentExecutor(
+            planner,
+            agentToolsProvider,
+            observationRegistry
+        )
         return ExecutableAgent(
             name,
             description,
@@ -62,7 +70,10 @@ object AgentFactory {
     ): AgentExecutor {
         return AgentExecutor(
             planner,
-            AgentToolWrappersProvider(agentToolsProvider, observationRegistry).get(),
+            AgentToolWrappersProvider(
+                agentToolsProvider,
+                observationRegistry
+            ).get(),
             observationRegistry = observationRegistry,
         )
     }

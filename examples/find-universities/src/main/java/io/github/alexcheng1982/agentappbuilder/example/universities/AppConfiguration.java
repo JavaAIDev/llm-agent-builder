@@ -5,7 +5,7 @@ import cc.vividcode.ai.agent.dashscope.DashscopeChatOptions;
 import cc.vividcode.ai.agent.dashscope.api.DashscopeApi;
 import cc.vividcode.ai.agent.dashscope.api.DashscopeModelName;
 import io.github.alexcheng1982.agentappbuilder.core.Planner;
-import io.github.alexcheng1982.agentappbuilder.core.planner.nofeedback.NoFeedbackPlanner;
+import io.github.alexcheng1982.agentappbuilder.core.planner.nofeedback.NoFeedbackPlannerFactory;
 import io.github.alexcheng1982.agentappbuilder.core.tool.AgentToolsProvider;
 import io.github.alexcheng1982.agentappbuilder.spring.AgentToolFunctionCallbackContext;
 import io.github.alexcheng1982.agentappbuilder.spring.agentcontroller.AgentControllerConfiguration;
@@ -56,7 +56,7 @@ public class AppConfiguration {
   public Planner agentPlanner(ChatClient chatClient,
       AgentToolsProvider agentToolsProvider,
       ObservationRegistry observationRegistry) {
-    return NoFeedbackPlanner.Companion.createDefault(
+    return NoFeedbackPlannerFactory.INSTANCE.create(
         chatClient,
         agentToolsProvider,
         null,
