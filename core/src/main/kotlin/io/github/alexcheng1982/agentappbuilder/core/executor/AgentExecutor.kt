@@ -5,6 +5,8 @@ import io.github.alexcheng1982.agentappbuilder.core.planner.OutputParserExceptio
 import io.github.alexcheng1982.agentappbuilder.core.planner.OutputParserExceptionHandler
 import io.github.alexcheng1982.agentappbuilder.core.planner.ParseResult
 import io.github.alexcheng1982.agentappbuilder.core.tool.ExceptionTool
+import io.github.alexcheng1982.agentappbuilder.core.tool.InvalidTool
+import io.github.alexcheng1982.agentappbuilder.core.tool.InvalidToolInput
 import io.micrometer.observation.ObservationRegistry
 import org.slf4j.LoggerFactory
 import org.springframework.ai.model.function.FunctionCallback
@@ -147,25 +149,34 @@ data class AgentExecutor(
         nameToToolMap: Map<String, FunctionCallback>,
         agentAction: AgentAction
     ): AgentStep {
-        val agentTool =
-            nameToToolMap[agentAction.tool] ?: return AgentStep(
-                agentAction,
-                "Invalid tool"
+        val agentTool = nameToToolMap[agentAction.tool]
+        if (agentTool != null) {
+            val (tool, toolInput) = agentAction
+            logger.info(
+                "Start executing tool [{}] with request [{}]",
+                tool,
+                toolInput
             )
-        val (tool, toolInput) = agentAction
-        logger.info(
-            "Start executing tool [{}] with request [{}]",
-            tool,
-            toolInput
-        )
-        val observation = agentTool.call(toolInput)
-        logger.info(
-            "Tool [{}] executed with request [{}], response is [{}]",
-            tool,
-            toolInput,
-            observation
-        )
-        return AgentStep(agentAction, observation)
+            val observation = agentTool.call(toolInput)
+            logger.info(
+                "Tool [{}] executed with request [{}], response is [{}]",
+                tool,
+                toolInput,
+                observation
+            )
+            return AgentStep(agentAction, observation)
+        } else {
+            val observation = InvalidTool().apply(
+                InvalidToolInput(
+                    agentAction.tool,
+                    nameToToolMap.keys,
+                )
+            )
+            return AgentStep(
+                agentAction,
+                observation,
+            )
+        }
     }
 
     private fun shouldContinue(iterations: Int, timeElapsed: Long): Boolean {

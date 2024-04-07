@@ -42,6 +42,7 @@ open class LLMPlanner(
     },
     private val observationRegistry: ObservationRegistry? = null,
     private val meterRegistry: MeterRegistry? = null,
+    private val stopSequence: List<String>? = listOf("\\nObservation")
 ) : Planner {
 
     override fun plan(
@@ -151,6 +152,7 @@ open class LLMPlanner(
                 .withModel(DashscopeModelName.QWEN_MAX)
                 .withTemperature(0.2f)
                 .withFunctions(toolNames)
+                .withStops(stopSequence)
                 .build()
         }
         return null
