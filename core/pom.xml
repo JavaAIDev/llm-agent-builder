@@ -10,7 +10,7 @@
   </parent>
 
   <artifactId>agent-app-builder-core</artifactId>
-  <name>Core</name>
+  <name>Agent Builder Core</name>
 
   <build>
     <sourceDirectory>src/main/kotlin</sourceDirectory>
