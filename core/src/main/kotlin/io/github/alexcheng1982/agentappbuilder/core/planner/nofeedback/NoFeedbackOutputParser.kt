@@ -11,12 +11,7 @@ import io.github.alexcheng1982.agentappbuilder.core.planner.ParseResult
  */
 class NoFeedbackOutputParser : OutputParser {
     override fun parse(text: String): ParseResult {
-        return ParseResult.finish(
-            AgentFinish(
-                mapOf("output" to text),
-                text,
-            )
-        )
+        return ParseResult.finishWithText(text)
     }
 
     companion object {

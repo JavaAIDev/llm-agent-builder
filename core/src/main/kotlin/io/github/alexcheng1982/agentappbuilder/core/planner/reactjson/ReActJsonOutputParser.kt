@@ -19,12 +19,7 @@ class ReActJsonOutputParser : OutputParser {
         val includeAnswer = text.contains(finalAnswerAction)
         if (includeAnswer) {
             val output = text.split(finalAnswerAction).last().trim()
-            return ParseResult.finish(
-                AgentFinish(
-                    mapOf("output" to output),
-                    text
-                )
-            )
+            return ParseResult.finishWithOutputAndLog(output, text)
         }
         val response = JsonParser.parse(text)
         if (response != null) {

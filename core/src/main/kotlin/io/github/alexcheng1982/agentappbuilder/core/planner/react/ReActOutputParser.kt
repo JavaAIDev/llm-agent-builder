@@ -1,7 +1,6 @@
 package io.github.alexcheng1982.agentappbuilder.core.planner.react
 
 import io.github.alexcheng1982.agentappbuilder.core.AgentAction
-import io.github.alexcheng1982.agentappbuilder.core.AgentFinish
 import io.github.alexcheng1982.agentappbuilder.core.planner.OutputParser
 import io.github.alexcheng1982.agentappbuilder.core.planner.OutputParserException
 import io.github.alexcheng1982.agentappbuilder.core.planner.ParseResult
@@ -47,14 +46,9 @@ class ReActOutputParser : OutputParser {
                 )
             )
         } else if (includeAnswer) {
-            return ParseResult.finish(
-                AgentFinish(
-                    mapOf(
-                        "output" to text.split(finalAnswerAction).last()
-                            .trim()
-                    ),
-                    text
-                )
+            return ParseResult.finishWithOutputAndLog(
+                text.split(finalAnswerAction).last().trim(),
+                text
             )
         } else if (!actionPattern.matcher(text).matches()) {
             throw OutputParserException(
