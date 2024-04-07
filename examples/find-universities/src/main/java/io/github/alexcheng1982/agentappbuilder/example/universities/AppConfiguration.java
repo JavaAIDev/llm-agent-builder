@@ -61,7 +61,8 @@ public class AppConfiguration {
         agentToolsProvider,
         null,
         null,
-        observationRegistry);
+        observationRegistry,
+        null);
   }
 
   @Bean

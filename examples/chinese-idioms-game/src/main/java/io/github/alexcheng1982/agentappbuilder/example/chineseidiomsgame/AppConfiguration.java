@@ -59,6 +59,7 @@ public class AppConfiguration {
         agentToolsProvider,
         properties.getReActJson().getSystemInstructions(),
         chatMemoryStore,
+        null,
         null);
   }
 }
