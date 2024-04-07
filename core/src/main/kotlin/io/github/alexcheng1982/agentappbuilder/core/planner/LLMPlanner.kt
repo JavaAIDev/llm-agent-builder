@@ -159,7 +159,7 @@ open class LLMPlanner(
     }
 
     override fun toString(): String {
-        return "LLMPlanner(outputParser=$outputParser)"
+        return "LLMPlanner(outputParser=${outputParser.javaClass.simpleName})"
     }
 
     class Builder {

@@ -25,7 +25,14 @@ enum class AgentToolExecutionObservationDocumentation :
         }
     };
 
-    enum class LowCardinalityKeyNames : KeyName
+    enum class LowCardinalityKeyNames : KeyName {
+        TOOL_NAME {
+            override fun asString(): String {
+                return "agent.tool.name"
+            }
+
+        }
+    }
 
     enum class HighCardinalityKeyNames : KeyName {
         TOOL_INPUT {
@@ -41,7 +48,10 @@ enum class AgentToolExecutionObservationDocumentation :
     }
 }
 
-class AgentToolExecutionObservationContext(val input: String) :
+class AgentToolExecutionObservationContext(
+    val toolName: String,
+    val input: String
+) :
     RequestReplySenderContext<String, String>({ _, _, _ ->
         run {}
     }) {
@@ -76,11 +86,18 @@ class DefaultAgentToolExecutionObservationConvention(private val name: String? =
     }
 
     override fun getLowCardinalityKeyValues(context: AgentToolExecutionObservationContext): KeyValues {
-        return KeyValues.empty()
+        return KeyValues.of(toolName(context))
     }
 
     override fun getHighCardinalityKeyValues(context: AgentToolExecutionObservationContext): KeyValues {
         return KeyValues.of(toolInput(context), toolOutput(context))
+    }
+
+    private fun toolName(context: AgentToolExecutionObservationContext): KeyValue {
+        return KeyValue.of(
+            AgentToolExecutionObservationDocumentation.LowCardinalityKeyNames.TOOL_NAME,
+            context.toolName
+        )
     }
 
     private fun toolInput(context: AgentToolExecutionObservationContext): KeyValue {

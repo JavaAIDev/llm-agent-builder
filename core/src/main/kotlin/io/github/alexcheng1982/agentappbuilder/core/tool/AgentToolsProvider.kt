@@ -75,7 +75,7 @@ class AgentToolWrappersProvider(
             registry: ObservationRegistry
         ): String {
             val observationContext =
-                AgentToolExecutionObservationContext(input)
+                AgentToolExecutionObservationContext(name, input)
             val observation =
                 AgentToolExecutionObservationDocumentation.AGENT_TOOL_EXECUTION.observation(
                     null,

@@ -4,7 +4,6 @@ import io.github.alexcheng1982.agentappbuilder.core.executor.AgentExecutor
 import io.github.alexcheng1982.agentappbuilder.core.tool.AgentToolWrappersProvider
 import io.github.alexcheng1982.agentappbuilder.core.tool.AgentToolsProvider
 import io.github.alexcheng1982.agentappbuilder.core.tool.AutoDiscoveredAgentToolsProvider
-import io.micrometer.observation.Observation
 import io.micrometer.observation.ObservationRegistry
 import org.slf4j.LoggerFactory
 
@@ -20,6 +19,7 @@ object AgentFactory {
         observationRegistry: ObservationRegistry? = null,
     ): ChatAgent {
         val executor = createAgentExecutor(
+            name,
             planner,
             agentToolsProvider,
             observationRegistry
@@ -49,6 +49,7 @@ object AgentFactory {
         observationRegistry: ObservationRegistry? = null,
     ): Agent<REQUEST, RESPONSE> {
         val executor = createAgentExecutor(
+            name,
             planner,
             agentToolsProvider,
             observationRegistry
@@ -64,11 +65,13 @@ object AgentFactory {
     }
 
     private fun createAgentExecutor(
+        agentName: String,
         planner: Planner,
         agentToolsProvider: AgentToolsProvider,
         observationRegistry: ObservationRegistry? = null,
     ): AgentExecutor {
         return AgentExecutor(
+            agentName,
             planner,
             AgentToolWrappersProvider(
                 agentToolsProvider,
@@ -106,12 +109,7 @@ object AgentFactory {
                 name(),
                 request
             )
-            val action = { responseFactory(executor.call(request.toMap())) }
-            val response = observationRegistry?.let { registry ->
-                Observation.createNotStarted("agent.execution", registry)
-                    .lowCardinalityKeyValue("agent.name", name())
-                    .observe(action)
-            } ?: action.invoke()
+            val response = responseFactory(executor.call(request.toMap()))
             logger.info(
                 "Finished executing agent [{}] with response [{}]",
                 name(),

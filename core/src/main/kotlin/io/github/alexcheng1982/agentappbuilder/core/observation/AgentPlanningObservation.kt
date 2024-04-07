@@ -63,12 +63,12 @@ class DefaultAgentPlanningObservationConvention(private val name: String? = null
     AgentPlanningObservationConvention {
     private val defaultName = "agent.plan"
 
-    private val toolInputNone: KeyValue = KeyValue.of(
+    private val planningInputNone: KeyValue = KeyValue.of(
         AgentPlanningObservationDocumentation.HighCardinalityKeyNames.PLANNING_INPUT,
         KeyValue.NONE_VALUE
     )
 
-    private val toolOutputNone: KeyValue = KeyValue.of(
+    private val planningResultNone: KeyValue = KeyValue.of(
         AgentPlanningObservationDocumentation.HighCardinalityKeyNames.PLANNING_RESULT,
         KeyValue.NONE_VALUE
     )
@@ -91,7 +91,7 @@ class DefaultAgentPlanningObservationConvention(private val name: String? = null
                 AgentPlanningObservationDocumentation.HighCardinalityKeyNames.PLANNING_INPUT,
                 ObjectToJson.toJson(input)
             )
-        } ?: toolInputNone
+        } ?: planningInputNone
     }
 
     private fun planningResult(context: AgentPlanningObservationContext): KeyValue {
@@ -101,7 +101,7 @@ class DefaultAgentPlanningObservationConvention(private val name: String? = null
                 ObjectToJson.toJson(result)
             )
 
-        } ?: toolOutputNone
+        } ?: planningResultNone
     }
 }
 

@@ -1,6 +1,9 @@
 package io.github.alexcheng1982.agentappbuilder.core.executor
 
 import io.github.alexcheng1982.agentappbuilder.core.*
+import io.github.alexcheng1982.agentappbuilder.core.observation.AgentExecutionObservationContext
+import io.github.alexcheng1982.agentappbuilder.core.observation.AgentExecutionObservationDocumentation
+import io.github.alexcheng1982.agentappbuilder.core.observation.DefaultAgentExecutionObservationConvention
 import io.github.alexcheng1982.agentappbuilder.core.planner.OutputParserException
 import io.github.alexcheng1982.agentappbuilder.core.planner.OutputParserExceptionHandler
 import io.github.alexcheng1982.agentappbuilder.core.planner.ParseResult
@@ -38,6 +41,7 @@ data class NextStep(
 }
 
 data class AgentExecutor(
+    val agentName: String,
     val planner: Planner,
     val nameToToolMap: Map<String, FunctionCallback>,
     val returnIntermediateSteps: Boolean = false,
@@ -48,7 +52,15 @@ data class AgentExecutor(
     val observationRegistry: ObservationRegistry? = null,
 ) {
     private val logger = LoggerFactory.getLogger(javaClass)
-    fun call(inputs: Map<String, Any>): Map<String, Any> {
+
+    fun call(input: Map<String, Any>): Map<String, Any> {
+        val action = { internalCall(input) }
+        return observationRegistry?.let { registry ->
+            instrumentedCall(input, action, registry)
+        } ?: action.invoke()
+    }
+
+    private fun internalCall(input: Map<String, Any>): Map<String, Any> {
         val intermediateSteps = mutableListOf<IntermediateAgentStep>()
         var iterations = 0
         var timeElapsed = 0L
@@ -56,7 +68,7 @@ data class AgentExecutor(
 
         while (shouldContinue(iterations, timeElapsed)) {
             val nextStepOutput =
-                takeNextStep(inputs, nameToToolMap, intermediateSteps)
+                takeNextStep(input, nameToToolMap, intermediateSteps)
             if (nextStepOutput.finish != null) {
                 return returnResult(nextStepOutput.finish, intermediateSteps)
             }
@@ -77,6 +89,34 @@ data class AgentExecutor(
                 intermediateSteps
             )
         return returnResult(output, intermediateSteps)
+    }
+
+    private fun instrumentedCall(
+        input: Map<String, Any>,
+        action: () -> Map<String, Any>,
+        registry: ObservationRegistry
+    ): Map<String, Any> {
+        val observationContext =
+            AgentExecutionObservationContext(agentName, input)
+        val observation =
+            AgentExecutionObservationDocumentation.AGENT_EXECUTION.observation(
+                null,
+                DefaultAgentExecutionObservationConvention(),
+                { observationContext },
+                registry
+            ).start()
+        return try {
+            observation.openScope().use {
+                val response = action.invoke()
+                observationContext.setResponse(response)
+                response
+            }
+        } catch (e: Exception) {
+            observation.error(e)
+            throw e
+        } finally {
+            observation.stop()
+        }
     }
 
     private fun returnResult(
