@@ -49,15 +49,9 @@
       <artifactId>spring-ai-core</artifactId>
     </dependency>
     <dependency>
-      <groupId>cc.vividcode.ai</groupId>
-      <artifactId>agents</artifactId>
-      <version>0.0.2-SNAPSHOT</version>
-      <exclusions>
-        <exclusion>
-          <groupId>org.slf4j</groupId>
-          <artifactId>slf4j-simple</artifactId>
-        </exclusion>
-      </exclusions>
+      <groupId>io.github.alexcheng1982</groupId>
+      <artifactId>spring-ai-dashscope-client</artifactId>
+      <version>0.1.1</version>
     </dependency>
     <dependency>
       <groupId>com.fasterxml.jackson.module</groupId>

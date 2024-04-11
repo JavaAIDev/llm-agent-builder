@@ -1,8 +1,5 @@
 package io.github.alexcheng1982.agentappbuilder.core.planner
 
-import cc.vividcode.ai.agent.dashscope.DashscopeChatClient
-import cc.vividcode.ai.agent.dashscope.DashscopeChatOptions
-import cc.vividcode.ai.agent.dashscope.api.DashscopeModelName
 import io.github.alexcheng1982.agentappbuilder.core.AgentFinish
 import io.github.alexcheng1982.agentappbuilder.core.IntermediateAgentStep
 import io.github.alexcheng1982.agentappbuilder.core.Planner
@@ -19,6 +16,9 @@ import io.github.alexcheng1982.agentappbuilder.core.planner.nofeedback.NoFeedbac
 import io.github.alexcheng1982.agentappbuilder.core.tool.AgentTool
 import io.github.alexcheng1982.agentappbuilder.core.tool.AgentToolsProvider
 import io.github.alexcheng1982.agentappbuilder.core.tool.AutoDiscoveredAgentToolsProvider
+import io.github.alexcheng1982.springai.dashscope.DashscopeChatClient
+import io.github.alexcheng1982.springai.dashscope.DashscopeChatOptions
+import io.github.alexcheng1982.springai.dashscope.api.DashscopeModelName
 import io.micrometer.core.instrument.MeterRegistry
 import io.micrometer.observation.ObservationRegistry
 import org.springframework.ai.chat.ChatClient

@@ -11,7 +11,7 @@
 
   <artifactId>agent-app-builder-spring-integration</artifactId>
   <name>Spring Integration :: Library</name>
-  
+
   <build>
     <sourceDirectory>src/main/kotlin</sourceDirectory>
     <testSourceDirectory>src/test/kotlin</testSourceDirectory>
@@ -33,6 +33,10 @@
     <dependency>
       <groupId>org.springframework.ai</groupId>
       <artifactId>spring-ai-core</artifactId>
+    </dependency>
+    <dependency>
+      <groupId>org.springframework</groupId>
+      <artifactId>spring-webmvc</artifactId>
     </dependency>
     <dependency>
       <groupId>io.github.alexcheng1982</groupId>
