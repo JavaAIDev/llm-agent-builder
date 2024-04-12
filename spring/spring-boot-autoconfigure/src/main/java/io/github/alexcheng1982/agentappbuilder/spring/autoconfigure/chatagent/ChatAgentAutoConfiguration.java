@@ -120,6 +120,7 @@ public class ChatAgentAutoConfiguration {
           properties.getDescription(),
           properties.getUsageInstruction(),
           agentToolsProvider,
+          null,
           observationRegistry);
     }
 

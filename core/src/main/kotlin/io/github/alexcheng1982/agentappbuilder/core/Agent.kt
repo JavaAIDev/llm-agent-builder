@@ -62,6 +62,13 @@ interface AgentRequest {
  */
 interface Agent<in REQUEST : AgentRequest, out RESPONSE> {
     /**
+     * ID of the agent, this is also used as the configuration key.
+     *
+     * Default value is the fully-qualified class name.
+     */
+    fun id(): String = javaClass.name
+
+    /**
      * Name of the agent
      */
     fun name(): String

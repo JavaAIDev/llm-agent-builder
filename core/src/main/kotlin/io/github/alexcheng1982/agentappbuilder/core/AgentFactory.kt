@@ -12,23 +12,26 @@ object AgentFactory {
 
     fun createChatAgent(
         planner: Planner,
-        name: String = "ChatAgent",
-        description: String = "A conversational chat agent",
-        usageInstruction: String = "Ask me anything",
-        agentToolsProvider: AgentToolsProvider = AutoDiscoveredAgentToolsProvider,
+        name: String? = null,
+        description: String? = null,
+        usageInstruction: String? = null,
+        agentToolsProvider: AgentToolsProvider? = null,
+        id: String? = null,
         observationRegistry: ObservationRegistry? = null,
     ): ChatAgent {
+        val defaultName = "ChatAgent"
         val executor = createAgentExecutor(
-            name,
+            name ?: defaultName,
             planner,
-            agentToolsProvider,
+            agentToolsProvider ?: AutoDiscoveredAgentToolsProvider,
             observationRegistry
         )
         return ExecutableChatAgent(
             executor,
-            name,
-            description,
-            usageInstruction,
+            name ?: defaultName,
+            description ?: "A conversational chat agent",
+            usageInstruction ?: "Ask me anything",
+            id,
             observationRegistry,
         ).also {
             logger.info(
@@ -46,6 +49,7 @@ object AgentFactory {
         planner: Planner,
         responseFactory: (Map<String, Any>) -> RESPONSE,
         agentToolsProvider: AgentToolsProvider = AutoDiscoveredAgentToolsProvider,
+        id: String? = null,
         observationRegistry: ObservationRegistry? = null,
     ): Agent<REQUEST, RESPONSE> {
         val executor = createAgentExecutor(
@@ -60,6 +64,7 @@ object AgentFactory {
             usageInstruction,
             executor,
             responseFactory,
+            id,
             observationRegistry,
         )
     }
@@ -87,10 +92,16 @@ object AgentFactory {
         private val usageInstruction: String,
         private val executor: AgentExecutor,
         private val responseFactory: (Map<String, Any>) -> RESPONSE,
+        private val id: String? = null,
         private val observationRegistry: ObservationRegistry? = null,
     ) :
         Agent<REQUEST, RESPONSE> {
         private val logger = LoggerFactory.getLogger(javaClass)
+
+        override fun id(): String {
+            return id ?: super.id()
+        }
+
         override fun name(): String {
             return name
         }
@@ -125,6 +136,7 @@ object AgentFactory {
         name: String,
         description: String,
         usageInstruction: String,
+        id: String? = null,
         observationRegistry: ObservationRegistry? = null,
     ) : ExecutableAgent<ChatAgentRequest, ChatAgentResponse>(
         name,
@@ -132,6 +144,7 @@ object AgentFactory {
         usageInstruction,
         executor,
         ChatAgentResponse::fromMap,
+        id,
         observationRegistry,
     ), ChatAgent
 }

@@ -1,4 +1,4 @@
-package io.github.alexcheng1982.agentappbuilder.core.planner.nofeedback
+package io.github.alexcheng1982.agentappbuilder.core.planner.simple
 
 import io.github.alexcheng1982.agentappbuilder.core.AgentFinish
 import io.github.alexcheng1982.agentappbuilder.core.planner.OutputParser
@@ -9,12 +9,12 @@ import io.github.alexcheng1982.agentappbuilder.core.planner.ParseResult
  *
  * @see AgentFinish
  */
-class NoFeedbackOutputParser : OutputParser {
+class SimpleOutputParser : OutputParser {
     override fun parse(text: String): ParseResult {
         return ParseResult.finishWithText(text)
     }
 
     companion object {
-        val INSTANCE = NoFeedbackOutputParser()
+        val INSTANCE = SimpleOutputParser()
     }
 }

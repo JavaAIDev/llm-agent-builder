@@ -1,4 +1,4 @@
-package io.github.alexcheng1982.agentappbuilder.core.planner.nofeedback
+package io.github.alexcheng1982.agentappbuilder.core.planner.simple
 
 import io.github.alexcheng1982.agentappbuilder.core.planner.LLMPlanner
 import io.github.alexcheng1982.agentappbuilder.core.planner.LLMPlannerFactory
@@ -8,12 +8,12 @@ import org.springframework.core.io.ClassPathResource
 /**
  * Planning without feedback
  */
-object NoFeedbackPlannerFactory : LLMPlannerFactory() {
+object SimplePlannerFactory : LLMPlannerFactory() {
     override fun defaultBuilder(): LLMPlanner.Builder {
         return LLMPlanner.Builder()
-            .withUserPromptTemplate(PromptTemplate(ClassPathResource("prompts/no-feedback/user.st")))
-            .withSystemPromptTemplate(PromptTemplate(ClassPathResource("prompts/no-feedback/system.st")))
-            .withOutputParser(NoFeedbackOutputParser.INSTANCE)
+            .withUserPromptTemplate(PromptTemplate(ClassPathResource("prompts/simple/user.st")))
+            .withSystemPromptTemplate(PromptTemplate(ClassPathResource("prompts/simple/system.st")))
+            .withOutputParser(SimpleOutputParser.INSTANCE)
             .withSystemInstruction("You are a helpful assistant.")
     }
 }

@@ -15,6 +15,7 @@
     <module>examples</module>
     <module>tools</module>
     <module>tool-builders</module>
+    <module>launchers</module>
   </modules>
 
   <properties>

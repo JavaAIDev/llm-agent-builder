@@ -7,12 +7,13 @@ import io.github.alexcheng1982.agentappbuilder.core.chatmemory.ChatMemory
 import io.github.alexcheng1982.agentappbuilder.core.chatmemory.ChatMemoryProvider
 import io.github.alexcheng1982.agentappbuilder.core.chatmemory.ChatMemoryStore
 import io.github.alexcheng1982.agentappbuilder.core.chatmemory.MessageWindowChatMemory
+import io.github.alexcheng1982.agentappbuilder.core.config.AgentConfig
 import io.github.alexcheng1982.agentappbuilder.core.executor.ActionPlanningResult
 import io.github.alexcheng1982.agentappbuilder.core.observation.AgentPlanningObservationContext
 import io.github.alexcheng1982.agentappbuilder.core.observation.AgentPlanningObservationDocumentation
 import io.github.alexcheng1982.agentappbuilder.core.observation.DefaultAgentPlanningObservationConvention
 import io.github.alexcheng1982.agentappbuilder.core.observation.InstrumentedChatClient
-import io.github.alexcheng1982.agentappbuilder.core.planner.nofeedback.NoFeedbackOutputParser
+import io.github.alexcheng1982.agentappbuilder.core.planner.simple.SimpleOutputParser
 import io.github.alexcheng1982.agentappbuilder.core.tool.AgentTool
 import io.github.alexcheng1982.agentappbuilder.core.tool.AgentToolsProvider
 import io.github.alexcheng1982.agentappbuilder.core.tool.AutoDiscoveredAgentToolsProvider
@@ -165,7 +166,7 @@ open class LLMPlanner(
     class Builder {
         private lateinit var chatClient: ChatClient
         private var toolsProvider: AgentToolsProvider? = null
-        private var outputParser: OutputParser = NoFeedbackOutputParser.INSTANCE
+        private var outputParser: OutputParser = SimpleOutputParser.INSTANCE
         private var observationRegistry: ObservationRegistry? = null
         private var meterRegistry: MeterRegistry? = null
         private var userPromptTemplate: PromptTemplate =
@@ -261,6 +262,22 @@ open class LLMPlanner(
 
 abstract class LLMPlannerFactory {
     abstract fun defaultBuilder(): LLMPlanner.Builder
+
+    fun create(agentConfig: AgentConfig): LLMPlanner {
+        val (chatClient) = agentConfig.llmConfig
+        val (_, systemInstruction) = agentConfig.plannerConfig
+        val (agentToolsProvider) = agentConfig.toolsConfig
+        val (chatMemoryStore) = agentConfig.memoryConfig
+        val (observationRegistry, meterRegistry) = agentConfig.observationConfig
+        return create(
+            chatClient,
+            agentToolsProvider,
+            systemInstruction,
+            chatMemoryStore,
+            observationRegistry,
+            meterRegistry
+        )
+    }
 
     fun create(
         chatClient: ChatClient,

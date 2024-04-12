@@ -1,7 +1,7 @@
 package io.github.alexcheng1982.agentappbuilder.example.universities;
 
 import io.github.alexcheng1982.agentappbuilder.core.Planner;
-import io.github.alexcheng1982.agentappbuilder.core.planner.nofeedback.NoFeedbackPlannerFactory;
+import io.github.alexcheng1982.agentappbuilder.core.planner.simple.SimplePlannerFactory;
 import io.github.alexcheng1982.agentappbuilder.core.tool.AgentToolsProvider;
 import io.github.alexcheng1982.agentappbuilder.spring.AgentToolFunctionCallbackContext;
 import io.github.alexcheng1982.agentappbuilder.spring.agentcontroller.AgentControllerConfiguration;
@@ -56,7 +56,7 @@ public class AppConfiguration {
   public Planner agentPlanner(ChatClient chatClient,
       AgentToolsProvider agentToolsProvider,
       ObservationRegistry observationRegistry) {
-    return NoFeedbackPlannerFactory.INSTANCE.create(
+    return SimplePlannerFactory.INSTANCE.create(
         chatClient,
         agentToolsProvider,
         null,
