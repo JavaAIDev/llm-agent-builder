@@ -1,0 +1,112 @@
+[
+  {
+    "name": "io.github.alexcheng1982.agentappbuilder.core.AgentInfo",
+    "allDeclaredFields": true,
+    "queryAllDeclaredMethods": true,
+    "queryAllDeclaredConstructors": true,
+    "methods": [
+      {
+        "name": "<init>",
+        "parameterTypes": [
+          "java.lang.String",
+          "java.lang.String",
+          "java.lang.String",
+          "java.lang.String",
+          "java.util.List"
+        ]
+      },
+      {
+        "name": "getDescription",
+        "parameterTypes": []
+      },
+      {
+        "name": "getId",
+        "parameterTypes": []
+      },
+      {
+        "name": "getName",
+        "parameterTypes": []
+      },
+      {
+        "name": "getTools",
+        "parameterTypes": []
+      },
+      {
+        "name": "getUsageInstruction",
+        "parameterTypes": []
+      }
+    ]
+  },
+  {
+    "name": "io.github.alexcheng1982.agentappbuilder.core.AgentRequest",
+    "queryAllDeclaredMethods": true
+  },
+  {
+    "name": "io.github.alexcheng1982.agentappbuilder.core.AgentToolInfo",
+    "allDeclaredFields": true,
+    "queryAllDeclaredMethods": true,
+    "queryAllDeclaredConstructors": true,
+    "methods": [
+      {
+        "name": "<init>",
+        "parameterTypes": [
+          "java.lang.String",
+          "java.lang.String"
+        ]
+      },
+      {
+        "name": "getDescription",
+        "parameterTypes": []
+      },
+      {
+        "name": "getName",
+        "parameterTypes": []
+      }
+    ]
+  },
+  {
+    "name": "io.github.alexcheng1982.agentappbuilder.core.ChatAgentRequest",
+    "allDeclaredFields": true,
+    "queryAllDeclaredMethods": true,
+    "queryAllDeclaredConstructors": true,
+    "methods": [
+      {
+        "name": "<init>",
+        "parameterTypes": [
+          "java.lang.String",
+          "java.lang.String"
+        ]
+      },
+      {
+        "name": "<init>",
+        "parameterTypes": [
+          "java.lang.String",
+          "java.lang.String",
+          "int",
+          "kotlin.jvm.internal.DefaultConstructorMarker"
+        ]
+      }
+    ]
+  },
+  {
+    "name": "io.github.alexcheng1982.agentappbuilder.core.ChatAgentResponse",
+    "allDeclaredFields": true,
+    "queryAllDeclaredMethods": true,
+    "queryAllDeclaredConstructors": true,
+    "methods": [
+      {
+        "name": "<init>",
+        "parameterTypes": [
+          "java.lang.String"
+        ]
+      },
+      {
+        "name": "getOutput",
+        "parameterTypes": []
+      }
+    ]
+  },
+  {
+    "name": "io.github.alexcheng1982.agentappbuilder.core.ChatAgentResponse$Companion"
+  }
+]

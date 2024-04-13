@@ -1,0 +1,81 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project xmlns="http://maven.apache.org/POM/4.0.0"
+  xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+  xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+  <modelVersion>4.0.0</modelVersion>
+  <parent>
+    <groupId>io.github.alexcheng1982</groupId>
+    <artifactId>agent-app-builder-examples</artifactId>
+    <version>0.1.0-SNAPSHOT</version>
+  </parent>
+
+  <artifactId>agent-builder-example-simple-http-sync</artifactId>
+  <name>Example :: Simple HTTP Sync</name>
+
+  <dependencies>
+    <dependency>
+      <groupId>io.github.alexcheng1982</groupId>
+      <artifactId>agent-builder-launcher-jdk-http-sync</artifactId>
+      <version>${project.version}</version>
+    </dependency>
+  </dependencies>
+
+  <build>
+    <sourceDirectory>src/main/kotlin</sourceDirectory>
+    <testSourceDirectory>src/test/kotlin</testSourceDirectory>
+    <plugins>
+      <plugin>
+        <groupId>org.jetbrains.kotlin</groupId>
+        <artifactId>kotlin-maven-plugin</artifactId>
+      </plugin>
+      <plugin>
+        <groupId>org.apache.maven.plugins</groupId>
+        <artifactId>maven-jar-plugin</artifactId>
+        <configuration>
+          <archive>
+            <manifest>
+              <mainClass>
+                io.github.alexcheng1982.agentbuilder.example.simplehttpsync.SimpleHttpSyncMainKt
+              </mainClass>
+            </manifest>
+          </archive>
+        </configuration>
+      </plugin>
+    </plugins>
+  </build>
+
+  <profiles>
+    <profile>
+      <id>native</id>
+      <build>
+        <plugins>
+          <plugin>
+            <groupId>org.graalvm.buildtools</groupId>
+            <artifactId>native-maven-plugin</artifactId>
+            <version>0.9.28</version>
+            <configuration>
+              <metadataRepository>
+                <enabled>true</enabled>
+              </metadataRepository>
+              <requiredVersion>22.3</requiredVersion>
+              <buildArgs>
+                <buildArg>-H:-CheckToolchain</buildArg>
+                <buildArg>-H:+UnlockExperimentalVMOptions</buildArg>
+                <buildArg>-march=native</buildArg>
+              </buildArgs>
+            </configuration>
+            <executions>
+              <execution>
+                <id>add-reachability-metadata</id>
+                <goals>
+                  <goal>add-reachability-metadata</goal>
+                </goals>
+              </execution>
+            </executions>
+          </plugin>
+        </plugins>
+      </build>
+    </profile>
+  </profiles>
+
+</project>

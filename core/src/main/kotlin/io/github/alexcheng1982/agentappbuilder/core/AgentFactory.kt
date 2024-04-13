@@ -96,7 +96,7 @@ object AgentFactory {
         private val observationRegistry: ObservationRegistry? = null,
     ) :
         Agent<REQUEST, RESPONSE> {
-        private val logger = LoggerFactory.getLogger(javaClass)
+        private val logger = LoggerFactory.getLogger("AgentExecutor")
 
         override fun id(): String {
             return id ?: super.id()

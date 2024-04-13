@@ -5,12 +5,19 @@ import com.sun.net.httpserver.HttpExchange
 import com.sun.net.httpserver.HttpHandler
 import io.github.alexcheng1982.agentappbuilder.core.ChatAgent
 import io.github.alexcheng1982.agentappbuilder.core.ChatAgentRequest
+import org.slf4j.LoggerFactory
 
 class ChatAgentHandler(
     private val objectMapper: ObjectMapper,
     private val chatAgent: ChatAgent,
 ) : HttpHandler {
+    private val logger = LoggerFactory.getLogger(javaClass)
+
     override fun handle(exchange: HttpExchange) {
+        if (exchange.requestMethod != "POST") {
+            writeResponse(exchange, 405, "Media type not allowed", "text/plain")
+            return
+        }
         try {
             val request = exchange.requestBody.use {
                 JsonUtil.fromJson(
@@ -24,14 +31,22 @@ class ChatAgentHandler(
                 val json = JsonUtil.toJson(response, objectMapper)
                 writeResponse(exchange, 200, json)
             } catch (e: Exception) {
-                writeResponse(exchange, 500, "Internal error")
+                logger.error("Failed to call agent", e)
+                writeResponse(exchange, 500, "Internal error", "text/plain")
             }
         } catch (e: Exception) {
-            writeResponse(exchange, 200, "Invalid request data")
+            logger.error("Failed to parse request", e)
+            writeResponse(exchange, 400, "Invalid request data", "text/plain")
         }
     }
 
-    private fun writeResponse(exchange: HttpExchange, code: Int, response: String) {
+    private fun writeResponse(
+        exchange: HttpExchange,
+        code: Int,
+        response: String,
+        contentType: String = "application/json"
+    ) {
+        exchange.responseHeaders.add("Content-Type", contentType)
         exchange.sendResponseHeaders(code, response.length.toLong())
         exchange.responseBody.use {
             it.write(response.toByteArray())
