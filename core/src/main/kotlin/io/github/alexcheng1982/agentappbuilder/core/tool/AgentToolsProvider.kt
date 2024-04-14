@@ -18,7 +18,7 @@ interface AgentToolsProvider : Supplier<Map<String, AgentTool<*, *>>>
 
 class AgentToolWrappersProvider(
     private val agentToolsProvider: AgentToolsProvider,
-    private val observationRegistry: ObservationRegistry? = null
+    private val observationRegistry: ObservationRegistry? = null,
 ) :
     Supplier<Map<String, FunctionCallback>> {
     override fun get(): Map<String, FunctionCallback> {

@@ -1,6 +1,7 @@
 package io.github.alexcheng1982.agentappbuilder.core
 
 import io.github.alexcheng1982.agentappbuilder.core.executor.ActionPlanningResult
+import java.util.*
 
 sealed interface Plannable
 
@@ -62,11 +63,12 @@ interface AgentRequest {
  */
 interface Agent<in REQUEST : AgentRequest, out RESPONSE> {
     /**
-     * ID of the agent, this is also used as the configuration key.
+     * ID of the agent
      *
-     * Default value is the fully-qualified class name.
+     * Default value is the agent name with a unique suffix.
      */
-    fun id(): String = javaClass.name
+    fun id(): String =
+        name() + "_" + UUID.randomUUID().toString().replace("-", "")
 
     /**
      * Name of the agent

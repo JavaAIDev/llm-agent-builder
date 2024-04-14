@@ -1,15 +1,18 @@
 # Simple ChatAgent UI
 
-A simple UI created with [streamlit](https://streamlit.io/).
+A simple ChatAgent UI created with [streamlit](https://streamlit.io/).
 
-Install requirements.
+1. Install requirements.
 
 ```shell
 pip install -r requirements.txt
 ```
 
-Run the app.
+2. Run the app.
 
 ```shell
 streamlit run ChatAgentUI.py
 ```
+
+3. Chat with the agent
+
