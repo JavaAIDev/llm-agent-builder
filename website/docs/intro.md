@@ -2,5 +2,5 @@
 sidebar_position: 1
 ---
 
-# Tutorial
+# LLM Agent Builder
 
