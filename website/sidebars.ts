@@ -6,7 +6,7 @@ const sidebars: SidebarsConfig = {
   memory: ["memory/intro"],
   tools: ["tools/intro"],
   observation: ["observation/intro"],
-  "native-image": ["native-image/intro"],
+  "build-deploy": ["build-deploy/intro"],
 };
 
 export default sidebars;

@@ -93,9 +93,9 @@ const config: Config = {
         },
         {
           type: "docSidebar",
-          sidebarId: "native-image",
+          sidebarId: "build-deploy",
           position: "left",
-          label: "Native Image",
+          label: "Build & Deploy",
         },
         { to: "/blog", label: "Blog", position: "left" },
         {

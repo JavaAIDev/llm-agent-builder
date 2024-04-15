@@ -51,10 +51,10 @@ const FeatureList: FeatureItem[] = [
     description: <>Observation support, tracing and metrics</>,
   },
   {
-    title: "Native Image",
+    title: "Build & Deploy",
     image: <BoltIcon sx={iconSx} />,
-    link: "/docs/native-image/intro",
-    description: <>GraalVM Native Image</>,
+    link: "/docs/build-deploy/intro",
+    description: <>Build & Deploy agents</>,
   },
 ];
 
