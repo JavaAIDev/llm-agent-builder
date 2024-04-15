@@ -4,7 +4,7 @@ import type * as Preset from "@docusaurus/preset-classic";
 
 const config: Config = {
   title: "LLM Agent Builder",
-  tagline: "From Zero to Production",
+  tagline: "LLM Agent Powered by Java / Spring AI",
   favicon: "img/favicon.ico",
 
   // Set the production url of your site here
@@ -48,19 +48,54 @@ const config: Config = {
   ],
 
   themeConfig: {
-    image: "img/docusaurus-social-card.jpg",
+    metadata: [
+      {
+        name: "keywords",
+        content: "java, llm, llm-agent, spring-ai, spring-boot",
+      },
+    ],
     navbar: {
       title: "LLM Agent Builder",
       logo: {
         alt: "LLM Agent Builder",
-        src: "img/logo.svg",
+        src: "img/logo.png",
       },
       items: [
         {
           type: "docSidebar",
-          sidebarId: "tutorialSidebar",
+          sidebarId: "quickstart",
           position: "left",
-          label: "Tutorial",
+          label: "Quick Start",
+        },
+        {
+          type: "docSidebar",
+          sidebarId: "planner",
+          position: "left",
+          label: "Planner",
+        },
+        {
+          type: "docSidebar",
+          sidebarId: "memory",
+          position: "left",
+          label: "Memory",
+        },
+        {
+          type: "docSidebar",
+          sidebarId: "tools",
+          position: "left",
+          label: "Tools",
+        },
+        {
+          type: "docSidebar",
+          sidebarId: "observation",
+          position: "left",
+          label: "Observation",
+        },
+        {
+          type: "docSidebar",
+          sidebarId: "native-image",
+          position: "left",
+          label: "Native Image",
         },
         { to: "/blog", label: "Blog", position: "left" },
         {
@@ -77,8 +112,8 @@ const config: Config = {
           title: "Docs",
           items: [
             {
-              label: "Tutorial",
-              to: "/docs/intro",
+              label: "Quick Start",
+              to: "/docs/quickstart/intro",
             },
           ],
         },
@@ -105,6 +140,7 @@ const config: Config = {
     prism: {
       theme: prismThemes.github,
       darkTheme: prismThemes.dracula,
+      additionalLanguages: ["java", "kotlin"],
     },
   } satisfies Preset.ThemeConfig,
 };

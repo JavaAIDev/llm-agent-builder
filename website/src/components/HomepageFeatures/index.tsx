@@ -1,54 +1,73 @@
-import clsx from 'clsx';
-import Heading from '@theme/Heading';
-import styles from './styles.module.css';
+import Link from "@docusaurus/Link";
+import BoltIcon from "@mui/icons-material/Bolt";
+import HandymanIcon from "@mui/icons-material/Handyman";
+import MemoryIcon from "@mui/icons-material/Memory";
+import PreviewIcon from "@mui/icons-material/Preview";
+import PsychologyIcon from "@mui/icons-material/Psychology";
+import RocketLaunchIcon from "@mui/icons-material/RocketLaunch";
+import clsx from "clsx";
+import styles from "./styles.module.css";
 
 type FeatureItem = {
   title: string;
-  Svg: React.ComponentType<React.ComponentProps<'svg'>>;
+  image: JSX.Element;
+  link: string;
   description: JSX.Element;
+};
+
+const iconSx = {
+  fontSize: 120,
 };
 
 const FeatureList: FeatureItem[] = [
   {
-    title: 'Easy to Use',
-    Svg: require('@site/static/img/undraw_docusaurus_mountain.svg').default,
-    description: (
-      <>
-        Docusaurus was designed from the ground up to be easily installed and
-        used to get your website up and running quickly.
-      </>
-    ),
+    title: "Quick Start",
+    image: <RocketLaunchIcon sx={iconSx} />,
+    link: "/docs/quickstart/intro",
+    description: <>Quick start with Spring Boot</>,
   },
   {
-    title: 'Focus on What Matters',
-    Svg: require('@site/static/img/undraw_docusaurus_tree.svg').default,
-    description: (
-      <>
-        Docusaurus lets you focus on your docs, and we&apos;ll do the chores. Go
-        ahead and move your docs into the <code>docs</code> directory.
-      </>
-    ),
+    title: "Planner",
+    image: <PsychologyIcon sx={iconSx} />,
+    link: "/docs/planner/intro",
+    description: <>Built-in planners: Simple, ReAct, Structured chat</>,
   },
   {
-    title: 'Powered by React',
-    Svg: require('@site/static/img/undraw_docusaurus_react.svg').default,
-    description: (
-      <>
-        Extend or customize your website layout by reusing React. Docusaurus can
-        be extended while reusing the same header and footer.
-      </>
-    ),
+    title: "Chat Memory",
+    image: <MemoryIcon sx={iconSx} />,
+    link: "/docs/memory/intro",
+    description: <>Chat memory as message history</>,
+  },
+  {
+    title: "Tools",
+    image: <HandymanIcon sx={iconSx} />,
+    link: "/docs/tools/intro",
+    description: <>Agent tools</>,
+  },
+  {
+    title: "Observation",
+    image: <PreviewIcon sx={iconSx} />,
+    link: "/docs/observation/intro",
+    description: <>Observation support, tracing and metrics</>,
+  },
+  {
+    title: "Native Image",
+    image: <BoltIcon sx={iconSx} />,
+    link: "/docs/native-image/intro",
+    description: <>GraalVM Native Image</>,
   },
 ];
 
-function Feature({title, Svg, description}: FeatureItem) {
+function Feature({ title, link, image, description }: FeatureItem) {
   return (
-    <div className={clsx('col col--4')}>
+    <div className={clsx("col col--4")}>
       <div className="text--center">
-        <Svg className={styles.featureSvg} role="img" />
+        <Link to={link}>{image}</Link>
       </div>
       <div className="text--center padding-horiz--md">
-        <Heading as="h3">{title}</Heading>
+        <Link to={link}>
+          <h1>{title}</h1>
+        </Link>
         <p>{description}</p>
       </div>
     </div>
