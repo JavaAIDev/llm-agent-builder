@@ -1,4 +1,4 @@
-package io.github.alexcheng1982.agentappbuilder.core.planner
+package io.github.alexcheng1982.llmagentbuilder.core.planner
 
 import org.junit.jupiter.api.Assertions.assertEquals
 import org.junit.jupiter.api.Assertions.assertNotNull

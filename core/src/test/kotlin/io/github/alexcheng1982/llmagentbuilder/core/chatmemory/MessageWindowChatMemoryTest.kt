@@ -1,4 +1,4 @@
-package io.github.alexcheng1982.agentappbuilder.core.chatmemory
+package io.github.alexcheng1982.llmagentbuilder.core.chatmemory
 
 import org.junit.jupiter.api.Assertions.assertEquals
 import org.junit.jupiter.api.Assertions.assertTrue
@@ -22,7 +22,8 @@ class MessageWindowChatMemoryTest {
 
     @Test
     fun testMessagesLimit() {
-        val memory = MessageWindowChatMemory(InMemoryChatMemoryStore(), "test", 3)
+        val memory =
+            MessageWindowChatMemory(InMemoryChatMemoryStore(), "test", 3)
         memory.add(UserMessage("1"))
         memory.add(SystemMessage("2"))
         memory.add(UserMessage("3"))

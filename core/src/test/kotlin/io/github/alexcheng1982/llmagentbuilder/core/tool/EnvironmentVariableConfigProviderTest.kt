@@ -1,6 +1,5 @@
-package io.github.alexcheng1982.agentappbuilder.core.tool
+package io.github.alexcheng1982.llmagentbuilder.core.tool
 
-import io.github.alexcheng1982.llmagentbuilder.core.tool.EnvironmentVariableConfigProvider
 import org.junit.jupiter.api.Test
 import org.junit.jupiter.api.extension.ExtendWith
 import uk.org.webcompere.systemstubs.SystemStubs.withEnvironmentVariable

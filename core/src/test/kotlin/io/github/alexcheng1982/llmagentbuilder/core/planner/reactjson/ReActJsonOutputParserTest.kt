@@ -1,4 +1,4 @@
-package io.github.alexcheng1982.agentappbuilder.core.planner.reactjson
+package io.github.alexcheng1982.llmagentbuilder.core.planner.reactjson
 
 import org.junit.jupiter.api.Test
 import kotlin.test.assertNotNull
