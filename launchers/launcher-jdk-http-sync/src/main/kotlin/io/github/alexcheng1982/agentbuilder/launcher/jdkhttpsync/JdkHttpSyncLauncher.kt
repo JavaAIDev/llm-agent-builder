@@ -46,7 +46,7 @@ class JdkHttpSyncLauncher {
             ObjectMapper().registerModule(KotlinModule.Builder().build())
         val chatAgent = ConfiguredAgentFactory.createChatAgent(agentConfig)
         val agentToolsProvider =
-            agentConfig.toolsConfig.agentToolsProvider
+            agentConfig.toolsConfig().agentToolsProvider
                 ?: AutoDiscoveredAgentToolsProvider
 
         val (chatAgentPath, agentInfoPath) = launchOptions.pathOptions

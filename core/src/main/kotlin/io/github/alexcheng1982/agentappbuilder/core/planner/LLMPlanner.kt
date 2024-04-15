@@ -7,7 +7,7 @@ import io.github.alexcheng1982.agentappbuilder.core.chatmemory.ChatMemory
 import io.github.alexcheng1982.agentappbuilder.core.chatmemory.ChatMemoryProvider
 import io.github.alexcheng1982.agentappbuilder.core.chatmemory.ChatMemoryStore
 import io.github.alexcheng1982.agentappbuilder.core.chatmemory.MessageWindowChatMemory
-import io.github.alexcheng1982.agentappbuilder.core.config.*
+import io.github.alexcheng1982.agentappbuilder.core.config.AgentConfig
 import io.github.alexcheng1982.agentappbuilder.core.executor.ActionPlanningResult
 import io.github.alexcheng1982.agentappbuilder.core.observation.AgentPlanningObservationContext
 import io.github.alexcheng1982.agentappbuilder.core.observation.AgentPlanningObservationDocumentation
@@ -265,12 +265,10 @@ abstract class LLMPlannerFactory {
 
     fun create(agentConfig: AgentConfig): LLMPlanner {
         val (chatClient) = agentConfig.llmConfig
-        val (_, systemInstruction) = agentConfig.plannerConfig
-            ?: PlannerConfig()
-        val (agentToolsProvider) = agentConfig.toolsConfig ?: ToolsConfig()
-        val (chatMemoryStore) = agentConfig.memoryConfig ?: MemoryConfig()
-        val (observationRegistry, meterRegistry) = agentConfig.observationConfig
-            ?: ObservationConfig()
+        val (_, systemInstruction) = agentConfig.plannerConfig()
+        val (agentToolsProvider) = agentConfig.toolsConfig()
+        val (chatMemoryStore) = agentConfig.memoryConfig()
+        val (observationRegistry, meterRegistry) = agentConfig.observationConfig()
         return create(
             chatClient,
             agentToolsProvider,

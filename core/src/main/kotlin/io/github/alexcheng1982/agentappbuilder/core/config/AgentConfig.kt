@@ -74,4 +74,9 @@ class AgentConfig(
     val memoryConfig: MemoryConfig? = null,
     val observationConfig: ObservationConfig? = null,
 ) {
+    fun metadataConfig() = metadataConfig ?: MetadataConfig()
+    fun plannerConfig() = plannerConfig ?: PlannerConfig()
+    fun toolsConfig() = toolsConfig ?: ToolsConfig()
+    fun memoryConfig() = memoryConfig ?: MemoryConfig()
+    fun observationConfig() = observationConfig ?: ObservationConfig()
 }
