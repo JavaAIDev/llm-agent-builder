@@ -6,11 +6,12 @@
   <parent>
     <groupId>io.github.alexcheng1982</groupId>
     <artifactId>agent-builder-launchers</artifactId>
-    <version>0.1.0-SNAPSHOT</version>
+    <version>0.0.9</version>
   </parent>
 
   <artifactId>agent-builder-launcher-jdk-http-sync</artifactId>
   <name>Agent Launcher :: JDK HTTP Sync</name>
+  <description>Agent Launcher :: JDK HTTP Sync</description>
 
   <properties>
     <java.version>21</java.version>

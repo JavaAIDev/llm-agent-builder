@@ -6,7 +6,7 @@
   <parent>
     <groupId>io.github.alexcheng1982</groupId>
     <artifactId>llm-agent-builder</artifactId>
-    <version>0.1.0-SNAPSHOT</version>
+    <version>0.0.9</version>
   </parent>
 
   <artifactId>agent-builder-launchers</artifactId>
