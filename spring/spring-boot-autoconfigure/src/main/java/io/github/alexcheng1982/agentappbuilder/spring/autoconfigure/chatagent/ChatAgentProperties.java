@@ -7,6 +7,8 @@ public class ChatAgentProperties {
 
   private boolean enabled = true;
 
+  private String id = null;
+
   private String name = "ChatAgent";
 
   private String description = "A conversational chat agent";
@@ -17,12 +19,24 @@ public class ChatAgentProperties {
 
   private Memory memory = new Memory();
 
+  private Tracing tracing = new Tracing();
+
+  private Metrics metrics = new Metrics();
+
   public boolean isEnabled() {
     return enabled;
   }
 
   public void setEnabled(boolean enabled) {
     this.enabled = enabled;
+  }
+
+  public String getId() {
+    return id;
+  }
+
+  public void setId(String id) {
+    this.id = id;
   }
 
   public String getName() {
@@ -66,6 +80,32 @@ public class ChatAgentProperties {
     this.memory = memory;
   }
 
+  public Tracing getTracing() {
+    return tracing;
+  }
+
+  public void setTracing(
+      Tracing tracing) {
+    this.tracing = tracing;
+  }
+
+  public Metrics getMetrics() {
+    return metrics;
+  }
+
+  public void setMetrics(
+      Metrics metrics) {
+    this.metrics = metrics;
+  }
+
+  public boolean tracingEnabled() {
+    return tracing == null || tracing.isEnabled();
+  }
+
+  public boolean metricsEnabled() {
+    return metrics == null || metrics.isEnabled();
+  }
+
   public static class ReActJson {
 
     private String systemInstructions;
@@ -80,6 +120,32 @@ public class ChatAgentProperties {
   }
 
   public static class Memory {
+
+    private boolean enabled = true;
+
+    public boolean isEnabled() {
+      return enabled;
+    }
+
+    public void setEnabled(boolean enabled) {
+      this.enabled = enabled;
+    }
+  }
+
+  public static class Tracing {
+
+    private boolean enabled = true;
+
+    public boolean isEnabled() {
+      return enabled;
+    }
+
+    public void setEnabled(boolean enabled) {
+      this.enabled = enabled;
+    }
+  }
+
+  public static class Metrics {
 
     private boolean enabled = true;
 

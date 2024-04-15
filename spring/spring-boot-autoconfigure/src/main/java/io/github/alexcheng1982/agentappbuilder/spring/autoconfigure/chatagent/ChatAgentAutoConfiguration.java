@@ -17,7 +17,7 @@ import io.micrometer.core.instrument.MeterRegistry;
 import io.micrometer.core.instrument.simple.SimpleMeterRegistry;
 import io.micrometer.observation.ObservationRegistry;
 import java.util.List;
-import org.apache.commons.lang3.StringUtils;
+import java.util.Optional;
 import org.springframework.ai.autoconfigure.ollama.OllamaAutoConfiguration;
 import org.springframework.ai.autoconfigure.openai.OpenAiAutoConfiguration;
 import org.springframework.ai.chat.ChatClient;
@@ -62,47 +62,33 @@ public class ChatAgentAutoConfiguration {
 
     @Bean
     @ConditionalOnMissingBean
-    @ConditionalOnBean(ChatMemoryStore.class)
-    public Planner plannerWithMemory(ChatClient chatClient,
-        ChatMemoryStore chatMemoryStore,
+    public Planner planner(ChatClient chatClient,
+        Optional<ChatMemoryStore> chatMemoryStore,
         AgentToolsProvider agentToolsProvider,
-        ObservationRegistry observationRegistry,
-        MeterRegistry meterRegistry) {
+        Optional<ObservationRegistry> observationRegistry,
+        Optional<MeterRegistry> meterRegistry) {
       return ReActJsonPlannerFactory.INSTANCE.create(
           chatClient,
           agentToolsProvider,
           properties.getReActJson().getSystemInstructions(),
-          chatMemoryStore,
-          observationRegistry,
-          meterRegistry
+          chatMemoryStore.orElse(null),
+          properties.tracingEnabled() ? observationRegistry.orElse(null)
+              : null,
+          properties.metricsEnabled() ? meterRegistry.orElse(null)
+              : null
       );
     }
 
     @Bean
-    @ConditionalOnMissingBean({Planner.class, ChatMemoryStore.class})
-    public Planner plannerWithoutMemory(ChatClient chatClient,
-        AgentToolsProvider agentToolsProvider,
-        ObservationRegistry observationRegistry,
-        MeterRegistry meterRegistry) {
-      return ReActJsonPlannerFactory.INSTANCE.create(
-          chatClient,
-          agentToolsProvider,
-          StringUtils.trimToNull(
-              properties.getReActJson().getSystemInstructions()),
-          null,
-          observationRegistry,
-          meterRegistry
-      );
-    }
-
-    @Bean
+    @ConditionalOnProperty(prefix = "io.github.alexcheng1982.agentappbuilder.chatagent.tracing", name = "enabled", matchIfMissing = true)
     @ConditionalOnBean(Planner.class)
     @ConditionalOnMissingBean
     public ObservationRegistry observationRegistry() {
-      return ObservationRegistry.NOOP;
+      return ObservationRegistry.create();
     }
 
     @Bean
+    @ConditionalOnProperty(prefix = "io.github.alexcheng1982.agentappbuilder.chatagent.metrics", name = "enabled", matchIfMissing = true)
     @ConditionalOnBean(Planner.class)
     @ConditionalOnMissingBean
     public MeterRegistry meterRegistry() {
@@ -113,15 +99,16 @@ public class ChatAgentAutoConfiguration {
     @ConditionalOnBean(Planner.class)
     public ChatAgent chatAgent(Planner planner,
         AgentToolsProvider agentToolsProvider,
-        ObservationRegistry observationRegistry) {
+        Optional<ObservationRegistry> observationRegistry) {
       return AgentFactory.INSTANCE.createChatAgent(
           planner,
           properties.getName(),
           properties.getDescription(),
           properties.getUsageInstruction(),
           agentToolsProvider,
-          null,
-          observationRegistry);
+          properties.getId(),
+          properties.tracingEnabled() ? observationRegistry.orElse(null)
+              : null);
     }
 
     @Bean
@@ -134,10 +121,11 @@ public class ChatAgentAutoConfiguration {
     @ConditionalOnMissingBean
     public FunctionCallbackContext springAiFunctionManager(
         AgentToolsProvider agentToolsProvider,
-        ObservationRegistry observationRegistry,
+        Optional<ObservationRegistry> observationRegistry,
         ApplicationContext context) {
       var manager = new AgentToolFunctionCallbackContext(agentToolsProvider,
-          observationRegistry);
+          properties.tracingEnabled() ? observationRegistry.orElse(null)
+              : null);
       manager.setApplicationContext(context);
       return manager;
     }

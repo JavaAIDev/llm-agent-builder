@@ -68,10 +68,10 @@ data class ObservationConfig(
 
 class AgentConfig(
     val llmConfig: LLMConfig,
-    val metadataConfig: MetadataConfig = MetadataConfig(),
-    val plannerConfig: PlannerConfig = PlannerConfig(),
-    val toolsConfig: ToolsConfig = ToolsConfig(),
-    val memoryConfig: MemoryConfig = MemoryConfig(),
-    val observationConfig: ObservationConfig = ObservationConfig(),
+    val metadataConfig: MetadataConfig? = null,
+    val plannerConfig: PlannerConfig? = null,
+    val toolsConfig: ToolsConfig? = null,
+    val memoryConfig: MemoryConfig? = null,
+    val observationConfig: ObservationConfig? = null,
 ) {
 }
