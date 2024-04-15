@@ -5,7 +5,7 @@
   <modelVersion>4.0.0</modelVersion>
   <parent>
     <groupId>io.github.alexcheng1982</groupId>
-    <artifactId>agent-builder-launchers</artifactId>
+    <artifactId>llm-agent-builder-launchers</artifactId>
     <version>0.0.9</version>
   </parent>
 
