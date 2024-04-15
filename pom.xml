@@ -5,15 +5,13 @@
   <modelVersion>4.0.0</modelVersion>
 
   <groupId>io.github.alexcheng1982</groupId>
-  <artifactId>agent-app-builder</artifactId>
+  <artifactId>llm-agent-builder</artifactId>
   <version>0.1.0-SNAPSHOT</version>
   <packaging>pom</packaging>
-  <name>LLM Agent App Builder</name>
+  <name>LLM Agent Builder</name>
   <modules>
     <module>core</module>
     <module>spring</module>
-    <module>examples</module>
-    <module>tools</module>
     <module>tool-builders</module>
     <module>launchers</module>
   </modules>

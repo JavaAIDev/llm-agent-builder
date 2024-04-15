@@ -19,7 +19,7 @@
   <dependencies>
     <dependency>
       <groupId>io.github.alexcheng1982</groupId>
-      <artifactId>agent-app-builder-core</artifactId>
+      <artifactId>llm-agent-builder-core</artifactId>
       <version>${project.version}</version>
     </dependency>
     <dependency>

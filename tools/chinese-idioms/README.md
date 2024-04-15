@@ -1,1 +1,0 @@
-# Agent Tool for Chinese Idioms (成语工具)

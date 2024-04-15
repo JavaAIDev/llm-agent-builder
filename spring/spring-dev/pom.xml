@@ -5,11 +5,11 @@
   <modelVersion>4.0.0</modelVersion>
   <parent>
     <groupId>io.github.alexcheng1982</groupId>
-    <artifactId>agent-app-builder-spring</artifactId>
+    <artifactId>llm-agent-builder-spring</artifactId>
     <version>0.1.0-SNAPSHOT</version>
   </parent>
 
-  <artifactId>agent-app-builder-spring-dev</artifactId>
+  <artifactId>llm-agent-builder-spring-dev</artifactId>
   <name>Spring Integration :: Dev</name>
 
   <build>
@@ -32,7 +32,7 @@
   <dependencies>
     <dependency>
       <groupId>io.github.alexcheng1982</groupId>
-      <artifactId>agent-app-builder-core</artifactId>
+      <artifactId>llm-agent-builder-core</artifactId>
       <version>${project.version}</version>
     </dependency>
     <dependency>
