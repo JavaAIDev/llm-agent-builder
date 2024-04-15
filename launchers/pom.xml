@@ -9,7 +9,7 @@
     <version>0.0.9</version>
   </parent>
 
-  <artifactId>agent-builder-launchers</artifactId>
+  <artifactId>llm-agent-builder-launchers</artifactId>
   <name>LLM Agent Launchers</name>
   <packaging>pom</packaging>
 
