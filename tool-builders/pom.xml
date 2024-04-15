@@ -11,7 +11,7 @@
 
   <artifactId>agent-builder-tool-builders</artifactId>
   <packaging>pom</packaging>
-  <name>Agent Tool Builders</name>
+  <name>LLM Agent Tool Builders</name>
   <modules>
     <module>openapi</module>
   </modules>

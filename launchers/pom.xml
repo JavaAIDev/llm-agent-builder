@@ -10,7 +10,7 @@
   </parent>
 
   <artifactId>agent-builder-launchers</artifactId>
-  <name>Agent Launchers</name>
+  <name>LLM Agent Launchers</name>
   <packaging>pom</packaging>
 
   <modules>

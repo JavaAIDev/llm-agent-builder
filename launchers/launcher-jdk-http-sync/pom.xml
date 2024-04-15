@@ -9,7 +9,7 @@
     <version>0.0.9</version>
   </parent>
 
-  <artifactId>agent-builder-launcher-jdk-http-sync</artifactId>
+  <artifactId>llm-agent-builder-launcher-jdk-http-sync</artifactId>
   <name>Agent Launcher :: JDK HTTP Sync</name>
   <description>Agent Launcher :: JDK HTTP Sync</description>
 
@@ -40,6 +40,10 @@
       <plugin>
         <groupId>org.jetbrains.kotlin</groupId>
         <artifactId>kotlin-maven-plugin</artifactId>
+      </plugin>
+      <plugin>
+        <groupId>org.jetbrains.dokka</groupId>
+        <artifactId>dokka-maven-plugin</artifactId>
       </plugin>
     </plugins>
   </build>

@@ -10,7 +10,7 @@
   </parent>
 
   <artifactId>llm-agent-builder-spring</artifactId>
-  <name>Spring Integration</name>
+  <name>LLM Agent Spring Integration</name>
   <packaging>pom</packaging>
 
   <modules>
