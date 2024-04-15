@@ -2,8 +2,18 @@ package io.github.alexcheng1982.llmagentbuilder.core.tool
 
 import java.util.function.Function
 
+/**
+ * Agent tool
+ */
 interface AgentTool<REQUEST, RESPONSE> : Function<REQUEST, RESPONSE> {
+    /**
+     * Name of the agent tool, will be passed to LLM
+     */
     fun name(): String
+
+    /**
+     * Description of the agent tool, will be passed to LLM
+     */
     fun description(): String
 }
 
