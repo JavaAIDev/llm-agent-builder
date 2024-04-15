@@ -1,5 +1,14 @@
 package io.github.alexcheng1982.agentappbuilder.tool.writelocalfile;
 
-public record WriteLocalFileConfig(String basePath) {
+public class WriteLocalFileConfig {
 
+  private String basePath;
+
+  public String getBasePath() {
+    return basePath;
+  }
+
+  public void setBasePath(String basePath) {
+    this.basePath = basePath;
+  }
 }

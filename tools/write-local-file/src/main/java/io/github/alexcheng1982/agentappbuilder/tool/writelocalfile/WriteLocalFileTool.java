@@ -1,6 +1,7 @@
 package io.github.alexcheng1982.agentappbuilder.tool.writelocalfile;
 
 import io.github.alexcheng1982.agentappbuilder.core.tool.ConfigurableAgentTool;
+import io.github.alexcheng1982.agentappbuilder.core.tool.ToolExecutionException;
 import java.io.IOException;
 import java.net.URI;
 import java.net.URISyntaxException;
@@ -42,6 +43,7 @@ public class WriteLocalFileTool implements
   @Override
   public WriteLocalFileResponse apply(
       WriteLocalFileRequest request) {
+    logger.info("Request: {}", request);
     try {
       var savePath = calculateSavePath(request);
       if (StringUtils.isNotEmpty(request.content())) {
@@ -53,18 +55,19 @@ public class WriteLocalFileTool implements
             savePath.toFile());
       }
       String path = savePath.toAbsolutePath().toString();
-      logger.info("Written to file {}", path);
-      return new WriteLocalFileResponse(path);
+      var response = new WriteLocalFileResponse(path);
+      logger.info("Response: {}", response);
+      return response;
     } catch (IOException | URISyntaxException e) {
-      throw new RuntimeException(e);
+      throw new ToolExecutionException(this, e);
     }
   }
 
   private Path calculateSavePath(WriteLocalFileRequest request)
       throws IOException {
     Path basePath =
-        StringUtils.isEmpty(config.basePath()) ? Files.createTempDirectory(
-            "write-local-file-") : Paths.get(config.basePath());
+        StringUtils.isEmpty(config.getBasePath()) ? Files.createTempDirectory(
+            "write-local-file-") : Paths.get(config.getBasePath());
     var filename = Optional.ofNullable(
             StringUtils.trimToNull(request.filename()))
         .orElseGet(() -> UUID.randomUUID().toString());

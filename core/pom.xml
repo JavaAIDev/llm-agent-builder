@@ -68,6 +68,13 @@
       <groupId>io.micrometer</groupId>
       <artifactId>micrometer-core</artifactId>
     </dependency>
+
+    <dependency>
+      <groupId>uk.org.webcompere</groupId>
+      <artifactId>system-stubs-jupiter</artifactId>
+      <version>2.1.6</version>
+      <scope>test</scope>
+    </dependency>
   </dependencies>
 
   <profiles>

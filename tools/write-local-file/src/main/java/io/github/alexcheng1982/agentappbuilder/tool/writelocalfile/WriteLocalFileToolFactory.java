@@ -1,13 +1,13 @@
 package io.github.alexcheng1982.agentappbuilder.tool.writelocalfile;
 
-import io.github.alexcheng1982.agentappbuilder.core.tool.BaseConfigurableAgentToolFactory;
+import io.github.alexcheng1982.agentappbuilder.core.tool.EnvironmentVariableConfigurableAgentToolFactory;
 import org.jetbrains.annotations.NotNull;
 
 public class WriteLocalFileToolFactory extends
-    BaseConfigurableAgentToolFactory<WriteLocalFileTool, WriteLocalFileConfig> {
+    EnvironmentVariableConfigurableAgentToolFactory<WriteLocalFileTool, WriteLocalFileConfig> {
 
   public WriteLocalFileToolFactory() {
-    super(() -> new WriteLocalFileConfig(null));
+    super(WriteLocalFileConfig.class, "writeLocalFile_");
   }
 
   @NotNull
