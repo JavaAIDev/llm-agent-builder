@@ -1,7 +1,5 @@
-package io.github.alexcheng1982.llmagentbuilder.spring
+package io.github.alexcheng1982.llmagentbuilder.core.tool
 
-import io.github.alexcheng1982.llmagentbuilder.core.tool.AgentToolWrappersProvider
-import io.github.alexcheng1982.llmagentbuilder.core.tool.AgentToolsProvider
 import io.micrometer.observation.ObservationRegistry
 import org.slf4j.LoggerFactory
 import org.springframework.ai.model.function.FunctionCallback

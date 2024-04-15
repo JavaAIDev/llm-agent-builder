@@ -3,6 +3,9 @@ package io.github.alexcheng1982.llmagentbuilder.core.tool
 import java.lang.reflect.Method
 import java.util.function.Supplier
 
+/**
+ * Factory to create agent tools
+ */
 interface AgentToolFactory<out T : AgentTool<*, *>> {
     fun create(): T
 }
