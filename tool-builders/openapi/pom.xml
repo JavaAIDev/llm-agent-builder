@@ -9,7 +9,7 @@
     <version>0.0.9</version>
   </parent>
 
-  <artifactId>agent-builder-tool-builder-openapi</artifactId>
+  <artifactId>llm-agent-builder-tool-builder-openapi</artifactId>
   <name>Agent Tool Builder :: OpenAPI</name>
 
   <build>
