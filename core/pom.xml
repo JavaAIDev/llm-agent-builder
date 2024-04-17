@@ -47,7 +47,13 @@
     <dependency>
       <groupId>io.github.alexcheng1982</groupId>
       <artifactId>spring-ai-dashscope-client</artifactId>
-      <version>0.3.0</version>
+      <version>0.6.0</version>
+      <exclusions>
+        <exclusion>
+          <groupId>org.slf4j</groupId>
+          <artifactId>slf4j-simple</artifactId>
+        </exclusion>
+      </exclusions>
     </dependency>
     <dependency>
       <groupId>com.fasterxml.jackson.module</groupId>
