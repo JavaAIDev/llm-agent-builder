@@ -4,5 +4,5 @@
 
 ## Documentation
 
-See [docs](https://alexcheng1982.github.io/llm-agent-builder/)
+See [docs](https://llmagentbuilder.github.io/llm-agent-builder/)
 

@@ -1,7 +1,8 @@
 package io.github.alexcheng1982.llmagentbuilder.core.planner.react
 
-import io.github.alexcheng1982.llmagentbuilder.core.AgentAction
-import io.github.alexcheng1982.llmagentbuilder.core.AgentFinish
+import io.github.llmagentbuilder.core.AgentAction
+import io.github.llmagentbuilder.core.AgentFinish
+import io.github.llmagentbuilder.core.planner.planner.react.ReActOutputParser
 import org.junit.jupiter.api.Test
 import kotlin.test.assertEquals
 import kotlin.test.assertNotNull

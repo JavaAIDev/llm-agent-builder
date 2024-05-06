@@ -1,9 +1,10 @@
 package io.github.alexcheng1982.llmagentbuilder.core
 
-import io.github.alexcheng1982.llmagentbuilder.core.config.AgentConfig
-import io.github.alexcheng1982.llmagentbuilder.core.config.ConfiguredAgentFactory
-import io.github.alexcheng1982.llmagentbuilder.core.config.LLMConfig
+import io.github.llmagentbuilder.core.config.AgentConfig
+import io.github.llmagentbuilder.core.config.ConfiguredAgentFactory
+import io.github.llmagentbuilder.core.config.LLMConfig
 import io.github.alexcheng1982.springai.dashscope.DashscopeChatClient
+import io.github.llmagentbuilder.core.ChatAgentRequest
 import org.junit.jupiter.api.Tag
 import org.junit.jupiter.api.Test
 import kotlin.test.assertNotNull
