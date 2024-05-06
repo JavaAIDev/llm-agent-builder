@@ -4,12 +4,12 @@
   xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
   <modelVersion>4.0.0</modelVersion>
   <parent>
-    <groupId>io.github.alexcheng1982</groupId>
-    <artifactId>llm-agent-builder-launchers</artifactId>
-    <version>0.0.9</version>
+    <groupId>io.github.llmagentbuilder</groupId>
+    <artifactId>launchers</artifactId>
+    <version>0.0.10</version>
   </parent>
 
-  <artifactId>llm-agent-builder-launcher-jdk-http-sync</artifactId>
+  <artifactId>launcher-jdk-http-sync</artifactId>
   <name>Agent Launcher :: JDK HTTP Sync</name>
   <description>Agent Launcher :: JDK HTTP Sync</description>
 
@@ -19,8 +19,8 @@
 
   <dependencies>
     <dependency>
-      <groupId>io.github.alexcheng1982</groupId>
-      <artifactId>llm-agent-builder-core</artifactId>
+      <groupId>io.github.llmagentbuilder</groupId>
+      <artifactId>core</artifactId>
       <version>${project.version}</version>
     </dependency>
     <dependency>

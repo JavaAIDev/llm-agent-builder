@@ -16,7 +16,7 @@ import org.springframework.ai.chat.prompt.Prompt
 
 enum class ChatClientObservationDocumentation : ObservationDocumentation {
     CHAT_CLIENT_CALL {
-        override fun getDefaultConvention(): Class<out ObservationConvention<out Observation.Context>>? {
+        override fun getDefaultConvention(): Class<out ObservationConvention<out Observation.Context>> {
             return DefaultChatClientObservationConvention::class.java
         }
 
@@ -165,7 +165,7 @@ interface ChatClientObservationConvention :
 }
 
 
-class ChatClientRequestObservationContext(val prompt: Prompt) :
+class ChatClientRequestObservationContext(prompt: Prompt) :
     RequestReplySenderContext<Prompt, ChatResponse>({ _, _, _ ->
         run {}
     }) {

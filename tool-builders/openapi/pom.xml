@@ -4,12 +4,12 @@
   xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
   <modelVersion>4.0.0</modelVersion>
   <parent>
-    <groupId>io.github.alexcheng1982</groupId>
-    <artifactId>llm-agent-builder-tool-builders</artifactId>
-    <version>0.0.9</version>
+    <groupId>io.github.llmagentbuilder</groupId>
+    <artifactId>tool-builders</artifactId>
+    <version>0.0.10</version>
   </parent>
 
-  <artifactId>llm-agent-builder-tool-builder-openapi</artifactId>
+  <artifactId>tool-builder-openapi</artifactId>
   <name>Agent Tool Builder :: OpenAPI</name>
 
   <build>
