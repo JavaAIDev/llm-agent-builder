@@ -8,14 +8,14 @@ const config: Config = {
   favicon: "img/favicon.ico",
 
   // Set the production url of your site here
-  url: "https://alexcheng1982.github.io",
+  url: "https://llmagentbuilder.github.io",
   // Set the /<baseUrl>/ pathname under which your site is served
   // For GitHub pages deployment, it is often '/<projectName>/'
   baseUrl: "/llm-agent-builder/",
 
   // GitHub pages deployment config.
   // If you aren't using GitHub pages, you don't need these.
-  organizationName: "alexcheng1982", // Usually your GitHub org/user name.
+  organizationName: "LLMAgentBuilder", // Usually your GitHub org/user name.
   projectName: "llm-agent-builder", // Usually your repo name.
   trailingSlash: false,
 
@@ -130,7 +130,7 @@ const config: Config = {
             },
             {
               label: "GitHub",
-              href: "https://github.com/alexcheng1982/llm-agent-builder",
+              href: "https://github.com/LLMAgentBuilder/llm-agent-builder",
             },
           ],
         },

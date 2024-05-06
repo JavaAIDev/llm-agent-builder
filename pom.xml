@@ -17,7 +17,7 @@
   </modules>
 
   <description>LLM Agent Builder</description>
-  <url>https://github.com/alexcheng1982/llm-agent-builder</url>
+  <url>https://github.com/LLMAgentBuilder/llm-agent-builder</url>
   <licenses>
     <license>
       <name>The Apache Software License, Version 2.0</name>
@@ -34,12 +34,12 @@
 
   <scm>
     <connection>
-      scm:git:git://github.com/alexcheng1982/llm-agent-builder.git
+      scm:git:git://github.com/LLMAgentBuilder/llm-agent-builder.git
     </connection>
     <developerConnection>
-      scm:git:ssh://github.com:alexcheng1982/llm-agent-builder.git
+      scm:git:ssh://github.com:LLMAgentBuilder/llm-agent-builder.git
     </developerConnection>
-    <url>http://github.com/alexcheng1982/llm-agent-builder</url>
+    <url>http://github.com/LLMAgentBuilder/llm-agent-builder</url>
   </scm>
 
   <properties>
