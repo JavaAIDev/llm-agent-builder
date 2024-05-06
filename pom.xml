@@ -14,6 +14,7 @@
     <module>spring</module>
     <module>tool-builders</module>
     <module>launchers</module>
+    <module>llm</module>
   </modules>
 
   <description>LLM Agent Builder</description>

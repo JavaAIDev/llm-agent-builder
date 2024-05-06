@@ -45,17 +45,6 @@
       <artifactId>spring-ai-core</artifactId>
     </dependency>
     <dependency>
-      <groupId>io.github.alexcheng1982</groupId>
-      <artifactId>spring-ai-dashscope-client</artifactId>
-      <version>0.8.0</version>
-      <exclusions>
-        <exclusion>
-          <groupId>org.slf4j</groupId>
-          <artifactId>slf4j-simple</artifactId>
-        </exclusion>
-      </exclusions>
-    </dependency>
-    <dependency>
       <groupId>com.fasterxml.jackson.module</groupId>
       <artifactId>jackson-module-kotlin</artifactId>
     </dependency>

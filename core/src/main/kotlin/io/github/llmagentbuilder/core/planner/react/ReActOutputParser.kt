@@ -1,9 +1,9 @@
-package io.github.llmagentbuilder.core.planner.planner.react
+package io.github.llmagentbuilder.core.planner.react
 
 import io.github.llmagentbuilder.core.AgentAction
-import io.github.llmagentbuilder.core.planner.planner.OutputParser
-import io.github.llmagentbuilder.core.planner.planner.OutputParserException
-import io.github.llmagentbuilder.core.planner.planner.ParseResult
+import io.github.llmagentbuilder.core.planner.OutputParser
+import io.github.llmagentbuilder.core.planner.OutputParserException
+import io.github.llmagentbuilder.core.planner.ParseResult
 import java.util.regex.Pattern
 
 class ReActOutputParser : OutputParser {

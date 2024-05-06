@@ -1,7 +1,7 @@
-package io.github.llmagentbuilder.core.planner.planner.reactjson
+package io.github.llmagentbuilder.core.planner.reactjson
 
-import io.github.llmagentbuilder.core.planner.planner.LLMPlanner
-import io.github.llmagentbuilder.core.planner.planner.LLMPlannerFactory
+import io.github.llmagentbuilder.core.planner.LLMPlanner
+import io.github.llmagentbuilder.core.planner.LLMPlannerFactory
 import org.springframework.ai.chat.prompt.PromptTemplate
 import org.springframework.core.io.ClassPathResource
 
@@ -12,5 +12,6 @@ object ReActJsonPlannerFactory : LLMPlannerFactory() {
             .withSystemPromptTemplate(PromptTemplate(ClassPathResource("prompts/react-json/system.st")))
             .withOutputParser(ReActJsonOutputParser.INSTANCE)
             .withSystemInstruction("Answer the following questions as best you can.")
+            .withStopSequence(listOf("\\nObservation"))
     }
 }

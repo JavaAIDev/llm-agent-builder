@@ -6,7 +6,7 @@ import io.github.llmagentbuilder.core.ChatAgent;
 import io.github.llmagentbuilder.core.Planner;
 import io.github.llmagentbuilder.core.chatmemory.ChatMemoryStore;
 import io.github.llmagentbuilder.core.chatmemory.InMemoryChatMemoryStore;
-import io.github.llmagentbuilder.core.planner.planner.reactjson.ReActJsonPlannerFactory;
+import io.github.llmagentbuilder.core.planner.reactjson.ReActJsonPlannerFactory;
 import io.github.llmagentbuilder.core.tool.AgentToolFunctionCallbackContext;
 import io.github.llmagentbuilder.core.tool.AgentToolsProvider;
 import io.github.llmagentbuilder.core.tool.AutoDiscoveredAgentToolsProvider;
@@ -21,6 +21,7 @@ import java.util.Optional;
 import org.springframework.ai.autoconfigure.ollama.OllamaAutoConfiguration;
 import org.springframework.ai.autoconfigure.openai.OpenAiAutoConfiguration;
 import org.springframework.ai.chat.ChatClient;
+import org.springframework.ai.chat.prompt.ChatOptions;
 import org.springframework.ai.model.function.FunctionCallbackContext;
 import org.springframework.boot.actuate.autoconfigure.observation.ObservationAutoConfiguration;
 import org.springframework.boot.autoconfigure.AutoConfiguration;
@@ -63,12 +64,14 @@ public class ChatAgentAutoConfiguration {
     @Bean
     @ConditionalOnMissingBean
     public Planner planner(ChatClient chatClient,
+        ChatOptions chatOptions,
         Optional<ChatMemoryStore> chatMemoryStore,
         AgentToolsProvider agentToolsProvider,
         Optional<ObservationRegistry> observationRegistry,
         Optional<MeterRegistry> meterRegistry) {
       return ReActJsonPlannerFactory.INSTANCE.create(
           chatClient,
+          chatOptions,
           agentToolsProvider,
           properties.getReActJson().getSystemInstructions(),
           chatMemoryStore.orElse(null),

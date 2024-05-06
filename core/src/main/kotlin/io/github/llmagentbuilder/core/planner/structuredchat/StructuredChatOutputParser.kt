@@ -1,10 +1,10 @@
-package io.github.llmagentbuilder.core.planner.planner.structuredchat
+package io.github.llmagentbuilder.core.planner.structuredchat
 
 import com.fasterxml.jackson.databind.ObjectMapper
 import io.github.llmagentbuilder.core.AgentAction
-import io.github.llmagentbuilder.core.planner.planner.OutputParser
-import io.github.llmagentbuilder.core.planner.planner.OutputParserException
-import io.github.llmagentbuilder.core.planner.planner.ParseResult
+import io.github.llmagentbuilder.core.planner.OutputParser
+import io.github.llmagentbuilder.core.planner.OutputParserException
+import io.github.llmagentbuilder.core.planner.ParseResult
 import java.util.regex.Pattern
 
 class StructuredChatOutputParser : OutputParser {

@@ -1,4 +1,4 @@
-package io.github.llmagentbuilder.core.planner.planner
+package io.github.llmagentbuilder.core.planner
 
 import com.fasterxml.jackson.core.type.TypeReference
 import com.fasterxml.jackson.databind.ObjectMapper

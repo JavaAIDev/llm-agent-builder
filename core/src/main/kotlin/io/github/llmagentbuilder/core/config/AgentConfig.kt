@@ -2,15 +2,16 @@ package io.github.llmagentbuilder.core.config
 
 import io.github.llmagentbuilder.core.Planner
 import io.github.llmagentbuilder.core.chatmemory.ChatMemoryStore
-import io.github.llmagentbuilder.core.planner.planner.react.ReActPlannerFactory
-import io.github.llmagentbuilder.core.planner.planner.reactjson.ReActJsonPlannerFactory
-import io.github.llmagentbuilder.core.planner.planner.simple.SimplePlannerFactory
-import io.github.llmagentbuilder.core.planner.planner.structuredchat.StructuredChatPlannerFactory
+import io.github.llmagentbuilder.core.planner.react.ReActPlannerFactory
+import io.github.llmagentbuilder.core.planner.reactjson.ReActJsonPlannerFactory
+import io.github.llmagentbuilder.core.planner.simple.SimplePlannerFactory
+import io.github.llmagentbuilder.core.planner.structuredchat.StructuredChatPlannerFactory
 import io.github.llmagentbuilder.core.tool.AgentToolsProvider
 import io.github.llmagentbuilder.core.tool.AutoDiscoveredAgentToolsProvider
 import io.micrometer.core.instrument.MeterRegistry
 import io.micrometer.observation.ObservationRegistry
 import org.springframework.ai.chat.ChatClient
+import org.springframework.ai.chat.prompt.ChatOptions
 
 enum class PlannerType {
     ReAct {
@@ -46,6 +47,7 @@ data class MetadataConfig(
 
 data class LLMConfig(
     val chatClient: ChatClient,
+    val chatOptions: ChatOptions,
 )
 
 data class PlannerConfig(

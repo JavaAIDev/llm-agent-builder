@@ -1,4 +1,4 @@
-package io.github.llmagentbuilder.core.planner.planner
+package io.github.llmagentbuilder.core.planner
 
 import io.github.llmagentbuilder.core.AgentFinish
 import io.github.llmagentbuilder.core.IntermediateAgentStep
@@ -13,13 +13,10 @@ import io.github.llmagentbuilder.core.observation.AgentPlanningObservationContex
 import io.github.llmagentbuilder.core.observation.AgentPlanningObservationDocumentation
 import io.github.llmagentbuilder.core.observation.DefaultAgentPlanningObservationConvention
 import io.github.llmagentbuilder.core.observation.InstrumentedChatClient
-import io.github.llmagentbuilder.core.planner.planner.simple.SimpleOutputParser
+import io.github.llmagentbuilder.core.planner.simple.SimpleOutputParser
 import io.github.llmagentbuilder.core.tool.AgentTool
 import io.github.llmagentbuilder.core.tool.AgentToolsProvider
 import io.github.llmagentbuilder.core.tool.AutoDiscoveredAgentToolsProvider
-import io.github.alexcheng1982.springai.dashscope.DashscopeChatClient
-import io.github.alexcheng1982.springai.dashscope.DashscopeChatOptions
-import io.github.alexcheng1982.springai.dashscope.api.DashscopeModelName
 import io.micrometer.core.instrument.MeterRegistry
 import io.micrometer.observation.ObservationRegistry
 import org.springframework.ai.chat.ChatClient
@@ -27,9 +24,11 @@ import org.springframework.ai.chat.messages.SystemMessage
 import org.springframework.ai.chat.prompt.ChatOptions
 import org.springframework.ai.chat.prompt.Prompt
 import org.springframework.ai.chat.prompt.PromptTemplate
+import java.util.*
 
 open class LLMPlanner(
     private val chatClient: ChatClient,
+    private val chatOptions: ChatOptions,
     private val toolsProvider: AgentToolsProvider,
     private val outputParser: OutputParser,
     private val userPromptTemplate: PromptTemplate,
@@ -43,7 +42,7 @@ open class LLMPlanner(
     },
     private val observationRegistry: ObservationRegistry? = null,
     private val meterRegistry: MeterRegistry? = null,
-    private val stopSequence: List<String>? = listOf("\\nObservation")
+    private val stopSequence: List<String>? = null,
 ) : Planner {
 
     override fun plan(
@@ -84,7 +83,7 @@ open class LLMPlanner(
         }
         val prompt = Prompt(
             chatMemory?.messages() ?: messages,
-            prepareChatClientOptions(chatClient, toolNames)
+            prepareChatClientOptions(toolNames)
         )
         val response = chatClient.call(prompt)
         val text = response.result?.output?.content?.trim() ?: ""
@@ -143,20 +142,14 @@ open class LLMPlanner(
     }
 
     private fun prepareChatClientOptions(
-        chatClient: ChatClient,
         toolNames: Set<String>
-    ): ChatOptions? {
-        val client =
-            if (chatClient is InstrumentedChatClient) chatClient.chatClient else chatClient
-        if (client is DashscopeChatClient) {
-            return DashscopeChatOptions.builder()
-                .withModel(DashscopeModelName.QWEN_MAX)
-                .withTemperature(0.2f)
-                .withFunctions(toolNames)
-                .withStops(stopSequence)
-                .build()
-        }
-        return null
+    ): ChatOptions {
+        return ServiceLoader.load(ChatOptionsConfigurer::class.java)
+            .firstOrNull { it.supports(chatOptions) }?.configure(
+                chatOptions, ChatOptionsConfigurer.ChatOptionsConfig(
+                    toolNames, stopSequence
+                )
+            ) ?: chatOptions
     }
 
     override fun toString(): String {
@@ -165,6 +158,7 @@ open class LLMPlanner(
 
     class Builder {
         private lateinit var chatClient: ChatClient
+        private lateinit var chatOptions: ChatOptions
         private var toolsProvider: AgentToolsProvider? = null
         private var outputParser: OutputParser = SimpleOutputParser.INSTANCE
         private var observationRegistry: ObservationRegistry? = null
@@ -176,9 +170,15 @@ open class LLMPlanner(
         private var systemInstruction: String? = null
         private var chatMemoryStore: ChatMemoryStore? = null
         private var chatMemoryProvider: ChatMemoryProvider? = null
+        private var stopSequence: List<String>? = null
 
         fun withChatClient(chatClient: ChatClient): Builder {
             this.chatClient = chatClient
+            return this
+        }
+
+        fun withChatOptions(chatOptions: ChatOptions): Builder {
+            this.chatOptions = chatOptions
             return this
         }
 
@@ -229,6 +229,11 @@ open class LLMPlanner(
             return this
         }
 
+        fun withStopSequence(stopSequence: List<String>?): Builder {
+            this.stopSequence = stopSequence
+            return this
+        }
+
         fun build(): LLMPlanner {
             if (!::chatClient.isInitialized) {
                 throw IllegalArgumentException("ChatClient is required")
@@ -239,6 +244,7 @@ open class LLMPlanner(
                 )
             return LLMPlanner(
                 chatClient,
+                chatOptions,
                 toolsProvider ?: AutoDiscoveredAgentToolsProvider,
                 outputParser,
                 userPromptTemplate,
@@ -255,6 +261,7 @@ open class LLMPlanner(
                 },
                 observationRegistry,
                 meterRegistry,
+                stopSequence,
             )
         }
     }
@@ -264,13 +271,14 @@ abstract class LLMPlannerFactory {
     abstract fun defaultBuilder(): LLMPlanner.Builder
 
     fun create(agentConfig: AgentConfig): LLMPlanner {
-        val (chatClient) = agentConfig.llmConfig
+        val (chatClient, chatOptions) = agentConfig.llmConfig
         val (_, systemInstruction) = agentConfig.plannerConfig()
         val (agentToolsProvider) = agentConfig.toolsConfig()
         val (chatMemoryStore) = agentConfig.memoryConfig()
         val (observationRegistry, meterRegistry) = agentConfig.observationConfig()
         return create(
             chatClient,
+            chatOptions,
             agentToolsProvider,
             systemInstruction,
             chatMemoryStore,
@@ -281,6 +289,7 @@ abstract class LLMPlannerFactory {
 
     fun create(
         chatClient: ChatClient,
+        chatOptions: ChatOptions,
         agentToolsProvider: AgentToolsProvider? = null,
         systemInstruction: String? = null,
         chatMemoryStore: ChatMemoryStore? = null,
@@ -289,6 +298,7 @@ abstract class LLMPlannerFactory {
     ): LLMPlanner {
         return defaultBuilder()
             .withChatClient(chatClient)
+            .withChatOptions(chatOptions)
             .withAgentToolsProvider(agentToolsProvider)
             .withSystemInstruction(systemInstruction)
             .withChatMemoryStore(chatMemoryStore)

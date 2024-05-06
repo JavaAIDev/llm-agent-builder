@@ -1,0 +1,36 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project xmlns="http://maven.apache.org/POM/4.0.0"
+  xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+  xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+  <modelVersion>4.0.0</modelVersion>
+  <parent>
+    <groupId>io.github.llmagentbuilder</groupId>
+    <artifactId>llm</artifactId>
+    <version>0.0.10</version>
+  </parent>
+
+  <artifactId>llm-dashscope</artifactId>
+  <name>LLM :: Dashscope</name>
+  <description>LLM :: Dashscope</description>
+
+  <dependencies>
+    <dependency>
+      <groupId>io.github.llmagentbuilder</groupId>
+      <artifactId>core</artifactId>
+      <version>${project.version}</version>
+    </dependency>
+
+    <dependency>
+      <groupId>io.github.alexcheng1982</groupId>
+      <artifactId>spring-ai-dashscope-client</artifactId>
+      <version>0.8.0</version>
+      <exclusions>
+        <exclusion>
+          <groupId>org.slf4j</groupId>
+          <artifactId>slf4j-simple</artifactId>
+        </exclusion>
+      </exclusions>
+    </dependency>
+  </dependencies>
+
+</project>

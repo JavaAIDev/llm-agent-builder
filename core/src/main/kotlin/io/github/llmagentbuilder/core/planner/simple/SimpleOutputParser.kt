@@ -1,8 +1,8 @@
-package io.github.llmagentbuilder.core.planner.planner.simple
+package io.github.llmagentbuilder.core.planner.simple
 
 import io.github.llmagentbuilder.core.AgentFinish
-import io.github.llmagentbuilder.core.planner.planner.OutputParser
-import io.github.llmagentbuilder.core.planner.planner.ParseResult
+import io.github.llmagentbuilder.core.planner.OutputParser
+import io.github.llmagentbuilder.core.planner.ParseResult
 
 /**
  * Output from LLM is used as a return value directly, no further actions will be taken.
