@@ -54,7 +54,7 @@ public class ChatAgentAutoConfiguration {
     }
 
     @Bean
-    @ConditionalOnProperty(prefix = "io.github.alexcheng1982.agentappbuilder.chatagent.memory", name = "enabled", matchIfMissing = true)
+    @ConditionalOnProperty(prefix = "io.github.llmagentbuilder.chatagent.memory", name = "enabled", matchIfMissing = true)
     @ConditionalOnMissingBean
     public ChatMemoryStore chatMemoryStore() {
       return new InMemoryChatMemoryStore();
@@ -80,7 +80,7 @@ public class ChatAgentAutoConfiguration {
     }
 
     @Bean
-    @ConditionalOnProperty(prefix = "io.github.alexcheng1982.agentappbuilder.chatagent.tracing", name = "enabled", matchIfMissing = true)
+    @ConditionalOnProperty(prefix = "io.github.llmagentbuilder.chatagent.tracing", name = "enabled", matchIfMissing = true)
     @ConditionalOnBean(Planner.class)
     @ConditionalOnMissingBean
     public ObservationRegistry observationRegistry() {
@@ -88,7 +88,7 @@ public class ChatAgentAutoConfiguration {
     }
 
     @Bean
-    @ConditionalOnProperty(prefix = "io.github.alexcheng1982.agentappbuilder.chatagent.metrics", name = "enabled", matchIfMissing = true)
+    @ConditionalOnProperty(prefix = "io.github.llmagentbuilder.chatagent.metrics", name = "enabled", matchIfMissing = true)
     @ConditionalOnBean(Planner.class)
     @ConditionalOnMissingBean
     public MeterRegistry meterRegistry() {

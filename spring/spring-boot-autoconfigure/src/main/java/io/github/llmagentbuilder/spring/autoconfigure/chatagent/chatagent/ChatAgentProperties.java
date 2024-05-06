@@ -2,7 +2,7 @@ package io.github.llmagentbuilder.spring.autoconfigure.chatagent.chatagent;
 
 import org.springframework.boot.context.properties.ConfigurationProperties;
 
-@ConfigurationProperties(prefix = "io.github.alexcheng1982.llmagentbuilder.chatagent")
+@ConfigurationProperties(prefix = "io.github.llmagentbuilder.chatagent")
 public class ChatAgentProperties {
 
   private boolean enabled = true;
