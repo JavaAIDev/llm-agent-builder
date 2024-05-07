@@ -10,12 +10,33 @@
   </parent>
 
   <artifactId>llm</artifactId>
-  <name>LLM</name>
-  <description>LLM</description>
+  <name>LLM Integration</name>
+  <description>LLM Integration</description>
   <modules>
     <module>dashscope</module>
     <module>openai</module>
+    <module>mistral-ai</module>
   </modules>
   <packaging>pom</packaging>
+
+  <properties>
+    <dashscope-client.version>1.1.1</dashscope-client.version>
+  </properties>
+
+  <dependencyManagement>
+    <dependencies>
+      <dependency>
+        <groupId>io.github.alexcheng1982</groupId>
+        <artifactId>spring-ai-dashscope-client</artifactId>
+        <version>${dashscope-client.version}</version>
+        <exclusions>
+          <exclusion>
+            <groupId>org.slf4j</groupId>
+            <artifactId>slf4j-simple</artifactId>
+          </exclusion>
+        </exclusions>
+      </dependency>
+    </dependencies>
+  </dependencyManagement>
 
 </project>

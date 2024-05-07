@@ -5,7 +5,7 @@ import org.springframework.ai.chat.prompt.ChatOptions
 interface ChatOptionsConfigurer {
 
     data class ChatOptionsConfig(
-        val toolNames: Set<String>? = null,
+        val functions: Set<String>? = null,
         val stopSequence: List<String>? = null,
     )
 

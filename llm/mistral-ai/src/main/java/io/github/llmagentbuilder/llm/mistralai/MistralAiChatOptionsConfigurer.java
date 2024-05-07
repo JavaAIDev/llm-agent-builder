@@ -1,26 +1,23 @@
-package io.github.llmagentbuilder.llm.dashscope;
+package io.github.llmagentbuilder.llm.mistralai;
 
-import io.github.alexcheng1982.springai.dashscope.DashscopeChatOptions;
 import io.github.llmagentbuilder.core.planner.ChatOptionsConfigurer;
 import java.util.HashSet;
 import org.jetbrains.annotations.NotNull;
 import org.springframework.ai.chat.prompt.ChatOptions;
+import org.springframework.ai.mistralai.MistralAiChatOptions;
 
-public class DashscopeChatOptionsConfigurer implements ChatOptionsConfigurer {
+public class MistralAiChatOptionsConfigurer implements ChatOptionsConfigurer {
 
   @Override
   public boolean supports(@NotNull ChatOptions chatOptions) {
-    return chatOptions instanceof DashscopeChatOptions;
+    return chatOptions instanceof MistralAiChatOptions;
   }
 
   @NotNull
   @Override
   public ChatOptions configure(@NotNull ChatOptions chatOptions,
       @NotNull ChatOptionsConfig config) {
-    var options = (DashscopeChatOptions) chatOptions;
-    if (config.getStopSequence() != null) {
-      options.setStops(config.getStopSequence());
-    }
+    var options = (MistralAiChatOptions) chatOptions;
     if (config.getFunctions() != null) {
       var toolNames = new HashSet<>(config.getFunctions());
       if (options.getFunctions() != null) {

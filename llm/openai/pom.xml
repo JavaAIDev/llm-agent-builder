@@ -10,8 +10,8 @@
   </parent>
 
   <artifactId>llm-openai</artifactId>
-  <name>LLM :: OpenAI</name>
-  <description>LLM :: OpenAI</description>
+  <name>LLM Integration :: OpenAI</name>
+  <description>LLM Integration :: OpenAI</description>
 
   <dependencies>
     <dependency>

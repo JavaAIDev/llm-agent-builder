@@ -71,7 +71,7 @@ open class LLMPlanner(
         )
         val messages = mutableListOf(userPromptTemplate.createMessage(context))
         systemPromptTemplate?.run {
-            messages.addFirst(SystemMessage(systemPromptTemplate.render(context)))
+            messages.add(0, SystemMessage(systemPromptTemplate.render(context)))
         }
 
         val chatMemory = chatMemoryStore?.let { store ->

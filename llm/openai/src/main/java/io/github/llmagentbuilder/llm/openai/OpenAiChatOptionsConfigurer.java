@@ -21,8 +21,8 @@ public class OpenAiChatOptionsConfigurer implements ChatOptionsConfigurer {
     if (config.getStopSequence() != null) {
       options.setStop(config.getStopSequence());
     }
-    if (config.getToolNames() != null) {
-      var toolNames = new HashSet<>(config.getToolNames());
+    if (config.getFunctions() != null) {
+      var toolNames = new HashSet<>(config.getFunctions());
       if (options.getFunctions() != null) {
         toolNames.addAll(options.getFunctions());
       }
