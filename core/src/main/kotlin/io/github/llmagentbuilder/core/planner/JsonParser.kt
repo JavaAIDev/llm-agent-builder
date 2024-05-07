@@ -21,7 +21,7 @@ object JsonParser {
         try {
             return parseJson(parseJsonMarkdown(json))
         } catch (e: Exception) {
-            logger.warn("Failed to parse json {}", json)
+            logger.warn("Failed to parse json: {}", json)
             return null
         }
     }

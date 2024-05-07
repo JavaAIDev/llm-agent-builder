@@ -12,7 +12,7 @@
   <artifactId>spring-boot-starter</artifactId>
   <name>Spring Integration :: Spring Boot Starter</name>
   <description>LLM Agent Builder - Spring Boot Starter</description>
-  <packaging>pom</packaging>
+  <packaging>jar</packaging>
 
   <dependencies>
     <dependency>

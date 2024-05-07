@@ -1,5 +1,6 @@
-package io.github.llmagentbuilder.spring.autoconfigure.chatagent.chatagent;
+package io.github.llmagentbuilder.spring.autoconfigure.chatagent;
 
+import io.github.alexcheng1982.springai.dashscope.autoconfigure.DashscopeAutoConfiguration;
 import io.github.llmagentbuilder.core.Agent;
 import io.github.llmagentbuilder.core.AgentFactory;
 import io.github.llmagentbuilder.core.ChatAgent;
@@ -9,7 +10,7 @@ import io.github.llmagentbuilder.core.chatmemory.InMemoryChatMemoryStore;
 import io.github.llmagentbuilder.core.planner.reactjson.ReActJsonPlannerFactory;
 import io.github.llmagentbuilder.core.tool.AgentToolFunctionCallbackContext;
 import io.github.llmagentbuilder.core.tool.AgentToolsProvider;
-import io.github.llmagentbuilder.core.tool.AutoDiscoveredAgentToolsProvider;
+import io.github.llmagentbuilder.core.tool.AgentToolsProviderFactory;
 import io.github.llmagentbuilder.core.tool.CompositeAgentToolsProvider;
 import io.github.llmagentbuilder.spring.spring.SpringAgentToolsProvider;
 import io.github.llmagentbuilder.spring.spring.chatagent.ChatAgentService;
@@ -34,11 +35,13 @@ import org.springframework.boot.context.properties.EnableConfigurationProperties
 import org.springframework.context.ApplicationContext;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.context.annotation.Primary;
 
 @AutoConfiguration(before = WebMvcAutoConfiguration.class, after = {
     OllamaAutoConfiguration.class, OpenAiAutoConfiguration.class,
+    DashscopeAutoConfiguration.class,
     ObservationAutoConfiguration.class})
-@ConditionalOnProperty(prefix = "io.github.llmagentbuilder.chatagent", name = "enabled", matchIfMissing = true)
+@ConditionalOnProperty(prefix = ChatAgentProperties.CONFIG_PREFIX, name = "enabled", matchIfMissing = true)
 public class ChatAgentAutoConfiguration {
 
   @Configuration(proxyBeanMethods = false)
@@ -55,7 +58,8 @@ public class ChatAgentAutoConfiguration {
     }
 
     @Bean
-    @ConditionalOnProperty(prefix = "io.github.llmagentbuilder.chatagent.memory", name = "enabled", matchIfMissing = true)
+    @ConditionalOnProperty(prefix = ChatAgentProperties.CONFIG_PREFIX
+        + ".memory", name = "enabled", matchIfMissing = true)
     @ConditionalOnMissingBean
     public ChatMemoryStore chatMemoryStore() {
       return new InMemoryChatMemoryStore();
@@ -83,7 +87,8 @@ public class ChatAgentAutoConfiguration {
     }
 
     @Bean
-    @ConditionalOnProperty(prefix = "io.github.llmagentbuilder.chatagent.tracing", name = "enabled", matchIfMissing = true)
+    @ConditionalOnProperty(prefix = ChatAgentProperties.CONFIG_PREFIX
+        + ".tracing", name = "enabled", matchIfMissing = true)
     @ConditionalOnBean(Planner.class)
     @ConditionalOnMissingBean
     public ObservationRegistry observationRegistry() {
@@ -91,7 +96,8 @@ public class ChatAgentAutoConfiguration {
     }
 
     @Bean
-    @ConditionalOnProperty(prefix = "io.github.llmagentbuilder.chatagent.metrics", name = "enabled", matchIfMissing = true)
+    @ConditionalOnProperty(prefix = ChatAgentProperties.CONFIG_PREFIX
+        + ".metrics", name = "enabled", matchIfMissing = true)
     @ConditionalOnBean(Planner.class)
     @ConditionalOnMissingBean
     public MeterRegistry meterRegistry() {
@@ -121,8 +127,8 @@ public class ChatAgentAutoConfiguration {
     }
 
     @Bean
-    @ConditionalOnMissingBean
-    public FunctionCallbackContext springAiFunctionManager(
+    @Primary
+    public FunctionCallbackContext agentToolFunctionCallbackContext(
         AgentToolsProvider agentToolsProvider,
         Optional<ObservationRegistry> observationRegistry,
         ApplicationContext context) {
@@ -139,7 +145,8 @@ public class ChatAgentAutoConfiguration {
       var springAgentToolsProvider = new SpringAgentToolsProvider();
       springAgentToolsProvider.setApplicationContext(context);
       return new CompositeAgentToolsProvider(List.of(
-          AutoDiscoveredAgentToolsProvider.INSTANCE,
+          AgentToolsProviderFactory.INSTANCE.create(
+              properties.getTools().getConfig()),
           springAgentToolsProvider
       ));
     }

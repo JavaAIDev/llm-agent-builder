@@ -1,7 +1,5 @@
-package io.github.alexcheng1982.llmagentbuilder.core.chatmemory
+package io.github.llmagentbuilder.core.chatmemory
 
-import io.github.llmagentbuilder.core.chatmemory.InMemoryChatMemoryStore
-import io.github.llmagentbuilder.core.chatmemory.MessageWindowChatMemory
 import org.junit.jupiter.api.Assertions.assertEquals
 import org.junit.jupiter.api.Assertions.assertTrue
 import org.junit.jupiter.api.Test

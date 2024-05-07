@@ -1,9 +1,13 @@
-package io.github.llmagentbuilder.spring.autoconfigure.chatagent.chatagent;
+package io.github.llmagentbuilder.spring.autoconfigure.chatagent;
 
+import java.util.Map;
 import org.springframework.boot.context.properties.ConfigurationProperties;
+import org.springframework.boot.context.properties.NestedConfigurationProperty;
 
-@ConfigurationProperties(prefix = "io.github.llmagentbuilder.chatagent")
+@ConfigurationProperties(prefix = ChatAgentProperties.CONFIG_PREFIX)
 public class ChatAgentProperties {
+
+  public static final String CONFIG_PREFIX = "io.github.llmagentbuilder.chatagent";
 
   private boolean enabled = true;
 
@@ -15,13 +19,20 @@ public class ChatAgentProperties {
 
   private String usageInstruction = "Ask me anything";
 
+  @NestedConfigurationProperty
   private ReActJson reActJson = new ReActJson();
 
+  @NestedConfigurationProperty
   private Memory memory = new Memory();
 
+  @NestedConfigurationProperty
   private Tracing tracing = new Tracing();
 
+  @NestedConfigurationProperty
   private Metrics metrics = new Metrics();
+
+  @NestedConfigurationProperty
+  private Tools tools = new Tools();
 
   public boolean isEnabled() {
     return enabled;
@@ -98,6 +109,15 @@ public class ChatAgentProperties {
     this.metrics = metrics;
   }
 
+  public Tools getTools() {
+    return tools;
+  }
+
+  public void setTools(
+      Tools tools) {
+    this.tools = tools;
+  }
+
   public boolean tracingEnabled() {
     return tracing == null || tracing.isEnabled();
   }
@@ -155,6 +175,20 @@ public class ChatAgentProperties {
 
     public void setEnabled(boolean enabled) {
       this.enabled = enabled;
+    }
+  }
+
+  public static class Tools {
+
+    private Map<String, Map<String, Object>> config;
+
+    public Map<String, Map<String, Object>> getConfig() {
+      return config;
+    }
+
+    public void setConfig(
+        Map<String, Map<String, Object>> config) {
+      this.config = config;
     }
   }
 }

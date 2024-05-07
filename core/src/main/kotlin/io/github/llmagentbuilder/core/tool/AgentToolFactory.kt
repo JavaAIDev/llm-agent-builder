@@ -1,18 +1,39 @@
 package io.github.llmagentbuilder.core.tool
 
-import java.lang.reflect.Method
+import org.apache.commons.beanutils.BeanUtils
 import java.util.function.Supplier
 
 /**
  * Factory to create agent tools
+ *
+ * Agent tool factories are loaded using [java.util.ServiceLoader].
  */
 interface AgentToolFactory<out T : AgentTool<*, *>> {
+    /**
+     * @param T Agent tool type
+     * @return Agent tool
+     */
     fun create(): T
 }
 
+/**
+ * Factory to create agent tools with configuration objects
+ */
 interface ConfigurableAgentToolFactory<CONFIG, out T : ConfigurableAgentTool<*, *, CONFIG>> :
     AgentToolFactory<T> {
+    /**
+     * @param T Agent tool type
+     * @param config Tool configuration object
+     * @return Agent tool
+     */
     fun create(config: CONFIG): T
+
+    /**
+     * Name of configuration key
+     *
+     * @return Config name
+     */
+    fun configName(): String
 }
 
 abstract class BaseConfigurableAgentToolFactory<out T : ConfigurableAgentTool<*, *, CONFIG>, CONFIG>(
@@ -41,46 +62,17 @@ open class EnvironmentVariableConfigProvider<C>(
     Supplier<C> {
     override fun get(): C {
         val instance = configClass.getDeclaredConstructor().newInstance()
-        val setters = getPropertySetters()
-        getEnvironmentVariables().forEach { (key, value) ->
-            setters[key]?.run {
-                invokeMethod(instance, this, value)
-            }
-        }
+        BeanUtils.populate(instance, getEnvironmentVariables())
         return instance
     }
 
-    private fun invokeMethod(instance: C, method: Method, value: String) {
-        if (method.parameterCount != 1) {
-            return
-        }
-        val parameter = method.parameters[0]
-        val parameterValue = when (parameter.type) {
-            Long::class.java -> value.toLongOrNull()
-            Int::class.java -> value.toIntOrNull()
-            Double::class.java -> value.toDoubleOrNull()
-            Float::class.java -> value.toFloatOrNull()
-            else -> value
-        }
-        method.invoke(instance, parameterValue)
-    }
-
-    private fun getPropertySetters(): Map<String, Method> {
-        return configClass.methods.filter {
-            it.name.startsWith("set")
-        }.associateBy {
-            it.name.removePrefix("set").lowercase()
-        }
-    }
-
     private fun getEnvironmentVariables(): Map<String, String> {
-        val prefix = environmentVariablePrefix.lowercase()
+        val prefix = environmentVariablePrefix
         return System.getenv()
             .filterKeys {
-                it.lowercase().startsWith(prefix)
+                it.startsWith(prefix)
             }.mapKeys { entry ->
-                entry.key.lowercase()
-                    .removePrefix(prefix)
+                entry.key.removePrefix(prefix)
             }
     }
 }

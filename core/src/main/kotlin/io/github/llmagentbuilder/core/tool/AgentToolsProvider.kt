@@ -6,6 +6,7 @@ import io.github.llmagentbuilder.core.observation.AgentToolExecutionObservationC
 import io.github.llmagentbuilder.core.observation.AgentToolExecutionObservationDocumentation
 import io.github.llmagentbuilder.core.observation.DefaultAgentToolExecutionObservationConvention
 import io.micrometer.observation.ObservationRegistry
+import org.apache.commons.beanutils.BeanUtils
 import org.slf4j.LoggerFactory
 import org.springframework.ai.model.function.FunctionCallback
 import org.springframework.ai.model.function.FunctionCallbackWrapper
@@ -106,6 +107,43 @@ class CompositeAgentToolsProvider(private val providers: List<AgentToolsProvider
         return providers.flatMap { it.get().values }
             .distinctBy { it.name() }
             .associateBy { it.name() }
+    }
+}
+
+object AgentToolsProviderFactory {
+    private val logger = LoggerFactory.getLogger(javaClass)
+
+    fun create(config: Map<String, Map<String, Any>>?): AgentToolsProvider {
+        val (toConfig, noConfig) = ServiceLoader.load(AgentToolFactory::class.java)
+            .stream()
+            .map { it.get() }
+            .asSequence()
+            .partition { it is ConfigurableAgentToolFactory<*, *> }
+        val noConfigTools = noConfig.map { it.create() }
+        val toConfigTools = toConfig.map {
+            val configName =
+                (it as ConfigurableAgentToolFactory<*, *>).configName()
+            val types =
+                GenericTypeResolver.resolveTypeArguments(
+                    it.javaClass,
+                    ConfigurableAgentToolFactory::class.java
+                )
+            val configType =
+                types?.get(0) ?: throw IllegalArgumentException("Invalid type")
+            val instance = configType.getDeclaredConstructor().newInstance()
+            BeanUtils.populate(instance, config?.get(configName) ?: mapOf())
+            val method = it.javaClass.getDeclaredMethod("create", configType)
+            method.invoke(it, instance) as AgentTool<*, *>
+        }
+        val agentTools = (noConfigTools + toConfigTools)
+            .associateBy { it.name() }.also {
+                logger.info("Found agent tools {}", it.keys)
+            };
+        return object : AgentToolsProvider {
+            override fun get(): Map<String, AgentTool<*, *>> {
+                return agentTools
+            }
+        }
     }
 }
 

@@ -175,7 +175,7 @@ data class AgentExecutor(
                 result.add(performAgentAction(nameToToolMap, it))
             }
         } catch (e: OutputParserException) {
-            logger.error("Output parsing error for input {}", inputs, e)
+            logger.error("Output parsing error for input: {}", inputs, e)
             val text = e.llmOutput()
             var observation = parsingErrorHandler?.apply(e) ?: e.observation()
             val output = AgentAction("_Exception", observation, text)

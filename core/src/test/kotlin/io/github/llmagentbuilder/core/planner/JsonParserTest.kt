@@ -1,6 +1,5 @@
-package io.github.alexcheng1982.llmagentbuilder.core.planner
+package io.github.llmagentbuilder.core.planner
 
-import io.github.llmagentbuilder.core.planner.JsonParser
 import org.junit.jupiter.api.Assertions.assertEquals
 import org.junit.jupiter.api.Assertions.assertNotNull
 import org.junit.jupiter.api.Test
