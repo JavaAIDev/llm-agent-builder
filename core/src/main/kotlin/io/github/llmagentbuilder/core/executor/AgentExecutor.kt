@@ -178,9 +178,8 @@ data class AgentExecutor(
             logger.error("Output parsing error for input: {}", inputs, e)
             val text = e.llmOutput()
             var observation = parsingErrorHandler?.apply(e) ?: e.observation()
-            val output = AgentAction("_Exception", observation, text)
             observation = ExceptionTool().apply(observation)
-            result.add(AgentStep(output, observation))
+            result.add(AgentFinish.fromOutput(observation, text))
         }
         return result
     }

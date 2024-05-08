@@ -8,9 +8,20 @@ import java.util.regex.Pattern
 
 object JsonParser {
     private val pattern =
-        Pattern.compile("^.*?`{3}(?:json)?\\n?(.*?)`{3}.*?\$", Pattern.DOTALL)
+        Pattern.compile(
+            "^.*?`{3}(?:json)?\\n?(.*?)`{3}.*?\$",
+            Pattern.DOTALL or Pattern.MULTILINE
+        )
     private val actionInputPattern =
-        Pattern.compile("(\"action_input\":\\s*\")(.*?)(\")", Pattern.DOTALL)
+        Pattern.compile(
+            "(\"action_input\":\\s*\")(.*?)(\")",
+            Pattern.DOTALL or Pattern.MULTILINE
+        )
+    private val textBlockPattern =
+        Pattern.compile(
+            "^(.*?)\"{3}\\n?(.*?)\"{3}(.*?)\$",
+            Pattern.DOTALL or Pattern.MULTILINE
+        )
 
     private val logger = LoggerFactory.getLogger(JsonParser::class.java)
 
@@ -21,7 +32,7 @@ object JsonParser {
         try {
             return parseJson(parseJsonMarkdown(json))
         } catch (e: Exception) {
-            logger.warn("Failed to parse json: {}", json)
+            logger.warn("Failed to parse json: {}", json, e)
             return null
         }
     }
@@ -38,19 +49,33 @@ object JsonParser {
             matcher.group(1)
         } else json
         jsonString = jsonString.trim().trim('`')
-        return cleanJson(jsonString)
+        jsonString = cleanJson(jsonString)
+        jsonString = cleanTextBlock(jsonString)
+        return jsonString
     }
 
     private fun cleanJson(json: String): String {
         val matcher = actionInputPattern.matcher(json)
         if (matcher.matches()) {
-            val value = matcher.group(2)
-                .replace("\\n", "\\\\n")
-                .replace("\\r", "\\\\r")
-                .replace("\\t", "\\\\t")
+            val value = collapseLines(matcher.group(2))
                 .replace("(?<!\\\\)\"", "\\\"")
             return matcher.group(1) + value + matcher.group(3)
         }
         return json
+    }
+
+    private fun cleanTextBlock(json: String): String {
+        val matcher = textBlockPattern.matcher(json)
+        if (matcher.matches()) {
+            val value = collapseLines(matcher.group(2))
+            return matcher.group(1) + "\"" + value + "\"" + matcher.group(3)
+        }
+        return json
+    }
+
+    private fun collapseLines(input: String): String {
+        return input.replace("\n", "\\n")
+            .replace("\r", "\\r")
+            .replace("\t", "\\t")
     }
 }
