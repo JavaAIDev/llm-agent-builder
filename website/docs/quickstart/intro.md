@@ -148,3 +148,25 @@ streamlit run ChatAgentUI.py
 ```
 
 You can interact with a running agent using this UI.
+
+## Examples
+
+### CSV Processor
+
+Process local CSV files.
+
+Tools used:
+
+- readLocalFile
+- writeLocalFile
+- executePythonCode
+
+[GitHub repo](https://github.com/LLMAgentBuilder/example-csv-processor)
+
+### Chinese Idioms Game
+
+成语接龙游戏
+
+Use custom tools.
+
+[GitHub repo](https://github.com/LLMAgentBuilder/example-chinese-idioms-game)
