@@ -8,6 +8,7 @@ import io.github.llmagentbuilder.core.Planner;
 import io.github.llmagentbuilder.core.chatmemory.ChatMemoryStore;
 import io.github.llmagentbuilder.core.chatmemory.InMemoryChatMemoryStore;
 import io.github.llmagentbuilder.core.planner.reactjson.ReActJsonPlannerFactory;
+import io.github.llmagentbuilder.core.planner.simple.SimplePlannerFactory;
 import io.github.llmagentbuilder.core.tool.AgentToolFunctionCallbackContext;
 import io.github.llmagentbuilder.core.tool.AgentToolsProvider;
 import io.github.llmagentbuilder.core.tool.AgentToolsProviderFactory;
@@ -66,8 +67,11 @@ public class ChatAgentAutoConfiguration {
     }
 
     @Bean
+    @Primary
+    @ConditionalOnProperty(prefix = ChatAgentProperties.CONFIG_PREFIX
+        + ".planner.reActJson", name = "enabled", matchIfMissing = true)
     @ConditionalOnMissingBean
-    public Planner planner(ChatClient chatClient,
+    public Planner reActJsonPlanner(ChatClient chatClient,
         ChatOptions chatOptions,
         Optional<ChatMemoryStore> chatMemoryStore,
         AgentToolsProvider agentToolsProvider,
@@ -77,7 +81,30 @@ public class ChatAgentAutoConfiguration {
           chatClient,
           chatOptions,
           agentToolsProvider,
-          properties.getReActJson().getSystemInstructions(),
+          properties.getPlanner().getSystemInstructions(),
+          chatMemoryStore.orElse(null),
+          properties.tracingEnabled() ? observationRegistry.orElse(null)
+              : null,
+          properties.metricsEnabled() ? meterRegistry.orElse(null)
+              : null
+      );
+    }
+
+    @Bean
+    @ConditionalOnProperty(prefix = ChatAgentProperties.CONFIG_PREFIX
+        + ".planner.simple", name = "enabled")
+    @ConditionalOnMissingBean
+    public Planner simplePlanner(ChatClient chatClient,
+        ChatOptions chatOptions,
+        Optional<ChatMemoryStore> chatMemoryStore,
+        AgentToolsProvider agentToolsProvider,
+        Optional<ObservationRegistry> observationRegistry,
+        Optional<MeterRegistry> meterRegistry) {
+      return SimplePlannerFactory.INSTANCE.create(
+          chatClient,
+          chatOptions,
+          agentToolsProvider,
+          properties.getPlanner().getSystemInstructions(),
           chatMemoryStore.orElse(null),
           properties.tracingEnabled() ? observationRegistry.orElse(null)
               : null,

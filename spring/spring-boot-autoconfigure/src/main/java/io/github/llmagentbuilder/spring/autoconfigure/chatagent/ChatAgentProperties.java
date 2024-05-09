@@ -20,7 +20,7 @@ public class ChatAgentProperties {
   private String usageInstruction = "Ask me anything";
 
   @NestedConfigurationProperty
-  private ReActJson reActJson = new ReActJson();
+  private Planner planner = new Planner();
 
   @NestedConfigurationProperty
   private Memory memory = new Memory();
@@ -74,12 +74,13 @@ public class ChatAgentProperties {
     this.usageInstruction = usageInstruction;
   }
 
-  public ReActJson getReActJson() {
-    return reActJson;
+  public Planner getPlanner() {
+    return planner;
   }
 
-  public void setReActJson(ReActJson reActJson) {
-    this.reActJson = reActJson;
+  public void setPlanner(
+      Planner planner) {
+    this.planner = planner;
   }
 
   public Memory getMemory() {
@@ -126,9 +127,15 @@ public class ChatAgentProperties {
     return metrics == null || metrics.isEnabled();
   }
 
-  public static class ReActJson {
+  public static class Planner {
 
     private String systemInstructions;
+
+    @NestedConfigurationProperty
+    private ReActJson reActJson = new ReActJson();
+
+    @NestedConfigurationProperty
+    private Simple simple = new Simple();
 
     public String getSystemInstructions() {
       return systemInstructions;
@@ -136,6 +143,50 @@ public class ChatAgentProperties {
 
     public void setSystemInstructions(String systemInstructions) {
       this.systemInstructions = systemInstructions;
+    }
+
+    public ReActJson getReActJson() {
+      return reActJson;
+    }
+
+    public void setReActJson(ReActJson reActJson) {
+      this.reActJson = reActJson;
+    }
+
+    public Simple getSimple() {
+      return simple;
+    }
+
+    public void setSimple(
+        Simple simple) {
+      this.simple = simple;
+    }
+  }
+
+  public static class ReActJson {
+
+    private boolean enabled = true;
+
+    public boolean isEnabled() {
+      return enabled;
+    }
+
+    public void setEnabled(boolean enabled) {
+      this.enabled = enabled;
+    }
+
+  }
+
+  public static class Simple {
+
+    private boolean enabled = false;
+
+    public boolean isEnabled() {
+      return enabled;
+    }
+
+    public void setEnabled(boolean enabled) {
+      this.enabled = enabled;
     }
   }
 
