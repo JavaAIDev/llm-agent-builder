@@ -1,4 +1,4 @@
-package io.github.llmagentbuilder.spring.spring.chatagent;
+package io.github.llmagentbuilder.spring.chatagent;
 
 import io.github.llmagentbuilder.core.ChatAgent;
 import io.github.llmagentbuilder.core.ChatAgentRequest;

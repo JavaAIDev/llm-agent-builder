@@ -1,6 +1,6 @@
 package io.github.alexcheng1982.llmagentbuilder.toolbuilder.openapi;
 
-import static io.github.llmagentbuilder.toolbuilder.openapi.openapi.OpenApiAgentToolGenerator.AGENT_BUILDER_VERSION;
+import static io.github.llmagentbuilder.toolbuilder.openapi.OpenApiAgentToolGenerator.AGENT_BUILDER_VERSION;
 
 import org.junit.Test;
 import org.openapitools.codegen.ClientOptInput;

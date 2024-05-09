@@ -1,4 +1,4 @@
-package io.github.llmagentbuilder.spring.spring
+package io.github.llmagentbuilder.spring
 
 import io.github.llmagentbuilder.core.tool.AgentTool
 import io.github.llmagentbuilder.core.tool.AgentToolsProvider

@@ -1,4 +1,4 @@
-package io.github.llmagentbuilder.toolbuilder.openapi.openapi;
+package io.github.llmagentbuilder.toolbuilder.openapi;
 
 import org.openapitools.codegen.CodegenConfig;
 import org.openapitools.codegen.languages.JavaClientCodegen;

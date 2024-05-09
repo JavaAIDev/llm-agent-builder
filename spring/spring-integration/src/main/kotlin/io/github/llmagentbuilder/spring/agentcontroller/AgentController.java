@@ -1,8 +1,8 @@
-package io.github.llmagentbuilder.spring.spring.agentcontroller;
+package io.github.llmagentbuilder.spring.agentcontroller;
 
 import io.github.llmagentbuilder.core.ChatAgentRequest;
 import io.github.llmagentbuilder.core.ChatAgentResponse;
-import io.github.llmagentbuilder.spring.spring.chatagent.ChatAgentService;
+import io.github.llmagentbuilder.spring.chatagent.ChatAgentService;
 import org.springframework.http.MediaType;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
