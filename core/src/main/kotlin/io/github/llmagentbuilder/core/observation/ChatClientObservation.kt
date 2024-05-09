@@ -1,5 +1,7 @@
 package io.github.llmagentbuilder.core.observation
 
+import com.fasterxml.jackson.databind.ObjectMapper
+import com.fasterxml.jackson.databind.SerializationFeature
 import io.micrometer.common.KeyValue
 import io.micrometer.common.KeyValues
 import io.micrometer.common.docs.KeyName
@@ -10,6 +12,7 @@ import io.micrometer.observation.ObservationConvention
 import io.micrometer.observation.ObservationRegistry
 import io.micrometer.observation.docs.ObservationDocumentation
 import io.micrometer.observation.transport.RequestReplySenderContext
+import org.slf4j.LoggerFactory
 import org.springframework.ai.chat.ChatClient
 import org.springframework.ai.chat.ChatResponse
 import org.springframework.ai.chat.prompt.Prompt
@@ -175,10 +178,14 @@ class ChatClientRequestObservationContext(prompt: Prompt) :
 }
 
 class InstrumentedChatClient(
-    val chatClient: ChatClient,
+    private val chatClient: ChatClient,
     private val observationRegistry: ObservationRegistry? = null,
     private val meterRegistry: MeterRegistry? = null,
 ) : ChatClient {
+    private val objectMapper =
+        ObjectMapper().configure(SerializationFeature.INDENT_OUTPUT, true)
+    private val logger = LoggerFactory.getLogger("chatClient.debugger")
+
     override fun call(prompt: Prompt): ChatResponse {
         val action = { chatClient.call(prompt) }
         val response = observationRegistry?.let { registry ->
@@ -206,7 +213,9 @@ class InstrumentedChatClient(
             ).start()
         return try {
             observation.openScope().use {
+                debugJson("Prompt", prompt)
                 val response = action.invoke()
+                debugJson("Response", response)
                 observationContext.setResponse(response)
                 response
             }
@@ -233,6 +242,23 @@ class InstrumentedChatClient(
                 counter.increment(provider.invoke().toDouble())
             }
         }
+    }
 
+    private fun debugJson(type: String, input: Any) {
+        val json = try {
+            objectMapper.writeValueAsString(input)
+        } catch (e: Exception) {
+            input.toString()
+        }
+        val message =
+            """
+            ===== $type =====
+            
+            $json
+            =================
+            """.trimIndent()
+        if (logger.isDebugEnabled) {
+            logger.debug(message)
+        }
     }
 }
