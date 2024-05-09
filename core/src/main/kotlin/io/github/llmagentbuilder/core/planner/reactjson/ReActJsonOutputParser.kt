@@ -24,7 +24,10 @@ class ReActJsonOutputParser : OutputParser {
         val response = JsonParser.parse(text)
         if (response != null) {
             val actionInput = response["action_input"]?.let {
-                objectMapper.writeValueAsString(it)
+                when (it) {
+                    is String, Int, Long, Float, Double -> it.toString()
+                    else -> objectMapper.writeValueAsString(it)
+                }
             } ?: "{}"
             if (response["action"] == "Final Answer") {
                 return ParseResult.finish(

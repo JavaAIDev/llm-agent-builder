@@ -1,5 +1,7 @@
 package io.github.llmagentbuilder.core.planner.reactjson
 
+import io.github.llmagentbuilder.core.AgentAction
+import org.junit.jupiter.api.Assertions.assertEquals
 import org.junit.jupiter.api.Test
 import kotlin.test.assertNotNull
 
@@ -74,5 +76,26 @@ class ReActJsonOutputParserTest {
         val parser = ReActJsonOutputParser()
         val result = parser.parse(text)
         assertNotNull(result.action)
+    }
+
+    @Test
+    fun parseActionInput() {
+        val text = """
+            Thought: I need to start a game  with the user. The first step is to validate the idiom provided by the user and then generate a response idiom that starts with the last character of the user's input.
+Action:
+```json
+{
+  "action": "checkChineseIdiom",
+  "action_input": "{\"word\": \"一马当先\"}"
+}
+```
+        """.trimIndent()
+        val parser = ReActJsonOutputParser()
+        val result = parser.parse(text)
+        assertNotNull(result.action)
+        assertEquals(
+            "{\"word\": \"一马当先\"}",
+            (result.action as AgentAction).toolInput
+        )
     }
 }
