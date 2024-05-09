@@ -4,6 +4,7 @@ import io.github.llmagentbuilder.core.planner.ChatOptionsConfigurer;
 import java.util.HashSet;
 import org.jetbrains.annotations.NotNull;
 import org.springframework.ai.chat.prompt.ChatOptions;
+import org.springframework.ai.model.ModelOptionsUtils;
 import org.springframework.ai.openai.OpenAiChatOptions;
 
 public class OpenAiChatOptionsConfigurer implements ChatOptionsConfigurer {
@@ -18,16 +19,18 @@ public class OpenAiChatOptionsConfigurer implements ChatOptionsConfigurer {
   public ChatOptions configure(@NotNull ChatOptions chatOptions,
       @NotNull ChatOptionsConfig config) {
     var options = (OpenAiChatOptions) chatOptions;
+    var updatedOptions = new OpenAiChatOptions();
+    ModelOptionsUtils.merge(options, updatedOptions, OpenAiChatOptions.class);
     if (config.getStopSequence() != null) {
-      options.setStop(config.getStopSequence());
+      updatedOptions.setStop(config.getStopSequence());
     }
     if (config.getFunctions() != null) {
       var toolNames = new HashSet<>(config.getFunctions());
       if (options.getFunctions() != null) {
         toolNames.addAll(options.getFunctions());
       }
-      options.setFunctions(toolNames);
+      updatedOptions.setFunctions(toolNames);
     }
-    return options;
+    return updatedOptions;
   }
 }
