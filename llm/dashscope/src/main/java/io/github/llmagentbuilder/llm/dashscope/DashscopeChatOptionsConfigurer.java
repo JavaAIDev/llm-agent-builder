@@ -18,17 +18,17 @@ public class DashscopeChatOptionsConfigurer implements ChatOptionsConfigurer {
   public ChatOptions configure(@NotNull ChatOptions chatOptions,
       @NotNull ChatOptionsConfig config) {
     var options = (DashscopeChatOptions) chatOptions;
-    var builder = DashscopeChatOptions.builder(options);
+    var updatedOptions = options.createCopy();
     if (config.getStopSequence() != null) {
-      builder.withStops(config.getStopSequence());
+      updatedOptions.setStops(config.getStopSequence());
     }
     if (config.getFunctions() != null) {
       var toolNames = new HashSet<>(config.getFunctions());
       if (options.getFunctions() != null) {
         toolNames.addAll(options.getFunctions());
       }
-      builder.withFunctions(toolNames);
+      updatedOptions.setFunctions(toolNames);
     }
-    return builder.build();
+    return updatedOptions;
   }
 }

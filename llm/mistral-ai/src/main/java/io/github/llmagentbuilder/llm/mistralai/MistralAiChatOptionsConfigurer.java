@@ -20,7 +20,7 @@ public class MistralAiChatOptionsConfigurer implements ChatOptionsConfigurer {
       @NotNull ChatOptionsConfig config) {
     var options = (MistralAiChatOptions) chatOptions;
     var updatedOptions = new MistralAiChatOptions();
-    ModelOptionsUtils.merge(options, updatedOptions,
+    updatedOptions = ModelOptionsUtils.merge(options, updatedOptions,
         MistralAiChatOptions.class);
     if (config.getFunctions() != null) {
       var toolNames = new HashSet<>(config.getFunctions());

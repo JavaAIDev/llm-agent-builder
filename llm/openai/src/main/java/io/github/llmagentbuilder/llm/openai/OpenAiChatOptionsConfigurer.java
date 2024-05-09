@@ -20,7 +20,8 @@ public class OpenAiChatOptionsConfigurer implements ChatOptionsConfigurer {
       @NotNull ChatOptionsConfig config) {
     var options = (OpenAiChatOptions) chatOptions;
     var updatedOptions = new OpenAiChatOptions();
-    ModelOptionsUtils.merge(options, updatedOptions, OpenAiChatOptions.class);
+    updatedOptions = ModelOptionsUtils.merge(options, updatedOptions,
+        OpenAiChatOptions.class);
     if (config.getStopSequence() != null) {
       updatedOptions.setStop(config.getStopSequence());
     }
