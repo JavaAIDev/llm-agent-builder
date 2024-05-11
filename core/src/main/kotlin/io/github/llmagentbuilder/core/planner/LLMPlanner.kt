@@ -6,7 +6,6 @@ import io.github.llmagentbuilder.core.Planner
 import io.github.llmagentbuilder.core.chatmemory.ChatMemory
 import io.github.llmagentbuilder.core.chatmemory.ChatMemoryProvider
 import io.github.llmagentbuilder.core.chatmemory.ChatMemoryStore
-import io.github.llmagentbuilder.core.chatmemory.MessageWindowChatMemory
 import io.github.llmagentbuilder.core.config.AgentConfig
 import io.github.llmagentbuilder.core.executor.ActionPlanningResult
 import io.github.llmagentbuilder.core.observation.AgentPlanningObservationContext
@@ -26,6 +25,31 @@ import org.springframework.ai.chat.prompt.Prompt
 import org.springframework.ai.chat.prompt.PromptTemplate
 import java.util.*
 
+interface LLMPlannerChatMemoryProvider {
+    fun provide(
+        chatMemoryStore: ChatMemoryStore,
+        inputs: Map<String, Any>
+    ): ChatMemory?
+
+    companion object {
+        val DEFAULT = object : LLMPlannerChatMemoryProvider {
+            override fun provide(
+                chatMemoryStore: ChatMemoryStore,
+                inputs: Map<String, Any>
+            ): ChatMemory? {
+                return inputs["memory_id"]?.let { memoryId ->
+                    if (memoryId.toString().trim().isNotBlank())
+                        ChatMemoryProvider.DEFAULT.provideChatMemory(
+                            chatMemoryStore,
+                            memoryId.toString()
+                        )
+                    else null
+                }
+            }
+        }
+    }
+}
+
 open class LLMPlanner(
     private val chatClient: ChatClient,
     private val chatOptions: ChatOptions,
@@ -35,11 +59,8 @@ open class LLMPlanner(
     private val systemPromptTemplate: PromptTemplate? = null,
     private val systemInstruction: String? = null,
     private val chatMemoryStore: ChatMemoryStore? = null,
-    private val chatMemoryProvider: ((ChatMemoryStore, Map<String, Any>) -> ChatMemory?)? = { store, inputs ->
-        inputs["memory_id"]?.let { memoryId ->
-            MessageWindowChatMemory(store, memoryId.toString(), 10)
-        }
-    },
+    private val chatMemoryProvider: LLMPlannerChatMemoryProvider? = null,
+    private val chatHistoryCustomizer: ChatHistoryCustomizer? = null,
     private val observationRegistry: ObservationRegistry? = null,
     private val meterRegistry: MeterRegistry? = null,
     private val stopSequence: List<String>? = null,
@@ -75,14 +96,16 @@ open class LLMPlanner(
         }
 
         val chatMemory = chatMemoryStore?.let { store ->
-            chatMemoryProvider?.invoke(store, inputs)
+            chatMemoryProvider?.provide(store, inputs)
         }
 
         chatMemory?.let { memory ->
             messages.forEach(memory::add)
         }
         val prompt = Prompt(
-            chatMemory?.messages() ?: messages,
+            chatMemory?.messages()
+                ?.let { chatHistoryCustomizer?.customize(it) ?: it }
+                ?: messages,
             prepareChatClientOptions(toolNames)
         )
         val response = chatClient.call(prompt)
@@ -170,6 +193,7 @@ open class LLMPlanner(
         private var systemInstruction: String? = null
         private var chatMemoryStore: ChatMemoryStore? = null
         private var chatMemoryProvider: ChatMemoryProvider? = null
+        private var chatHistoryCustomizer: ChatHistoryCustomizer? = null
         private var stopSequence: List<String>? = null
 
         fun withChatClient(chatClient: ChatClient): Builder {
@@ -229,6 +253,11 @@ open class LLMPlanner(
             return this
         }
 
+        fun withChatHistoryCustomizer(chatHistoryCustomizer: ChatHistoryCustomizer?): Builder {
+            this.chatHistoryCustomizer = chatHistoryCustomizer
+            return this
+        }
+
         fun withStopSequence(stopSequence: List<String>?): Builder {
             this.stopSequence = stopSequence
             return this
@@ -251,14 +280,8 @@ open class LLMPlanner(
                 systemPromptTemplate,
                 systemInstruction,
                 chatMemoryStore,
-                { store, inputs ->
-                    inputs["memory_id"]?.let { memoryId ->
-                        ChatMemoryProvider.DEFAULT.provideChatMemory(
-                            store,
-                            memoryId.toString()
-                        )
-                    }
-                },
+                LLMPlannerChatMemoryProvider.DEFAULT,
+                chatHistoryCustomizer,
                 observationRegistry,
                 meterRegistry,
                 stopSequence,
@@ -274,7 +297,7 @@ abstract class LLMPlannerFactory {
         val (chatClient, chatOptions) = agentConfig.llmConfig
         val (_, systemInstruction) = agentConfig.plannerConfig()
         val (agentToolsProvider) = agentConfig.toolsConfig()
-        val (chatMemoryStore) = agentConfig.memoryConfig()
+        val (chatMemoryStore, chatHistoryCustomizer) = agentConfig.memoryConfig()
         val (observationRegistry, meterRegistry) = agentConfig.observationConfig()
         return create(
             chatClient,
@@ -282,6 +305,7 @@ abstract class LLMPlannerFactory {
             agentToolsProvider,
             systemInstruction,
             chatMemoryStore,
+            chatHistoryCustomizer,
             observationRegistry,
             meterRegistry
         )
@@ -293,6 +317,7 @@ abstract class LLMPlannerFactory {
         agentToolsProvider: AgentToolsProvider? = null,
         systemInstruction: String? = null,
         chatMemoryStore: ChatMemoryStore? = null,
+        chatHistoryCustomizer: ChatHistoryCustomizer? = null,
         observationRegistry: ObservationRegistry? = null,
         meterRegistry: MeterRegistry? = null,
     ): LLMPlanner {
@@ -302,6 +327,7 @@ abstract class LLMPlannerFactory {
             .withAgentToolsProvider(agentToolsProvider)
             .withSystemInstruction(systemInstruction)
             .withChatMemoryStore(chatMemoryStore)
+            .withChatHistoryCustomizer(chatHistoryCustomizer)
             .withObservationRegistry(observationRegistry)
             .withMeterRegistry(meterRegistry)
             .build()

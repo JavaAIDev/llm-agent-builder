@@ -2,6 +2,7 @@ package io.github.llmagentbuilder.core.config
 
 import io.github.llmagentbuilder.core.Planner
 import io.github.llmagentbuilder.core.chatmemory.ChatMemoryStore
+import io.github.llmagentbuilder.core.planner.ChatHistoryCustomizer
 import io.github.llmagentbuilder.core.planner.react.ReActPlannerFactory
 import io.github.llmagentbuilder.core.planner.reactjson.ReActJsonPlannerFactory
 import io.github.llmagentbuilder.core.planner.simple.SimplePlannerFactory
@@ -61,6 +62,7 @@ data class ToolsConfig(
 
 data class MemoryConfig(
     val chatMemoryStore: ChatMemoryStore? = null,
+    val chatHistoryCustomizer: ChatHistoryCustomizer? = null,
 )
 
 data class ObservationConfig(

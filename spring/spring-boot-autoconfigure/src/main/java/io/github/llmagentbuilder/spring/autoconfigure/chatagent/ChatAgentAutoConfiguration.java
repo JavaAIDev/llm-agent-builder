@@ -7,6 +7,7 @@ import io.github.llmagentbuilder.core.ChatAgent;
 import io.github.llmagentbuilder.core.Planner;
 import io.github.llmagentbuilder.core.chatmemory.ChatMemoryStore;
 import io.github.llmagentbuilder.core.chatmemory.InMemoryChatMemoryStore;
+import io.github.llmagentbuilder.core.planner.ChatHistoryCustomizer;
 import io.github.llmagentbuilder.core.planner.reactjson.ReActJsonPlannerFactory;
 import io.github.llmagentbuilder.core.planner.simple.SimplePlannerFactory;
 import io.github.llmagentbuilder.core.tool.AgentToolFunctionCallbackContext;
@@ -20,6 +21,7 @@ import io.micrometer.core.instrument.simple.SimpleMeterRegistry;
 import io.micrometer.observation.ObservationRegistry;
 import java.util.List;
 import java.util.Optional;
+import org.springframework.ai.autoconfigure.mistralai.MistralAiAutoConfiguration;
 import org.springframework.ai.autoconfigure.ollama.OllamaAutoConfiguration;
 import org.springframework.ai.autoconfigure.openai.OpenAiAutoConfiguration;
 import org.springframework.ai.chat.ChatClient;
@@ -39,7 +41,9 @@ import org.springframework.context.annotation.Configuration;
 import org.springframework.context.annotation.Primary;
 
 @AutoConfiguration(before = WebMvcAutoConfiguration.class, after = {
-    OllamaAutoConfiguration.class, OpenAiAutoConfiguration.class,
+    OllamaAutoConfiguration.class,
+    OpenAiAutoConfiguration.class,
+    MistralAiAutoConfiguration.class,
     DashscopeAutoConfiguration.class,
     ObservationAutoConfiguration.class})
 @ConditionalOnProperty(prefix = ChatAgentProperties.CONFIG_PREFIX, name = "enabled", matchIfMissing = true)
@@ -75,6 +79,7 @@ public class ChatAgentAutoConfiguration {
         ChatOptions chatOptions,
         Optional<ChatMemoryStore> chatMemoryStore,
         AgentToolsProvider agentToolsProvider,
+        Optional<ChatHistoryCustomizer> chatHistoryCustomizer,
         Optional<ObservationRegistry> observationRegistry,
         Optional<MeterRegistry> meterRegistry) {
       return ReActJsonPlannerFactory.INSTANCE.create(
@@ -83,6 +88,7 @@ public class ChatAgentAutoConfiguration {
           agentToolsProvider,
           properties.getPlanner().getSystemInstructions(),
           chatMemoryStore.orElse(null),
+          chatHistoryCustomizer.orElse(null),
           properties.tracingEnabled() ? observationRegistry.orElse(null)
               : null,
           properties.metricsEnabled() ? meterRegistry.orElse(null)
@@ -98,6 +104,7 @@ public class ChatAgentAutoConfiguration {
         ChatOptions chatOptions,
         Optional<ChatMemoryStore> chatMemoryStore,
         AgentToolsProvider agentToolsProvider,
+        Optional<ChatHistoryCustomizer> chatHistoryCustomizer,
         Optional<ObservationRegistry> observationRegistry,
         Optional<MeterRegistry> meterRegistry) {
       return SimplePlannerFactory.INSTANCE.create(
@@ -106,6 +113,7 @@ public class ChatAgentAutoConfiguration {
           agentToolsProvider,
           properties.getPlanner().getSystemInstructions(),
           chatMemoryStore.orElse(null),
+          chatHistoryCustomizer.orElse(null),
           properties.tracingEnabled() ? observationRegistry.orElse(null)
               : null,
           properties.metricsEnabled() ? meterRegistry.orElse(null)
