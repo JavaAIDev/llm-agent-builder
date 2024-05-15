@@ -10,6 +10,7 @@ import io.github.llmagentbuilder.core.planner.ParseResult
 import io.github.llmagentbuilder.core.tool.ExceptionTool
 import io.github.llmagentbuilder.core.tool.InvalidTool
 import io.github.llmagentbuilder.core.tool.InvalidToolInput
+import io.github.llmagentbuilder.core.utils.JsonUtils
 import io.micrometer.observation.ObservationRegistry
 import org.slf4j.LoggerFactory
 import org.springframework.ai.model.function.FunctionCallback
@@ -191,16 +192,17 @@ data class AgentExecutor(
         val agentTool = nameToToolMap[agentAction.tool]
         if (agentTool != null) {
             val (tool, toolInput) = agentAction
+            val functionInput = JsonUtils.escapeStringContent(toolInput)
             logger.info(
                 "Start executing tool [{}] with request [{}]",
                 tool,
-                toolInput
+                functionInput
             )
-            val observation = agentTool.call(toolInput)
+            val observation = agentTool.call(functionInput)
             logger.info(
                 "Tool [{}] executed with request [{}], response is [{}]",
                 tool,
-                toolInput,
+                functionInput,
                 observation
             )
             return AgentStep(agentAction, observation)

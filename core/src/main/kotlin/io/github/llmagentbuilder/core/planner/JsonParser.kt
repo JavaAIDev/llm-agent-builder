@@ -3,6 +3,8 @@ package io.github.llmagentbuilder.core.planner
 import com.fasterxml.jackson.core.type.TypeReference
 import com.fasterxml.jackson.databind.ObjectMapper
 import com.fasterxml.jackson.module.kotlin.KotlinModule
+import io.github.llmagentbuilder.core.utils.JsonEscapeResult
+import io.github.llmagentbuilder.core.utils.JsonUtils
 import org.slf4j.LoggerFactory
 import java.util.regex.Pattern
 
@@ -15,11 +17,6 @@ object JsonParser {
     private val actionInputPattern =
         Pattern.compile(
             "(\"action_input\":\\s*\")(.*?)(\")",
-            Pattern.DOTALL or Pattern.MULTILINE
-        )
-    private val textBlockPattern =
-        Pattern.compile(
-            "^(.*?)\"{3}\\n?(.*?)\"{3}(.*?)\$",
             Pattern.DOTALL or Pattern.MULTILINE
         )
 
@@ -50,32 +47,33 @@ object JsonParser {
         } else json
         jsonString = jsonString.trim().trim('`')
         jsonString = cleanJson(jsonString)
-        jsonString = cleanTextBlock(jsonString)
+        val escapeResult = cleanTextBlock(jsonString)
+        jsonString = if (escapeResult.escaped) {
+            escapeResult.result
+        } else {
+            cleanQuotes(jsonString).result
+        }
         return jsonString
     }
 
     private fun cleanJson(json: String): String {
         val matcher = actionInputPattern.matcher(json)
         if (matcher.matches()) {
-            val value = collapseLines(matcher.group(2))
+            val value = JsonUtils.collapseLines(matcher.group(2))
                 .replace("(?<!\\\\)\"", "\\\"")
             return matcher.group(1) + value + matcher.group(3)
         }
         return json
     }
 
-    private fun cleanTextBlock(json: String): String {
-        val matcher = textBlockPattern.matcher(json)
-        if (matcher.matches()) {
-            val value = collapseLines(matcher.group(2))
-            return matcher.group(1) + "\"" + value + "\"" + matcher.group(3)
-        }
-        return json
+    private fun cleanTextBlock(json: String): JsonEscapeResult {
+        val block = "\"\"\""
+        return JsonUtils.escapeJsonBetween(json, block, block, "\"", "\"", true)
     }
 
-    private fun collapseLines(input: String): String {
-        return input.replace("\n", "\\n")
-            .replace("\r", "\\r")
-            .replace("\t", "\\t")
+    private fun cleanQuotes(input: String): JsonEscapeResult {
+        val unescaped = input.replace("\\\"", "'")
+        return JsonUtils.escapeJsonBetween(unescaped, "\"", "\"", "\"", "\"")
     }
+
 }

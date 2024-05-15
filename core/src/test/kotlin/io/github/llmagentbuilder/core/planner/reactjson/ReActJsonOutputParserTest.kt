@@ -1,10 +1,16 @@
 package io.github.llmagentbuilder.core.planner.reactjson
 
+import com.fasterxml.jackson.core.type.TypeReference
+import com.fasterxml.jackson.databind.ObjectMapper
 import io.github.llmagentbuilder.core.AgentAction
 import org.junit.jupiter.api.Assertions.assertEquals
 import org.junit.jupiter.api.Test
+import org.junit.jupiter.api.TestInstance
+import org.junit.jupiter.params.ParameterizedTest
+import org.junit.jupiter.params.provider.MethodSource
 import kotlin.test.assertNotNull
 
+@TestInstance(TestInstance.Lifecycle.PER_CLASS)
 class ReActJsonOutputParserTest {
 
     @Test
@@ -45,40 +51,6 @@ class ReActJsonOutputParserTest {
     }
 
     @Test
-    fun parseWithCodeExecution() {
-        val text = """
-            Thought: We need to read the 'users.csv' file, combine the 'first_name' and 'last_name' columns into a new 'name' column, and then write the updated data into a new file 'output.csv'. We can achieve this using the `executePythonCode` tool.
-
-            Action:
-            ```json
-            {
-              "action": "executePythonCode",
-              "action_input": {
-                "code": ""${'"'}
-            import pandas as pd
-
-            # Read the original CSV file
-            df = pd.read_csv('users.csv')
-
-            # Create a new column 'name' by combining first_name and last_name
-            df['name'] = df['first_name'] + ' ' + df['last_name']
-
-            # Drop the original columns and keep only 'name' and 'email'
-            df = df[['name', 'email']]
-
-            # Write the updated DataFrame to a new CSV file
-            df.to_csv('output.csv', index=False)
-                ""${'"'}
-              }
-            }
-            ```
-        """.trimIndent()
-        val parser = ReActJsonOutputParser()
-        val result = parser.parse(text)
-        assertNotNull(result.action)
-    }
-
-    @Test
     fun parseActionInput() {
         val text = """
             Thought: I need to start a game  with the user. The first step is to validate the idiom provided by the user and then generate a response idiom that starts with the last character of the user's input.
@@ -97,5 +69,32 @@ Action:
             "{\"word\": \"一马当先\"}",
             (result.action as AgentAction).toolInput
         )
+    }
+
+    @ParameterizedTest(name = "{1}")
+    @MethodSource("testCases")
+    fun parseInput(text: String, caseName: String) {
+        val parser = ReActJsonOutputParser()
+        val result = parser.parse(text)
+        assertNotNull(result.action)
+        val input = (result.action as AgentAction).toolInput
+        assertNotNull(input)
+        ObjectMapper().readValue(
+            input,
+            object : TypeReference<Map<String, Any>>() {})
+    }
+
+    private fun testCases(): List<Any> {
+        return listOf(
+            "double-quotes-escape.txt",
+            "triple-quotes-escape.txt",
+            "code.txt",
+            "python-code.txt",
+        ).map { arrayOf(loadText(it), it) }
+    }
+
+    private fun loadText(name: String): String {
+        return javaClass.getResourceAsStream("/output_parser/ReActJson/$name")
+            ?.reader()?.readText() ?: throw RuntimeException("$name not found")
     }
 }
