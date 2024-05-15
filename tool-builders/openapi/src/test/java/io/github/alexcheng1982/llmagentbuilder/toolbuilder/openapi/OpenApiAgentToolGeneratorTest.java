@@ -30,9 +30,9 @@ public class OpenApiAgentToolGeneratorTest {
         .setArtifactId("universities-openapi-agent-tool")
         .setGeneratorName("Java") // use this codegen library
         .addAdditionalProperty(AGENT_BUILDER_VERSION, "0.1.0-SNAPSHOT")
+        .addAdditionalProperty("useEnumCaseInsensitive", true)
         .setInputSpec(
-            "./src/test/resources/universities.yaml") // sample OpenAPI file
-        // .setInputSpec("https://raw.githubusercontent.com/openapitools/openapi-generator/master/modules/openapi-generator/src/test/resources/2_0/petstore.yaml") // or from the server
+            "https://petstore3.swagger.io/api/v3/openapi.json")
         .setOutputDir("target/agent-tool-openapi"); // output directory
 
     final ClientOptInput clientOptInput = configurator.toClientOptInput();
