@@ -7,7 +7,7 @@ public class OpenApiAgentToolGenerator extends
     JavaClientCodegen implements CodegenConfig {
 
   public static final String AGENT_BUILDER_VERSION = "agentBuilderVersion";
-  public static final String DEFAULT_AGENT_BUILDER_VERSION = "0.1.0-SNAPSHOT";
+  public static final String DEFAULT_AGENT_BUILDER_VERSION = "0.1.5";
 
   private String agentBuilderVersion;
 

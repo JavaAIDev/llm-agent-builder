@@ -27,9 +27,10 @@ public class OpenApiAgentToolGeneratorTest {
     // https://github.com/OpenAPITools/openapi-generator/blob/master/modules/openapi-generator-cli/src/main/java/org/openapitools/codegen/cmd/Generate.java
     final CodegenConfigurator configurator = new CodegenConfigurator()
         .setGroupId("io.github.alexcheng1982")
-        .setArtifactId("universities-openapi-agent-tool")
-        .setGeneratorName("Java") // use this codegen library
-        .addAdditionalProperty(AGENT_BUILDER_VERSION, "0.1.0-SNAPSHOT")
+        .setArtifactId("petstore-openapi-agent-tool")
+        .setGeneratorName("Java")
+        .setLibrary("native")
+        .addAdditionalProperty(AGENT_BUILDER_VERSION, "0.1.6")
         .addAdditionalProperty("useEnumCaseInsensitive", true)
         .setInputSpec(
             "https://petstore3.swagger.io/api/v3/openapi.json")
