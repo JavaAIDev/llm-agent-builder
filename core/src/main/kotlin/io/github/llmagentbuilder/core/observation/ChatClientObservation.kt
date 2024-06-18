@@ -7,7 +7,7 @@ import io.micrometer.observation.Observation
 import io.micrometer.observation.ObservationConvention
 import io.micrometer.observation.docs.ObservationDocumentation
 import io.micrometer.observation.transport.RequestReplySenderContext
-import org.springframework.ai.chat.ChatResponse
+import org.springframework.ai.chat.model.ChatResponse
 import org.springframework.ai.chat.prompt.Prompt
 
 enum class ChatClientObservationDocumentation : ObservationDocumentation {

@@ -11,7 +11,7 @@ import io.github.llmagentbuilder.core.tool.AgentToolsProvider
 import io.github.llmagentbuilder.core.tool.AutoDiscoveredAgentToolsProvider
 import io.micrometer.core.instrument.MeterRegistry
 import io.micrometer.observation.ObservationRegistry
-import org.springframework.ai.chat.ChatClient
+import org.springframework.ai.chat.model.ChatModel
 import org.springframework.ai.chat.prompt.ChatOptions
 
 enum class PlannerType {
@@ -47,7 +47,7 @@ data class MetadataConfig(
 )
 
 data class LLMConfig(
-    val chatClient: ChatClient,
+    val chatModel: ChatModel,
     val chatOptions: ChatOptions,
 )
 

@@ -2,25 +2,30 @@ package io.github.llmagentbuilder.core.observation
 
 import com.fasterxml.jackson.databind.ObjectMapper
 import com.fasterxml.jackson.databind.SerializationFeature
+import com.fasterxml.jackson.datatype.jsr310.JavaTimeModule
 import io.micrometer.core.instrument.Counter
 import io.micrometer.core.instrument.MeterRegistry
 import io.micrometer.observation.ObservationRegistry
 import org.slf4j.LoggerFactory
-import org.springframework.ai.chat.ChatClient
-import org.springframework.ai.chat.ChatResponse
+import org.springframework.ai.chat.model.ChatModel
+import org.springframework.ai.chat.model.ChatResponse
+import org.springframework.ai.chat.prompt.ChatOptions
 import org.springframework.ai.chat.prompt.Prompt
 
-class InstrumentedChatClient(
-    private val chatClient: ChatClient,
+class InstrumentedChatModel(
+    private val chatModel: ChatModel,
     private val observationRegistry: ObservationRegistry? = null,
     private val meterRegistry: MeterRegistry? = null,
-) : ChatClient {
+) : ChatModel {
     private val objectMapper =
-        ObjectMapper().configure(SerializationFeature.INDENT_OUTPUT, true)
+        ObjectMapper().registerModules(JavaTimeModule())
+            .enable(SerializationFeature.INDENT_OUTPUT)
+            .disable(SerializationFeature.FAIL_ON_EMPTY_BEANS)
     private val logger = LoggerFactory.getLogger("chatClient.debugger")
 
+
     override fun call(prompt: Prompt): ChatResponse {
-        val action = { chatClient.call(prompt) }
+        val action = { chatModel.call(prompt) }
         val response = observationRegistry?.let { registry ->
             instrumentedCall(prompt, action, registry)
         } ?: action.invoke()
@@ -28,6 +33,10 @@ class InstrumentedChatClient(
             updateMetrics(response, this)
         }
         return response
+    }
+
+    override fun getDefaultOptions(): ChatOptions {
+        return chatModel.defaultOptions
     }
 
     private fun instrumentedCall(
@@ -88,8 +97,8 @@ class InstrumentedChatClient(
         }
         val message =
             """
-            ===== $type =====
-            
+            =================
+            $type:
             $json
             =================
             """.trimIndent()

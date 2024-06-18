@@ -48,7 +48,7 @@
     <kotlin.code.style>official</kotlin.code.style>
     <kotlin.compiler.jvmTarget>17</kotlin.compiler.jvmTarget>
     <java.version>17</java.version>
-    <spring-ai.version>0.8.1</spring-ai.version>
+    <spring-ai.version>1.0.0-SNAPSHOT</spring-ai.version>
     <kotlin.version>1.9.23</kotlin.version>
     <spring-boot.version>3.2.4</spring-boot.version>
     <spring.version>6.1.4</spring.version>
@@ -334,6 +334,14 @@
       <snapshots>
         <enabled>false</enabled>
       </snapshots>
+    </repository>
+    <repository>
+      <id>spring-snapshots</id>
+      <name>Spring Snapshots</name>
+      <url>https://repo.spring.io/snapshot</url>
+      <releases>
+        <enabled>false</enabled>
+      </releases>
     </repository>
   </repositories>
 

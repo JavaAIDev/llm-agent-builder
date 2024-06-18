@@ -24,7 +24,7 @@ import java.util.Optional;
 import org.springframework.ai.autoconfigure.mistralai.MistralAiAutoConfiguration;
 import org.springframework.ai.autoconfigure.ollama.OllamaAutoConfiguration;
 import org.springframework.ai.autoconfigure.openai.OpenAiAutoConfiguration;
-import org.springframework.ai.chat.ChatClient;
+import org.springframework.ai.chat.model.ChatModel;
 import org.springframework.ai.chat.prompt.ChatOptions;
 import org.springframework.ai.model.function.FunctionCallbackContext;
 import org.springframework.boot.actuate.autoconfigure.observation.ObservationAutoConfiguration;
@@ -51,7 +51,7 @@ public class ChatAgentAutoConfiguration {
 
   @Configuration(proxyBeanMethods = false)
   @ConditionalOnClass(Agent.class)
-  @ConditionalOnBean(ChatClient.class)
+  @ConditionalOnBean(ChatModel.class)
   @ConditionalOnMissingBean(Agent.class)
   @EnableConfigurationProperties(ChatAgentProperties.class)
   public static class ChatAgentConfiguration {
@@ -75,7 +75,7 @@ public class ChatAgentAutoConfiguration {
     @ConditionalOnProperty(prefix = ChatAgentProperties.CONFIG_PREFIX
         + ".planner.reActJson", name = "enabled", matchIfMissing = true)
     @ConditionalOnMissingBean
-    public Planner reActJsonPlanner(ChatClient chatClient,
+    public Planner reActJsonPlanner(ChatModel chatModel,
         ChatOptions chatOptions,
         Optional<ChatMemoryStore> chatMemoryStore,
         AgentToolsProvider agentToolsProvider,
@@ -83,7 +83,7 @@ public class ChatAgentAutoConfiguration {
         Optional<ObservationRegistry> observationRegistry,
         Optional<MeterRegistry> meterRegistry) {
       return ReActJsonPlannerFactory.INSTANCE.create(
-          chatClient,
+          chatModel,
           chatOptions,
           agentToolsProvider,
           properties.getPlanner().getSystemInstructions(),
@@ -100,7 +100,7 @@ public class ChatAgentAutoConfiguration {
     @ConditionalOnProperty(prefix = ChatAgentProperties.CONFIG_PREFIX
         + ".planner.simple", name = "enabled")
     @ConditionalOnMissingBean
-    public Planner simplePlanner(ChatClient chatClient,
+    public Planner simplePlanner(ChatModel chatModel,
         ChatOptions chatOptions,
         Optional<ChatMemoryStore> chatMemoryStore,
         AgentToolsProvider agentToolsProvider,
@@ -108,7 +108,7 @@ public class ChatAgentAutoConfiguration {
         Optional<ObservationRegistry> observationRegistry,
         Optional<MeterRegistry> meterRegistry) {
       return SimplePlannerFactory.INSTANCE.create(
-          chatClient,
+          chatModel,
           chatOptions,
           agentToolsProvider,
           properties.getPlanner().getSystemInstructions(),
