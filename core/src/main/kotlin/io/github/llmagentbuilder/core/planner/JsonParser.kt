@@ -8,6 +8,10 @@ import io.github.llmagentbuilder.core.utils.JsonUtils
 import org.slf4j.LoggerFactory
 import java.util.regex.Pattern
 
+interface JsonNormalizer {
+    fun normalize(json: String): String
+}
+
 object JsonParser {
     private val pattern =
         Pattern.compile(
@@ -25,12 +29,17 @@ object JsonParser {
     private val objectMapper =
         ObjectMapper().registerModule(KotlinModule.Builder().build())
 
+    private val jsonNormalizers = listOf(
+        MarkdownJsonNormalizer(),
+        BasicCleanJsonNormalizer(),
+        EscapeJsonNormalizer()
+    )
+
     fun parse(json: String): Map<String, Any>? {
-        try {
-            return parseJson(parseJsonMarkdown(json))
-        } catch (e: Exception) {
-            logger.warn("Failed to parse json: {}", json, e)
-            return null
+        return normalizeAndParse(json).also {
+            if (it == null) {
+                logger.warn("Failed to parse json: {}", json)
+            }
         }
     }
 
@@ -40,20 +49,48 @@ object JsonParser {
             object : TypeReference<Map<String, Any>>() {})
     }
 
-    private fun parseJsonMarkdown(json: String): String {
-        val matcher = pattern.matcher(json)
-        var jsonString = if (matcher.matches()) {
-            matcher.group(1)
-        } else json
-        jsonString = jsonString.trim().trim('`')
-        jsonString = cleanJson(jsonString)
-        val escapeResult = cleanTextBlock(jsonString)
-        jsonString = if (escapeResult.escaped) {
-            escapeResult.result
-        } else {
-            cleanQuotes(jsonString).result
+    private fun normalizeAndParse(json: String): Map<String, Any>? {
+        var jsonString = json
+        for (jsonNormalizer in jsonNormalizers) {
+            jsonString = jsonNormalizer.normalize(jsonString)
+            try {
+                return parseJson(jsonString)
+            } catch (e: Exception) {
+                continue
+            }
         }
-        return jsonString
+        return null
+    }
+
+    private class MarkdownJsonNormalizer : JsonNormalizer {
+        override fun normalize(json: String): String {
+            val matcher = pattern.matcher(json)
+            return if (matcher.matches()) {
+                matcher.group(1)
+            } else json
+        }
+    }
+
+    private class BasicCleanJsonNormalizer : JsonNormalizer {
+        override fun normalize(json: String): String {
+            var jsonString = json.trim().trim('`')
+            jsonString = cleanJson(jsonString)
+            return jsonString
+        }
+
+    }
+
+    private class EscapeJsonNormalizer : JsonNormalizer {
+        override fun normalize(json: String): String {
+            val escapeResult = cleanTextBlock(json)
+            val jsonString = if (escapeResult.escaped) {
+                escapeResult.result
+            } else {
+                cleanQuotes(json).result
+            }
+            return jsonString
+        }
+
     }
 
     private fun cleanJson(json: String): String {
