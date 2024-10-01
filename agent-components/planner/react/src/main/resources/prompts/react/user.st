@@ -1,0 +1,3 @@
+{input}
+
+{agent_scratchpad}

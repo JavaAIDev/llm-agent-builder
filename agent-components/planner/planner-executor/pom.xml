@@ -5,12 +5,11 @@
   <modelVersion>4.0.0</modelVersion>
   <parent>
     <groupId>io.github.llmagentbuilder</groupId>
-    <artifactId>llm</artifactId>
+    <artifactId>agent-planner</artifactId>
     <version>0.2.0</version>
   </parent>
 
-  <artifactId>llm-openai</artifactId>
-  <name>LLM :: OpenAI</name>
+  <artifactId>planner-executor</artifactId>
 
   <properties>
     <maven.compiler.source>21</maven.compiler.source>
@@ -21,7 +20,7 @@
   <dependencies>
     <dependency>
       <groupId>org.springframework.ai</groupId>
-      <artifactId>spring-ai-openai</artifactId>
+      <artifactId>spring-ai-core</artifactId>
     </dependency>
     <dependency>
       <groupId>io.github.llmagentbuilder</groupId>

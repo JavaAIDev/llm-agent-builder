@@ -18,25 +18,29 @@ class ChatAgentHandler(
             writeResponse(exchange, 405, "Media type not allowed", "text/plain")
             return
         }
-        try {
-            val request = exchange.requestBody.use {
+
+        val request = try {
+            exchange.requestBody.use {
                 JsonUtil.fromJson(
                     String(it.readAllBytes()),
                     ChatAgentRequest::class.java,
                     objectMapper
                 )
             }
-            try {
-                val response = chatAgent.call(request)
-                val json = JsonUtil.toJson(response, objectMapper)
-                writeResponse(exchange, 200, json)
-            } catch (e: Exception) {
-                logger.error("Failed to call agent", e)
-                writeResponse(exchange, 500, "Internal error", "text/plain")
-            }
         } catch (e: Exception) {
             logger.error("Failed to parse request", e)
             writeResponse(exchange, 400, "Invalid request data", "text/plain")
+            return
+        }
+
+        try {
+            val response = chatAgent.call(request)
+            val json =
+                JsonUtil.toJson(response, objectMapper)
+            writeResponse(exchange, 200, json)
+        } catch (e: Exception) {
+            logger.error("Failed to call agent", e)
+            writeResponse(exchange, 500, "Internal error", "text/plain")
         }
     }
 
@@ -47,9 +51,10 @@ class ChatAgentHandler(
         contentType: String = "application/json"
     ) {
         exchange.responseHeaders.add("Content-Type", contentType)
-        exchange.sendResponseHeaders(code, response.length.toLong())
+        val data = response.toByteArray()
+        exchange.sendResponseHeaders(code, data.size.toLong())
         exchange.responseBody.use {
-            it.write(response.toByteArray())
+            it.write(data)
             it.flush()
         }
     }

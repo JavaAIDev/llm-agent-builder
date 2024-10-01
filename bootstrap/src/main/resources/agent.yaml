@@ -1,0 +1,14 @@
+llm:
+  ollama:
+    model: "llama3.2:1b"
+profile:
+  system: You are a helpful assistant.
+memory:
+  inMemory:
+    enabled: true
+planner:
+  reAct:
+    enabled: true
+tools:
+  - name: baiduHotWords
+  - name: webPageContentLoader

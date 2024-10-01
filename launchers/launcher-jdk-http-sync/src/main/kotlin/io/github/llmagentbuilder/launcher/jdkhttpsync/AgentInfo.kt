@@ -16,9 +16,10 @@ class AgentInfoHandler(
     override fun handle(exchange: HttpExchange) {
         val info = AgentInfoBuilder.info(chatAgent, agentToolsProvider)
         val json = JsonUtil.toJson(info, objectMapper)
-        exchange.sendResponseHeaders(200, json.length.toLong())
+        val data = json.toByteArray()
+        exchange.sendResponseHeaders(200, data.size.toLong())
         exchange.responseBody.use {
-            it.write(json.toByteArray())
+            it.write(data)
             it.flush()
         }
     }

@@ -3,8 +3,7 @@ package io.github.llmagentbuilder.launcher.jdkhttpsync
 import com.fasterxml.jackson.databind.ObjectMapper
 import com.fasterxml.jackson.module.kotlin.KotlinModule
 import com.sun.net.httpserver.HttpServer
-import io.github.llmagentbuilder.core.config.AgentConfig
-import io.github.llmagentbuilder.core.config.ConfiguredAgentFactory
+import io.github.llmagentbuilder.core.ChatAgent
 import io.github.llmagentbuilder.core.tool.AutoDiscoveredAgentToolsProvider
 import org.slf4j.LoggerFactory
 import java.net.InetSocketAddress
@@ -30,7 +29,7 @@ class JdkHttpSyncLauncher {
     private val logger = LoggerFactory.getLogger(javaClass)
 
     fun launch(
-        agentConfig: AgentConfig,
+        chatAgent: ChatAgent,
         launchOptions: LaunchOptions = LaunchOptions()
     ) {
         val (serverOptions) = launchOptions
@@ -44,10 +43,7 @@ class JdkHttpSyncLauncher {
         )
         val objectMapper =
             ObjectMapper().registerModule(KotlinModule.Builder().build())
-        val chatAgent = ConfiguredAgentFactory.createChatAgent(agentConfig)
-        val agentToolsProvider =
-            agentConfig.toolsConfig().agentToolsProvider
-                ?: AutoDiscoveredAgentToolsProvider
+        val agentToolsProvider = AutoDiscoveredAgentToolsProvider
 
         val (chatAgentPath, agentInfoPath) = launchOptions.pathOptions
         chatAgentPath.let { path ->
