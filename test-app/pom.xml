@@ -1,0 +1,114 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project xmlns="http://maven.apache.org/POM/4.0.0"
+         xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+         xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+  <modelVersion>4.0.0</modelVersion>
+  <groupId>io.github.llmagentbuilder.app</groupId>
+  <artifactId>app_d7e1ade7e41044029b708c327b0a5370</artifactId>
+  <version>0.0.1-SNAPSHOT</version>
+
+  <properties>
+    <maven.compiler.source>21</maven.compiler.source>
+    <maven.compiler.target>21</maven.compiler.target>
+    <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
+    <spring-ai.version>1.0.0-SNAPSHOT</spring-ai.version>
+    <llmagentbuilder.version>0.2.0</llmagentbuilder.version>
+  </properties>
+
+  <dependencyManagement>
+    <dependencies>
+      <dependency>
+        <groupId>org.springframework.ai</groupId>
+        <artifactId>spring-ai-bom</artifactId>
+        <version>${spring-ai.version}</version>
+        <type>pom</type>
+        <scope>import</scope>
+      </dependency>
+    </dependencies>
+  </dependencyManagement>
+
+  <dependencies>
+    <dependency>
+      <groupId>org.springframework.ai</groupId>
+      <artifactId>spring-ai-core</artifactId>
+    </dependency>
+    <dependency>
+      <groupId>io.github.llmagentbuilder</groupId>
+      <artifactId>core</artifactId>
+      <version>${llmagentbuilder.version}</version>
+    </dependency>
+    <dependency>
+      <groupId>io.github.llmagentbuilder</groupId>
+      <artifactId>bootstrap</artifactId>
+      <version>${llmagentbuilder.version}</version>
+    </dependency>
+    <dependency>
+      <groupId>io.github.llmagentbuilder</groupId>
+      <artifactId>agent-profile-system-message</artifactId>
+      <version>${llmagentbuilder.version}</version>
+    </dependency>
+    
+      <dependency>
+        <groupId>io.github.llmagentbuilder</groupId>
+        <artifactId>agent-planner-react-json</artifactId>
+        <version>${llmagentbuilder.version}</version>
+      </dependency>
+    
+      <dependency>
+        <groupId>io.github.llmagentbuilder</groupId>
+        <artifactId>llm-openai</artifactId>
+        <version>${llmagentbuilder.version}</version>
+      </dependency>
+    
+      <dependency>
+        <groupId>io.github.llmagentbuilder</groupId>
+        <artifactId>tool-write-local-file</artifactId>
+        <version>0.1.1</version>
+      </dependency>
+    
+    <dependency>
+      <groupId>io.github.llmagentbuilder</groupId>
+      <artifactId>launcher-jdk-http-sync</artifactId>
+      <version>${llmagentbuilder.version}</version>
+    </dependency>
+    <dependency>
+      <groupId>org.slf4j</groupId>
+      <artifactId>slf4j-api</artifactId>
+      <version>2.0.16</version>
+    </dependency>
+    <dependency>
+      <groupId>ch.qos.logback</groupId>
+      <artifactId>logback-classic</artifactId>
+      <version>1.5.8</version>
+    </dependency>
+  </dependencies>
+
+  <build>
+    <plugins>
+      <plugin>
+        <artifactId>maven-assembly-plugin</artifactId>
+        <version>3.7.1</version>
+        <configuration>
+          <descriptorRefs>
+            <descriptorRef>jar-with-dependencies</descriptorRef>
+          </descriptorRefs>
+          <archive>
+            <manifest>
+              <mainClass>io.github.llmagentbuilder.bootstrap.AgentMainKt
+              </mainClass>
+            </manifest>
+          </archive>
+        </configuration>
+        <executions>
+          <execution>
+            <id>make-assembly</id>
+            <phase>package</phase>
+            <goals>
+              <goal>single</goal>
+            </goals>
+          </execution>
+        </executions>
+      </plugin>
+    </plugins>
+  </build>
+</project>

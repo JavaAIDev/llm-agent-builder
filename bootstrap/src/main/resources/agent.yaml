@@ -1,14 +1,15 @@
 llm:
-  ollama:
-    model: "llama3.2:1b"
+  openai:
+    enabled: true
 profile:
   system: You are a helpful assistant.
 memory:
   inMemory:
     enabled: true
 planner:
-  reAct:
+  reActJson:
     enabled: true
 tools:
-  - name: baiduHotWords
-  - name: webPageContentLoader
+  - groupId: "io.github.llmagentbuilder"
+    artifactId: "tool-write-local-file"
+    version: "0.1.1"

@@ -7,7 +7,7 @@ import java.nio.charset.Charset
 
 class ReActPromptAdvisor : RequestAdvisor {
     override fun getName(): String {
-        return "ReAct Planner - User Text"
+        return "ReAct Planner - Prompt"
     }
 
     override fun adviseRequest(

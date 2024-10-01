@@ -6,6 +6,12 @@ import java.util.function.Function
  * Agent tool
  */
 interface AgentTool<REQUEST, RESPONSE> : Function<REQUEST, RESPONSE> {
+
+    /**
+     * ID of the agent tool
+     */
+    fun id(): String = javaClass.name.replace(".", "_")
+
     /**
      * Name of the agent tool, will be passed to LLM
      */
