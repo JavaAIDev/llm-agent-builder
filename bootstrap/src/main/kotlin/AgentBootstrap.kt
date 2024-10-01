@@ -3,11 +3,9 @@ import io.github.llmagentbuilder.agent.tool.AgentToolContextAdvisor
 import io.github.llmagentbuilder.core.AgentFactory
 import io.github.llmagentbuilder.core.ChatAgent
 import io.github.llmagentbuilder.core.ChatModelProvider
+import io.github.llmagentbuilder.core.PlannerProvider
 import io.github.llmagentbuilder.core.tool.AgentToolFunctionCallbackContext
 import io.github.llmagentbuilder.core.tool.AutoDiscoveredAgentToolsProvider
-import io.github.llmagentbuilder.planner.reactjson.ReActJsonPlanner
-import io.github.llmagentbuilder.planner.reactjson.ReActJsonPromptAdvisor
-import io.micrometer.observation.ObservationRegistry
 import org.springframework.ai.chat.client.ChatClient
 import org.springframework.ai.chat.client.advisor.MessageChatMemoryAdvisor
 import org.springframework.ai.chat.client.advisor.SimpleLoggerAdvisor
@@ -28,24 +26,25 @@ object AgentBootstrap {
                 AutoDiscoveredAgentToolsProvider.get()
             )
         )
-        val observationRegistry = ObservationRegistry.create()
-        advisors.addLast(ReActJsonPromptAdvisor())
         advisors.addLast(SimpleLoggerAdvisor())
         val functionCallbackContext =
             AgentToolFunctionCallbackContext(
                 AutoDiscoveredAgentToolsProvider,
-                observationRegistry
             )
         val chatModel = ServiceLoader.load(ChatModelProvider::class.java)
             .stream()
-            .map { it.get() }
             .findFirst()
+            .map { it.get() }
             .map { it.provideChatModel(functionCallbackContext) }
             .orElseThrow { RuntimeException("No ChatModel found") }
-        val chatClient = ChatClient.builder(chatModel)
+        val chatClientBuilder = ChatClient.builder(chatModel)
             .defaultAdvisors(advisors)
-            .build()
-        val planner = ReActJsonPlanner(chatClient)
+        val planner = ServiceLoader.load(PlannerProvider::class.java)
+            .stream()
+            .findFirst()
+            .map { it.get() }
+            .map { it.providePlanner(chatClientBuilder) }
+            .orElseThrow { RuntimeException("No Planner found") }
         return AgentFactory.createChatAgent(
             planner
         )

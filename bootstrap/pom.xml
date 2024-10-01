@@ -46,16 +46,6 @@
     </dependency>
     <dependency>
       <groupId>io.github.llmagentbuilder</groupId>
-      <artifactId>agent-planner-simple</artifactId>
-      <version>${project.version}</version>
-    </dependency>
-    <dependency>
-      <groupId>io.github.llmagentbuilder</groupId>
-      <artifactId>agent-planner-react</artifactId>
-      <version>${project.version}</version>
-    </dependency>
-    <dependency>
-      <groupId>io.github.llmagentbuilder</groupId>
       <artifactId>agent-planner-react-json</artifactId>
       <version>${project.version}</version>
     </dependency>

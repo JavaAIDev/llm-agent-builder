@@ -17,6 +17,7 @@
     <module>agent-components</module>
     <module>bootstrap</module>
     <module>llm</module>
+    <module>cli</module>
   </modules>
 
   <description>LLM Agent Builder</description>
