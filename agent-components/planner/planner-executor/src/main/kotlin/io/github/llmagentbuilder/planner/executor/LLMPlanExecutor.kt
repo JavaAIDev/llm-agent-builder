@@ -18,7 +18,12 @@ open class LLMPlanExecutor(
         val userInput =
             (inputs["input"] as? String)
                 ?: throw RuntimeException("Invalid input")
-        val response = chatClient.prompt().user(userInput).call().content()
+        val thoughts = constructScratchpad(intermediateSteps)
+        val response = chatClient.prompt()
+            .user { spec ->
+                spec.text(userInput).param("agent_scratchpad", thoughts)
+            }
+            .call().content()
         if (response.isEmpty()) {
             return ActionPlanningResult.finish(
                 AgentFinish.fromOutput(
@@ -31,4 +36,10 @@ open class LLMPlanExecutor(
         return ActionPlanningResult.fromParseResult(result)
     }
 
+    private fun constructScratchpad(intermediateSteps: List<IntermediateAgentStep>): String {
+        return intermediateSteps.joinToString(" ") {
+            val (action, observation) = it
+            "${action.log} \nObservation: $observation\n"
+        }
+    }
 }

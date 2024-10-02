@@ -4,7 +4,7 @@ import com.fasterxml.jackson.databind.ObjectMapper
 import com.fasterxml.jackson.module.kotlin.KotlinModule
 import com.sun.net.httpserver.HttpServer
 import io.github.llmagentbuilder.core.ChatAgent
-import io.github.llmagentbuilder.core.tool.AutoDiscoveredAgentToolsProvider
+import io.github.llmagentbuilder.core.tool.AgentToolsProvider
 import org.slf4j.LoggerFactory
 import java.net.InetSocketAddress
 import java.util.concurrent.Executors
@@ -30,6 +30,7 @@ class JdkHttpSyncLauncher {
 
     fun launch(
         chatAgent: ChatAgent,
+        agentToolsProvider: AgentToolsProvider,
         launchOptions: LaunchOptions = LaunchOptions()
     ) {
         val (serverOptions) = launchOptions
@@ -43,7 +44,6 @@ class JdkHttpSyncLauncher {
         )
         val objectMapper =
             ObjectMapper().registerModule(KotlinModule.Builder().build())
-        val agentToolsProvider = AutoDiscoveredAgentToolsProvider
 
         val (chatAgentPath, agentInfoPath) = launchOptions.pathOptions
         chatAgentPath.let { path ->

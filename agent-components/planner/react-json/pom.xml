@@ -10,6 +10,7 @@
   </parent>
 
   <artifactId>agent-planner-react-json</artifactId>
+  <name>Agent Planner :: ReAct Json</name>
 
   <properties>
     <maven.compiler.source>21</maven.compiler.source>

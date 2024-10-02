@@ -10,12 +10,14 @@
   </parent>
 
   <artifactId>agent-planner</artifactId>
+  <name>LLM Agent Planner</name>
   <packaging>pom</packaging>
   <modules>
     <module>simple</module>
     <module>planner-executor</module>
     <module>react</module>
     <module>react-json</module>
+    <module>structuredchat</module>
   </modules>
 
   <properties>

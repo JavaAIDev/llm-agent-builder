@@ -1,4 +1,4 @@
-package io.github.llmagentbuilder.core.planner
+package io.github.llmagentbuilder.core
 
 import org.springframework.ai.chat.prompt.ChatOptions
 
@@ -8,7 +8,6 @@ import org.springframework.ai.chat.prompt.ChatOptions
 interface ChatOptionsConfigurer {
 
     data class ChatOptionsConfig(
-        val functions: Set<String>? = null,
         val stopSequence: List<String>? = null,
     )
 
@@ -16,7 +15,7 @@ interface ChatOptionsConfigurer {
      * Checks if the [ChatOptions] can be configured
      * @param chatOptions Default [ChatOptions]
      */
-    fun supports(chatOptions: ChatOptions): Boolean
+    fun supports(chatOptions: ChatOptions?): Boolean
 
     /**
      * Should return a new [ChatOptions]
@@ -26,7 +25,7 @@ interface ChatOptionsConfigurer {
      * @return A new [ChatOptions]
      */
     fun configure(
-        chatOptions: ChatOptions,
+        chatOptions: ChatOptions?,
         config: ChatOptionsConfig
     ): ChatOptions
 }

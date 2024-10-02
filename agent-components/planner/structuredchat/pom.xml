@@ -9,8 +9,8 @@
     <version>0.2.0</version>
   </parent>
 
-  <artifactId>agent-planner-react</artifactId>
-  <name>Agent Planner :: ReAct</name>
+  <artifactId>agent-planner-structuredchat</artifactId>
+  <name>Agent Planner :: Structured Chat</name>
 
   <properties>
     <maven.compiler.source>21</maven.compiler.source>

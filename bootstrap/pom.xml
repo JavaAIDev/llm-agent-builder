@@ -56,7 +56,30 @@
     <dependency>
       <groupId>org.yaml</groupId>
       <artifactId>snakeyaml</artifactId>
-      <version>2.3</version>
+    </dependency>
+
+    <dependency>
+      <groupId>io.github.llmagentbuilder</groupId>
+      <artifactId>tool-write-local-file</artifactId>
+      <version>0.1.1</version>
+    </dependency>
+
+    <dependency>
+      <groupId>io.github.llmagentbuilder</groupId>
+      <artifactId>llm-openai</artifactId>
+      <version>${project.version}</version>
+    </dependency>
+
+    <dependency>
+      <groupId>io.github.llmagentbuilder</groupId>
+      <artifactId>tool-read-local-file</artifactId>
+      <version>0.1.1</version>
+    </dependency>
+
+    <dependency>
+      <groupId>io.github.llmagentbuilder</groupId>
+      <artifactId>agent-planner-react-json</artifactId>
+      <version>${project.version}</version>
     </dependency>
   </dependencies>
 </project>

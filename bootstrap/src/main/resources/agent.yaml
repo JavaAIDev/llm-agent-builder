@@ -1,3 +1,5 @@
+metadata:
+  name: Test agent
 llm:
   openai:
     enabled: true
@@ -10,6 +12,17 @@ planner:
   reActJson:
     enabled: true
 tools:
-  - groupId: "io.github.llmagentbuilder"
-    artifactId: "tool-write-local-file"
-    version: "0.1.1"
+  - id: writeLocalFile
+    config:
+      basePath: "E:\\file-output"
+    dependency:
+      groupId: "io.github.llmagentbuilder"
+      artifactId: "tool-write-local-file"
+      version: "0.1.1"
+  - id: readLocalFile
+    config:
+      basePath: "E:\\file-output"
+    dependency:
+      groupId: "io.github.llmagentbuilder"
+      artifactId: "tool-read-local-file"
+      version: "0.1.1"

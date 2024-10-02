@@ -24,7 +24,6 @@ import org.springframework.ai.chat.model.ChatModel
 import org.springframework.ai.chat.prompt.ChatOptions
 import org.springframework.ai.chat.prompt.Prompt
 import org.springframework.ai.chat.prompt.PromptTemplate
-import java.util.*
 
 interface LLMPlannerChatMemoryProvider {
     fun provide(
@@ -109,7 +108,7 @@ open class LLMPlanner(
             chatMemory?.messages()
                 ?.let { chatHistoryCustomizer?.customize(it) ?: it }
                 ?: messages,
-            prepareChatClientOptions(toolNames)
+            // prepareChatClientOptions(toolNames)
         )
         val response = chatClient.prompt(prompt).call().chatResponse()
         val text = response.result?.output?.content?.trim() ?: ""
@@ -167,16 +166,16 @@ open class LLMPlanner(
         }
     }
 
-    private fun prepareChatClientOptions(
-        toolNames: Set<String>
-    ): ChatOptions {
-        return ServiceLoader.load(ChatOptionsConfigurer::class.java)
-            .firstOrNull { it.supports(chatOptions) }?.configure(
-                chatOptions, ChatOptionsConfigurer.ChatOptionsConfig(
-                    toolNames, stopSequence
-                )
-            ) ?: chatOptions
-    }
+//    private fun prepareChatClientOptions(
+//        toolNames: Set<String>
+//    ): ChatOptions {
+//        return ServiceLoader.load(ChatOptionsConfigurer::class.java)
+//            .firstOrNull { it.supports(chatOptions) }?.configure(
+//                chatOptions, ChatOptionsConfigurer.ChatOptionsConfig(
+//                    stopSequence
+//                )
+//            ) ?: chatOptions
+//    }
 
     override fun toString(): String {
         return "LLMPlanner(outputParser=${outputParser.javaClass.simpleName})"

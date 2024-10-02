@@ -14,4 +14,12 @@ object MapToObject {
         val json = objectMapper.writeValueAsString(input)
         return objectMapper.readValue(json, T::class.java)
     }
+
+    fun <T> toObject(configClass: Class<T>, input: Map<String, Any?>?): T? {
+        if (input == null) {
+            return null
+        }
+        val json = objectMapper.writeValueAsString(input)
+        return objectMapper.readValue(json, configClass)
+    }
 }

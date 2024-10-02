@@ -2,21 +2,18 @@ package io.github.llmagentbuilder.cli
 
 import com.github.jknack.handlebars.Handlebars
 import com.github.jknack.handlebars.io.ClassPathTemplateLoader
-import io.github.llmagentbuilder.bootstrap.AgentConfig
+import io.github.llmagentbuilder.core.AgentConfig
 import org.yaml.snakeyaml.LoaderOptions
 import org.yaml.snakeyaml.Yaml
 import org.yaml.snakeyaml.constructor.Constructor
 import java.io.FileReader
-import java.nio.file.Files
 import java.nio.file.Path
-import java.nio.file.StandardOpenOption
 import java.util.*
-import kotlin.io.path.createDirectories
 
 object MavenPomGenerator {
     private val handlebars = Handlebars(ClassPathTemplateLoader("/template"))
 
-    fun generate(config: GenerationConfig, agentConfig: AgentConfig) {
+    fun generate(config: GenerationConfig, agentConfig: AgentConfig): String {
         val template = handlebars.compile("pom.xml")
         val pom = template.apply(
             mapOf(
@@ -29,28 +26,25 @@ object MavenPomGenerator {
                 "llmAgentBuilderVersion" to (config.llmAgentBuilderVersion
                     ?: "0.2.0"),
                 "dependencies" to collectDependencies(agentConfig),
-            )
+
+                )
         )
-        val outputPath = Path.of(".", "test-app")
-        outputPath.createDirectories()
-        Files.writeString(
-            outputPath.resolve("pom.xml"),
-            pom,
-            StandardOpenOption.TRUNCATE_EXISTING,
-            StandardOpenOption.CREATE
-        )
+        return pom
+
     }
 
     private fun collectDependencies(agentConfig: AgentConfig): List<MavenCoordinate> {
         val plannerDeps =
             collectDependencies(agentConfig.planner, plannerDependencies)
         val llmDeps = collectDependencies(agentConfig.llm, llmDependencies)
-        val toolDeps = agentConfig.tools?.map {
-            MavenCoordinate(
-                it.groupId,
-                it.artifactId,
-                it.version
-            )
+        val toolDeps = agentConfig.tools?.mapNotNull {
+            it.dependency?.let { dep ->
+                MavenCoordinate(
+                    dep.groupId,
+                    dep.artifactId,
+                    dep.version
+                )
+            }
         }?.toList() ?: listOf()
         return plannerDeps + llmDeps + toolDeps
     }

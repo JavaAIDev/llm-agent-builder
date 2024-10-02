@@ -190,6 +190,7 @@ data class AgentExecutor(
         agentAction: AgentAction
     ): AgentStep {
         val agentTool = nameToToolMap[agentAction.tool]
+            ?: nameToToolMap["functions.${agentAction.tool}"]
         if (agentTool != null) {
             val (tool, toolInput) = agentAction
             val functionInput = JsonUtils.escapeStringContent(toolInput)
@@ -207,6 +208,7 @@ data class AgentExecutor(
             )
             return AgentStep(agentAction, observation)
         } else {
+            logger.info("Tool ${agentAction.tool} not found")
             val observation = InvalidTool().apply(
                 InvalidToolInput(
                     agentAction.tool,

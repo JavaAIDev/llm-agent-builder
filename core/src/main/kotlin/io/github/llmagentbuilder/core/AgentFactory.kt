@@ -19,16 +19,16 @@ object AgentFactory {
         id: String? = null,
         observationRegistry: ObservationRegistry? = null,
     ): ChatAgent {
-        val defaultName = "ChatAgent"
+        val agentName = name ?: "ChatAgent"
         val executor = createAgentExecutor(
-            name ?: defaultName,
+            agentName,
             planner,
             agentToolsProvider ?: AutoDiscoveredAgentToolsProvider,
             observationRegistry
         )
         return ExecutableChatAgent(
             executor,
-            name ?: defaultName,
+            agentName,
             description ?: "A conversational chat agent",
             usageInstruction ?: "Ask me anything",
             id,
@@ -36,7 +36,7 @@ object AgentFactory {
         ).also {
             logger.info(
                 "Created ChatAgent [{}] with planner [{}]",
-                name,
+                agentName,
                 planner
             )
         }

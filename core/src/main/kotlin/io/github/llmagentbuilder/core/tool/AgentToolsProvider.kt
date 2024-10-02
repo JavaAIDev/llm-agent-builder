@@ -2,11 +2,12 @@ package io.github.llmagentbuilder.core.tool
 
 import com.fasterxml.jackson.databind.ObjectMapper
 import com.fasterxml.jackson.module.kotlin.KotlinModule
+import io.github.llmagentbuilder.core.MapToObject
+import io.github.llmagentbuilder.core.ToolConfig
 import io.github.llmagentbuilder.core.observation.AgentToolExecutionObservationContext
 import io.github.llmagentbuilder.core.observation.AgentToolExecutionObservationDocumentation
 import io.github.llmagentbuilder.core.observation.DefaultAgentToolExecutionObservationConvention
 import io.micrometer.observation.ObservationRegistry
-import org.apache.commons.beanutils.BeanUtils
 import org.slf4j.LoggerFactory
 import org.springframework.ai.model.function.FunctionCallback
 import org.springframework.ai.model.function.FunctionCallbackWrapper
@@ -113,16 +114,17 @@ class CompositeAgentToolsProvider(private val providers: List<AgentToolsProvider
 object AgentToolsProviderFactory {
     private val logger = LoggerFactory.getLogger(javaClass)
 
-    fun create(config: Map<String, Map<String, Any>>?): AgentToolsProvider {
+    fun create(tools: List<ToolConfig>): AgentToolsProvider {
         val (toConfig, noConfig) = ServiceLoader.load(AgentToolFactory::class.java)
             .stream()
             .map { it.get() }
             .asSequence()
             .partition { it is ConfigurableAgentToolFactory<*, *> }
         val noConfigTools = noConfig.map { it.create() }
+        val toolsMap = tools.associateBy { it.id }.mapValues { it.value.config }
         val toConfigTools = toConfig.map {
-            val configName =
-                (it as ConfigurableAgentToolFactory<*, *>).configName()
+            val toolId =
+                (it as ConfigurableAgentToolFactory<*, *>).toolId()
             val types =
                 GenericTypeResolver.resolveTypeArguments(
                     it.javaClass,
@@ -130,8 +132,8 @@ object AgentToolsProviderFactory {
                 )
             val configType =
                 types?.get(0) ?: throw IllegalArgumentException("Invalid type")
-            val instance = configType.getDeclaredConstructor().newInstance()
-            BeanUtils.populate(instance, config?.get(configName) ?: mapOf())
+            val instance =
+                MapToObject.toObject(configType, toolsMap[toolId])
             val method = it.javaClass.getDeclaredMethod("create", configType)
             method.invoke(it, instance) as AgentTool<*, *>
         }

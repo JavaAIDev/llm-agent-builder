@@ -10,6 +10,7 @@
   </parent>
 
   <artifactId>agent-planner-simple</artifactId>
+  <name>Agent Planner :: Simple</name>
 
   <properties>
     <maven.compiler.source>21</maven.compiler.source>

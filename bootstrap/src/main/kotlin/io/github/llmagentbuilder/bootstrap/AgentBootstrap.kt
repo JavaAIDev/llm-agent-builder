@@ -2,60 +2,46 @@ package io.github.llmagentbuilder.bootstrap
 
 import io.github.llmagentbuilder.agent.profile.systemmessage.SystemMessageProfileAdvisor
 import io.github.llmagentbuilder.agent.tool.AgentToolContextAdvisor
-import io.github.llmagentbuilder.core.AgentFactory
-import io.github.llmagentbuilder.core.ChatAgent
-import io.github.llmagentbuilder.core.ChatModelProvider
-import io.github.llmagentbuilder.core.PlannerProvider
+import io.github.llmagentbuilder.core.*
 import io.github.llmagentbuilder.core.tool.AgentToolFunctionCallbackContext
-import io.github.llmagentbuilder.core.tool.AutoDiscoveredAgentToolsProvider
+import io.github.llmagentbuilder.core.tool.AgentToolsProviderFactory
 import io.github.llmagentbuilder.launcher.jdkhttpsync.JdkHttpSyncLauncher
+import org.slf4j.LoggerFactory
 import org.springframework.ai.chat.client.ChatClient
 import org.springframework.ai.chat.client.advisor.MessageChatMemoryAdvisor
 import org.springframework.ai.chat.client.advisor.SimpleLoggerAdvisor
 import org.springframework.ai.chat.client.advisor.api.Advisor
 import org.springframework.ai.chat.memory.InMemoryChatMemory
-import org.yaml.snakeyaml.LoaderOptions
-import org.yaml.snakeyaml.Yaml
-import org.yaml.snakeyaml.constructor.Constructor
-import java.io.FileReader
 import java.nio.file.Path
 import java.util.*
 import kotlin.streams.asSequence
 
 object AgentBootstrap {
+    private val logger = LoggerFactory.getLogger(javaClass)
+
     fun bootstrap(configFile: Path) {
-        JdkHttpSyncLauncher().launch(
-            buildAgent(configFile)
-        )
+        val config = AgentConfigLoader.load(configFile.toFile())
+        bootstrap(config)
     }
 
-    private fun buildAgent(configFile: Path): ChatAgent {
-        val config =
-            Yaml(
-                Constructor(
-                    AgentConfig::class.java,
-                    LoaderOptions()
-                )
-            ).load<AgentConfig>(FileReader(configFile.toFile()))
-        return buildAgent(config)
-    }
-
-    private fun buildAgent(agentConfig: AgentConfig): ChatAgent {
+    private fun bootstrap(agentConfig: AgentConfig) {
         val advisors = listOf(
             this::profileAdvisor,
             this::inMemoryMessageHistoryAdvisor
         ).mapNotNull {
             it(agentConfig)
         }.toMutableList()
+        val agentToolsProvider =
+            AgentToolsProviderFactory.create(agentConfig.tools ?: listOf())
         advisors.addLast(
             AgentToolContextAdvisor(
-                AutoDiscoveredAgentToolsProvider.get()
+                agentToolsProvider.get()
             )
         )
         advisors.addLast(SimpleLoggerAdvisor())
         val functionCallbackContext =
             AgentToolFunctionCallbackContext(
-                AutoDiscoveredAgentToolsProvider,
+                agentToolsProvider,
             )
         val llmConfigs = agentConfig.llm
         val chatModel = ServiceLoader.load(ChatModelProvider::class.java)
@@ -67,7 +53,9 @@ object AgentBootstrap {
                     llmConfigs?.get(it.configKey()) as? Map<String, Any?>
                 it.provideChatModel(functionCallbackContext, config)
             }
-            .firstOrNull() ?: throw RuntimeException("No ChatModel found")
+            .firstOrNull()?.also {
+                logger.info("Loaded ChatModel $it")
+            } ?: throw RuntimeException("No ChatModel found")
         val chatClientBuilder = ChatClient.builder(chatModel)
             .defaultAdvisors(advisors)
         val plannerConfigs = agentConfig.planner
@@ -80,10 +68,18 @@ object AgentBootstrap {
                     plannerConfigs?.get(it.configKey()) as? Map<String, Any?>
                 it.providePlanner(chatClientBuilder, config)
             }
-            .firstOrNull() ?: throw RuntimeException("No Planner found")
-        return AgentFactory.createChatAgent(
-            planner
+            .firstOrNull()?.also {
+                logger.info("Loaded Planner $it")
+            } ?: throw RuntimeException("No Planner found")
+        val metadata = agentConfig.metadata
+        val chatAgent = AgentFactory.createChatAgent(
+            planner,
+            metadata?.name,
+            metadata?.description,
+            metadata?.usageInstruction,
+            agentToolsProvider,
         )
+        JdkHttpSyncLauncher().launch(chatAgent, agentToolsProvider)
     }
 
     private fun profileAdvisor(agentConfig: AgentConfig): Advisor? {

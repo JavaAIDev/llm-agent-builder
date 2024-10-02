@@ -1,5 +1,6 @@
 package io.github.llmagentbuilder.core.tool
 
+import io.github.llmagentbuilder.core.MapToObject
 import org.apache.commons.beanutils.BeanUtils
 import java.util.function.Supplier
 
@@ -26,23 +27,46 @@ interface ConfigurableAgentToolFactory<CONFIG, out T : ConfigurableAgentTool<*, 
      * @param config Tool configuration object
      * @return Agent tool
      */
-    fun create(config: CONFIG): T
+    fun create(config: CONFIG?): T
 
     /**
-     * Name of configuration key
+     * ID of the created tool
      *
-     * @return Config name
+     * @return Tool id
      */
-    fun configName(): String
+    fun toolId(): String
+
+    override fun create(): T {
+        return create(null)
+    }
 }
 
 abstract class BaseConfigurableAgentToolFactory<out T : ConfigurableAgentTool<*, *, CONFIG>, CONFIG>(
-    private val configProvider: Supplier<CONFIG>
+    private val configProvider: Supplier<CONFIG?>
 ) : ConfigurableAgentToolFactory<CONFIG, T> {
     override fun create(): T {
         return create(configProvider.get())
     }
 }
+
+class MapConfigProvider<C>(
+    private val configClass: Class<C>,
+    private val config: Map<String, Any?>
+) : Supplier<C?> {
+    override fun get(): C? {
+        return MapToObject.toObject(configClass, config)
+    }
+}
+
+abstract class MapConfigurableAgentToolFactory<out T : ConfigurableAgentTool<*, *, CONFIG>, CONFIG>(
+    configClass: Class<CONFIG>,
+    config: Map<String, Any?>,
+) : BaseConfigurableAgentToolFactory<T, CONFIG>(
+    MapConfigProvider(
+        configClass,
+        config
+    )
+)
 
 abstract class EnvironmentVariableConfigurableAgentToolFactory<out T : ConfigurableAgentTool<*, *, CONFIG>, CONFIG>(
     configClass: Class<CONFIG>,
@@ -59,8 +83,8 @@ open class EnvironmentVariableConfigProvider<C>(
     private val configClass: Class<C>,
     private val environmentVariablePrefix: String
 ) :
-    Supplier<C> {
-    override fun get(): C {
+    Supplier<C?> {
+    override fun get(): C? {
         val instance = configClass.getDeclaredConstructor().newInstance()
         BeanUtils.populate(instance, getEnvironmentVariables())
         return instance

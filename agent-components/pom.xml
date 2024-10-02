@@ -10,6 +10,7 @@
   </parent>
 
   <artifactId>agent-components</artifactId>
+  <name>Agent Components</name>
   <packaging>pom</packaging>
   <modules>
     <module>profile</module>
