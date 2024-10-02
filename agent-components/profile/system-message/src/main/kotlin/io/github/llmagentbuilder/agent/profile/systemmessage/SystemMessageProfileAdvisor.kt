@@ -1,25 +1,34 @@
 package io.github.llmagentbuilder.agent.profile.systemmessage
 
-import org.springframework.ai.chat.client.AdvisedRequest
-import org.springframework.ai.chat.client.advisor.api.RequestAdvisor
+import org.springframework.ai.chat.client.advisor.api.AdvisedRequest
+import org.springframework.ai.chat.client.advisor.api.AdvisedResponse
+import org.springframework.ai.chat.client.advisor.api.CallAroundAdvisor
+import org.springframework.ai.chat.client.advisor.api.CallAroundAdvisorChain
+import org.springframework.core.Ordered
 
 class SystemMessageProfileAdvisor(
     private val systemMessage: String,
     private val systemMessageParams: Map<String, Any>? = mapOf()
-) : RequestAdvisor {
+) : CallAroundAdvisor {
     override fun getName(): String {
         return "Profile - System Message"
     }
 
-    override fun adviseRequest(
-        request: AdvisedRequest,
-        adviseContext: MutableMap<String, Any>
-    ): AdvisedRequest {
+    override fun getOrder(): Int {
+        return Ordered.HIGHEST_PRECEDENCE + 1000
+    }
+
+    override fun aroundCall(
+        advisedRequest: AdvisedRequest,
+        chain: CallAroundAdvisorChain
+    ): AdvisedResponse {
         val systemParams =
-            (request.systemParams ?: mapOf()) + (systemMessageParams ?: mapOf())
-        return AdvisedRequest.from(request)
+            (advisedRequest.systemParams ?: mapOf()) + (systemMessageParams
+                ?: mapOf())
+        val request = AdvisedRequest.from(advisedRequest)
             .withSystemText(systemMessage)
             .withSystemParams(systemParams)
             .build()
+        return chain.nextAroundCall(request)
     }
 }

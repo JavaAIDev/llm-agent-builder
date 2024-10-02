@@ -1,37 +1,43 @@
 package io.github.llmagentbuilder.agent.tool
 
 import io.github.llmagentbuilder.core.tool.AgentTool
-import org.springframework.ai.chat.client.AdvisedRequest
-import org.springframework.ai.chat.client.advisor.api.RequestAdvisor
+import org.springframework.ai.chat.client.advisor.api.AdvisedRequest
+import org.springframework.ai.chat.client.advisor.api.AdvisedResponse
+import org.springframework.ai.chat.client.advisor.api.CallAroundAdvisor
+import org.springframework.ai.chat.client.advisor.api.CallAroundAdvisorChain
+import org.springframework.core.Ordered
 
-const val CONTEXT_KEY_TOOL_NAMES = "llmagentbuilder.toolNames"
-const val CONTEXT_KEY_TOOLS = "llmagentbuilder.tools"
 const val SYSTEM_PARAM_TOOL_NAMES = "tool_names"
 const val SYSTEM_PARAM_TOOLS = "tools"
 
 class AgentToolContextAdvisor(private val tools: Map<String, AgentTool<*, *>>) :
-    RequestAdvisor {
+    CallAroundAdvisor {
     override fun getName(): String {
         return "AgentTool"
     }
 
-    override fun adviseRequest(
-        request: AdvisedRequest,
-        adviseContext: MutableMap<String, Any>
-    ): AdvisedRequest {
+    override fun getOrder(): Int {
+        return Ordered.HIGHEST_PRECEDENCE + 500
+    }
+
+    override fun aroundCall(
+        advisedRequest: AdvisedRequest,
+        chain: CallAroundAdvisorChain
+    ): AdvisedResponse {
         val toolNames = tools.keys
-        adviseContext[CONTEXT_KEY_TOOL_NAMES] = toolNames
         val toolsDescription = renderTools(tools.values)
-        adviseContext[CONTEXT_KEY_TOOLS] = toolsDescription
-        val systemParams = HashMap(request.systemParams ?: mapOf())
+        val systemParams = HashMap(advisedRequest.systemParams ?: mapOf())
         systemParams[SYSTEM_PARAM_TOOLS] = toolsDescription
         systemParams[SYSTEM_PARAM_TOOL_NAMES] = toolNames.joinToString(", ")
         val functionNames =
-            (HashSet(request.functionNames ?: listOf()) + tools.keys).toList()
-        return AdvisedRequest.from(request)
+            (HashSet(
+                advisedRequest.functionNames ?: listOf()
+            ) + tools.keys).toList()
+        val request = AdvisedRequest.from(advisedRequest)
             .withFunctionNames(functionNames)
             .withSystemParams(systemParams)
             .build()
+        return chain.nextAroundCall(request)
     }
 
     private fun renderTools(tools: Collection<AgentTool<*, *>>): String {

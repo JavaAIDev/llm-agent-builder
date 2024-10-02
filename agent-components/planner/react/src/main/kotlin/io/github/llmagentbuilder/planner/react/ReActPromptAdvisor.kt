@@ -2,10 +2,13 @@ package io.github.llmagentbuilder.planner.react
 
 import io.github.llmagentbuilder.core.ChatOptionsConfigurer
 import io.github.llmagentbuilder.planner.executor.ChatOptionsHelper
-import org.springframework.ai.chat.client.AdvisedRequest
-import org.springframework.ai.chat.client.advisor.api.RequestAdvisor
+import org.springframework.ai.chat.client.advisor.api.AdvisedRequest
+import org.springframework.ai.chat.client.advisor.api.AdvisedResponse
+import org.springframework.ai.chat.client.advisor.api.CallAroundAdvisor
+import org.springframework.ai.chat.client.advisor.api.CallAroundAdvisorChain
+import org.springframework.core.Ordered
 
-const val defaultSystemTextTemplate = """
+internal const val defaultSystemTextTemplate = """
 {system_instruction}
 
 You have access to the following tools:
@@ -27,25 +30,40 @@ Begin!
     
 """
 
-class ReActPromptAdvisor : RequestAdvisor {
+internal const val defaultUserTextTemplate = """
+{user_input}
+
+{agent_scratchpad}
+"""
+
+class ReActPromptAdvisor : CallAroundAdvisor {
     override fun getName(): String {
         return "ReAct Planner - Prompt"
     }
 
-    override fun adviseRequest(
-        request: AdvisedRequest,
-        adviseContext: MutableMap<String, Any>
-    ): AdvisedRequest {
-        val systemParams = HashMap(request.systemParams ?: mapOf())
-        systemParams["system_instruction"] = request.systemText ?: ""
+    override fun getOrder(): Int {
+        return Ordered.HIGHEST_PRECEDENCE + 1000
+    }
+
+    override fun aroundCall(
+        advisedRequest: AdvisedRequest,
+        chain: CallAroundAdvisorChain
+    ): AdvisedResponse {
+        val systemParams = HashMap(advisedRequest.systemParams ?: mapOf())
+        systemParams["system_instruction"] = advisedRequest.systemText ?: ""
+        val userParams = HashMap(advisedRequest.userParams ?: mapOf())
+        userParams["user_input"] = advisedRequest.userText ?: ""
         val chatOptions = ChatOptionsHelper.buildChatOptions(
-            request.chatOptions,
+            advisedRequest.chatOptions,
             ChatOptionsConfigurer.ChatOptionsConfig(listOf("\\nObservation"))
         )
-        return AdvisedRequest.from(request)
+        val request = AdvisedRequest.from(advisedRequest)
             .withSystemText(defaultSystemTextTemplate)
             .withSystemParams(systemParams)
+            .withUserText(defaultUserTextTemplate)
+            .withUserParams(userParams)
             .withChatOptions(chatOptions)
             .build()
+        return chain.nextAroundCall(request)
     }
 }
