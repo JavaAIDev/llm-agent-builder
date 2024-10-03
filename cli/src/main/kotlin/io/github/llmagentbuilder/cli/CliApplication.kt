@@ -1,5 +1,6 @@
 package io.github.llmagentbuilder.cli
 
+import io.github.llmagentbuilder.cli.command.BuildCommand
 import io.github.llmagentbuilder.cli.command.RunCommand
 import picocli.CommandLine
 import java.io.File
@@ -11,7 +12,7 @@ import kotlin.system.exitProcess
     mixinStandardHelpOptions = true,
     version = ["0.2.0"],
     description = ["Build LLM agents"],
-    subcommands = [RunCommand::class],
+    subcommands = [RunCommand::class, BuildCommand::class],
 )
 class CliApplication : Callable<Void> {
     @CommandLine.Option(

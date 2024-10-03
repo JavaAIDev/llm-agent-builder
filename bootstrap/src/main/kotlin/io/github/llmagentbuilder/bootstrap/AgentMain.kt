@@ -10,9 +10,9 @@ object AgentMain {
             logger.info("Bootstrap agent from config file $configFile")
             AgentBootstrap.bootstrap(Path.of(configFile))
         } else {
-            javaClass.getResourceAsStream("agent.yaml")?.let {
+            javaClass.getResourceAsStream("/agent.yaml")?.let {
                 AgentBootstrap.bootstrap(it)
-            } ?: {
+            } ?: run {
                 logger.error("No config file found")
             }
         }
