@@ -26,3 +26,10 @@ tools:
       groupId: "io.github.llmagentbuilder"
       artifactId: "tool-read-local-file"
       version: "0.1.1"
+  - id: extractWebPageContent
+    config:
+      sizeLimit: 500
+    dependency:
+      groupId: "io.github.llmagentbuilder"
+      artifactId: "tool-extract-web-page-content"
+      version: "0.1.2"

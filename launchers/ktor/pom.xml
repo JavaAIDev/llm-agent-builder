@@ -1,0 +1,69 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project xmlns="http://maven.apache.org/POM/4.0.0"
+  xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+  xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+  <modelVersion>4.0.0</modelVersion>
+  <parent>
+    <groupId>io.github.llmagentbuilder</groupId>
+    <artifactId>launchers</artifactId>
+    <version>0.2.0</version>
+  </parent>
+
+  <artifactId>launcher-ktor</artifactId>
+
+  <properties>
+    <maven.compiler.source>21</maven.compiler.source>
+    <maven.compiler.target>21</maven.compiler.target>
+    <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
+    <ktor.version>2.3.12</ktor.version>
+  </properties>
+
+  <dependencies>
+    <dependency>
+      <groupId>io.github.llmagentbuilder</groupId>
+      <artifactId>core</artifactId>
+      <version>${project.version}</version>
+    </dependency>
+    <dependency>
+      <groupId>io.ktor</groupId>
+      <artifactId>ktor-server-core-jvm</artifactId>
+      <version>${ktor.version}</version>
+    </dependency>
+    <dependency>
+      <groupId>io.ktor</groupId>
+      <artifactId>ktor-server-content-negotiation-jvm</artifactId>
+      <version>${ktor.version}</version>
+    </dependency>
+    <dependency>
+      <groupId>io.ktor</groupId>
+      <artifactId>ktor-server-host-common-jvm</artifactId>
+      <version>${ktor.version}</version>
+    </dependency>
+    <dependency>
+      <groupId>io.ktor</groupId>
+      <artifactId>ktor-server-cio-jvm</artifactId>
+      <version>${ktor.version}</version>
+    </dependency>
+    <dependency>
+      <groupId>io.ktor</groupId>
+      <artifactId>ktor-server-compression-jvm</artifactId>
+      <version>${ktor.version}</version>
+    </dependency>
+    <dependency>
+      <groupId>io.ktor</groupId>
+      <artifactId>ktor-server-default-headers-jvm</artifactId>
+      <version>${ktor.version}</version>
+    </dependency>
+    <dependency>
+      <groupId>io.ktor</groupId>
+      <artifactId>ktor-server-resources-jvm</artifactId>
+      <version>${ktor.version}</version>
+    </dependency>
+    <dependency>
+      <groupId>io.ktor</groupId>
+      <artifactId>ktor-serialization-jackson-jvm</artifactId>
+      <version>${ktor.version}</version>
+    </dependency>
+  </dependencies>
+
+</project>

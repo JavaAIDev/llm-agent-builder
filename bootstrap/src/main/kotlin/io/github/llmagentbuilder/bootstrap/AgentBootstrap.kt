@@ -5,7 +5,7 @@ import io.github.llmagentbuilder.agent.tool.AgentToolContextAdvisor
 import io.github.llmagentbuilder.core.*
 import io.github.llmagentbuilder.core.tool.AgentToolFunctionCallbackContext
 import io.github.llmagentbuilder.core.tool.AgentToolsProviderFactory
-import io.github.llmagentbuilder.launcher.jdkhttpsync.JdkHttpSyncLauncher
+import io.github.llmagentbuilder.launcher.ktor.server.KtorLauncher
 import org.slf4j.LoggerFactory
 import org.springframework.ai.chat.client.ChatClient
 import org.springframework.ai.chat.client.advisor.MessageChatMemoryAdvisor
@@ -83,7 +83,8 @@ object AgentBootstrap {
             metadata?.usageInstruction,
             agentToolsProvider,
         )
-        JdkHttpSyncLauncher().launch(chatAgent, agentToolsProvider)
+        KtorLauncher.launch(chatAgent)
+//        JdkHttpSyncLauncher().launch(chatAgent, agentToolsProvider)
     }
 
     private fun profileAdvisor(agentConfig: AgentConfig): Advisor? {

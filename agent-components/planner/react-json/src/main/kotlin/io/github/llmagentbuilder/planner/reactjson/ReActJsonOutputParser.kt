@@ -6,7 +6,6 @@ import io.github.llmagentbuilder.core.AgentAction
 import io.github.llmagentbuilder.core.AgentFinish
 import io.github.llmagentbuilder.core.planner.JsonParser
 import io.github.llmagentbuilder.core.planner.OutputParser
-import io.github.llmagentbuilder.core.planner.OutputParserException
 import io.github.llmagentbuilder.core.planner.ParseResult
 
 class ReActJsonOutputParser : OutputParser {
@@ -49,12 +48,7 @@ class ReActJsonOutputParser : OutputParser {
                 }
             }
         }
-        throw OutputParserException(
-            "Could not parse LLM output: $text",
-            text,
-            text,
-            true
-        )
+        return ParseResult.finishWithText(text)
     }
 
     companion object {

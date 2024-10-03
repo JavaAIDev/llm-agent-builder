@@ -16,6 +16,7 @@
   <modules>
 
     <module>launcher-jdk-http-sync</module>
+    <module>ktor</module>
   </modules>
 
 </project>

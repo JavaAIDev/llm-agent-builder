@@ -33,7 +33,7 @@ object CommandHelper {
         return projectDir
     }
 
-    fun mavenCommandBuilder(projectDir: Path): ProcBuilder {
+    private fun mavenCommandBuilder(projectDir: Path): ProcBuilder {
         val command = if (SystemUtils.IS_OS_WINDOWS) "run-maven.bat" else "mvnw"
         return ProcBuilder(
             projectDir.resolve(command).normalize().toAbsolutePath().toString()
