@@ -17,6 +17,19 @@ class RunCommand : Callable<Void> {
     @CommandLine.ParentCommand
     private val parent: CliApplication? = null
 
+    @CommandLine.Option(
+        names = ["-d"],
+        description = ["Enabled remote debugging"]
+    )
+    var debug: Boolean? = false
+
+    @CommandLine.Option(
+        names = ["--debug-port"],
+        description = ["Remote debug port"],
+        defaultValue = "5005"
+    )
+    var debugPort: Int = 5005
+
     private val logger = LoggerFactory.getLogger(javaClass)
 
     override fun call(): Void? {
@@ -26,7 +39,6 @@ class RunCommand : Callable<Void> {
             GenerationConfig(), config
         )
         val projectDir = Files.createTempDirectory("agent_app_")
-//        val projectDir = Path.of(".", "test-app1")
         Files.createDirectories(projectDir)
         logger.info("Create project in directory : ${projectDir.toAbsolutePath()}")
         RunCommand::class.java.getResourceAsStream("/maven.zip")?.use {
@@ -36,11 +48,12 @@ class RunCommand : Callable<Void> {
             projectDir.resolve("pom.xml"),
             pom
         )
-        val debugArg =
-            "-agentlib:jdwp=transport=dt_socket,server=y,suspend=n,address=*:5155"
+        val mavenOpts = mutableListOf<String>()
+        if (debug == true) {
+            mavenOpts.add("-agentlib:jdwp=transport=dt_socket,server=y,suspend=n,address=*:$debugPort")
+        }
         val configFileArg =
             file.toPath().normalize().toAbsolutePath().toString()
-        val execArgs = listOf(debugArg, configFileArg).joinToString(" ")
         val command = if (SystemUtils.IS_OS_WINDOWS) "run-maven.bat" else "mvnw"
         val pb = ProcBuilder(
             projectDir.resolve(command).normalize().toAbsolutePath().toString()
@@ -49,7 +62,7 @@ class RunCommand : Callable<Void> {
             .withArgs("exec:java")
             .withArgs("-Dexec.args=\"${configFileArg}\"")
             .withOutputStream(System.out)
-            .withVar("MAVEN_OPTS", debugArg)
+            .withVar("MAVEN_OPTS", mavenOpts.joinToString(" "))
             .withNoTimeout()
         logger.info("Run command : ${pb.commandLine}")
         pb.run()

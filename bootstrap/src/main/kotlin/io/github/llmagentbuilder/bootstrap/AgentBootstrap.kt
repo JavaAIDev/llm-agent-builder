@@ -12,6 +12,7 @@ import org.springframework.ai.chat.client.advisor.MessageChatMemoryAdvisor
 import org.springframework.ai.chat.client.advisor.SimpleLoggerAdvisor
 import org.springframework.ai.chat.client.advisor.api.Advisor
 import org.springframework.ai.chat.memory.InMemoryChatMemory
+import java.io.InputStream
 import java.nio.file.Path
 import java.util.*
 import kotlin.streams.asSequence
@@ -20,8 +21,11 @@ object AgentBootstrap {
     private val logger = LoggerFactory.getLogger(javaClass)
 
     fun bootstrap(configFile: Path) {
-        val config = AgentConfigLoader.load(configFile.toFile())
-        bootstrap(config)
+        bootstrap(AgentConfigLoader.load(configFile.toFile()))
+    }
+
+    fun bootstrap(configFileStream: InputStream) {
+        bootstrap(AgentConfigLoader.load(configFileStream))
     }
 
     private fun bootstrap(agentConfig: AgentConfig) {

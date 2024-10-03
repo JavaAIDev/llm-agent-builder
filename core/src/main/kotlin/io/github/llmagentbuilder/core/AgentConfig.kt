@@ -3,8 +3,7 @@ package io.github.llmagentbuilder.core
 import org.yaml.snakeyaml.LoaderOptions
 import org.yaml.snakeyaml.Yaml
 import org.yaml.snakeyaml.constructor.Constructor
-import java.io.File
-import java.io.FileReader
+import java.io.*
 
 class ProfileConfig {
     var system: String? = null
@@ -48,11 +47,19 @@ class AgentConfig {
 
 object AgentConfigLoader {
     fun load(configFile: File): AgentConfig {
+        return load(FileReader(configFile))
+    }
+
+    fun load(configFileStream: InputStream): AgentConfig {
+        return load(InputStreamReader(configFileStream))
+    }
+
+    private fun load(reader: Reader): AgentConfig {
         return Yaml(
             Constructor(
                 AgentConfig::class.java,
                 LoaderOptions()
             )
-        ).load(FileReader(configFile))
+        ).load(reader)
     }
 }
