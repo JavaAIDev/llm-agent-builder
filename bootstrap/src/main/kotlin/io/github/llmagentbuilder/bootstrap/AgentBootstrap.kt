@@ -28,7 +28,7 @@ object AgentBootstrap {
         bootstrap(AgentConfigLoader.load(configFileStream))
     }
 
-    private fun bootstrap(agentConfig: AgentConfig) {
+    fun bootstrap(agentConfig: AgentConfig) {
         val advisors = listOf(
             this::profileAdvisor,
             this::inMemoryMessageHistoryAdvisor

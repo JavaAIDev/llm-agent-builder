@@ -4,7 +4,7 @@ import org.slf4j.LoggerFactory
 import java.nio.file.Path
 
 object AgentMain {
-    fun start(configFile: String?) {
+    fun start(configFile: String? = null) {
         val logger = LoggerFactory.getLogger(javaClass)
         if (configFile != null) {
             logger.info("Bootstrap agent from config file $configFile")
