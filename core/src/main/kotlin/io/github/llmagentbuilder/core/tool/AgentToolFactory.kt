@@ -1,7 +1,5 @@
 package io.github.llmagentbuilder.core.tool
 
-import io.github.llmagentbuilder.core.MapToObject
-import org.apache.commons.beanutils.BeanUtils
 import java.util.function.Supplier
 
 /**
@@ -46,57 +44,5 @@ abstract class BaseConfigurableAgentToolFactory<out T : ConfigurableAgentTool<*,
 ) : ConfigurableAgentToolFactory<CONFIG, T> {
     override fun create(): T {
         return create(configProvider.get())
-    }
-}
-
-class MapConfigProvider<C>(
-    private val configClass: Class<C>,
-    private val config: Map<String, Any?>
-) : Supplier<C?> {
-    override fun get(): C? {
-        return MapToObject.toObject(configClass, config)
-    }
-}
-
-abstract class MapConfigurableAgentToolFactory<out T : ConfigurableAgentTool<*, *, CONFIG>, CONFIG>(
-    configClass: Class<CONFIG>,
-    config: Map<String, Any?>,
-) : BaseConfigurableAgentToolFactory<T, CONFIG>(
-    MapConfigProvider(
-        configClass,
-        config
-    )
-)
-
-abstract class EnvironmentVariableConfigurableAgentToolFactory<out T : ConfigurableAgentTool<*, *, CONFIG>, CONFIG>(
-    configClass: Class<CONFIG>,
-    environmentVariablePrefix: String
-) :
-    BaseConfigurableAgentToolFactory<T, CONFIG>(
-        EnvironmentVariableConfigProvider(
-            configClass,
-            environmentVariablePrefix
-        )
-    )
-
-open class EnvironmentVariableConfigProvider<C>(
-    private val configClass: Class<C>,
-    private val environmentVariablePrefix: String
-) :
-    Supplier<C?> {
-    override fun get(): C? {
-        val instance = configClass.getDeclaredConstructor().newInstance()
-        BeanUtils.populate(instance, getEnvironmentVariables())
-        return instance
-    }
-
-    private fun getEnvironmentVariables(): Map<String, String> {
-        val prefix = environmentVariablePrefix
-        return System.getenv()
-            .filterKeys {
-                it.startsWith(prefix)
-            }.mapKeys { entry ->
-                entry.key.removePrefix(prefix)
-            }
     }
 }
