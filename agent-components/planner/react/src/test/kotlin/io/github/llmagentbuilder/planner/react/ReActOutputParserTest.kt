@@ -1,4 +1,4 @@
-package io.github.llmagentbuilder.core.planner.react
+package io.github.llmagentbuilder.planner.react
 
 import io.github.llmagentbuilder.core.AgentAction
 import io.github.llmagentbuilder.core.AgentFinish
