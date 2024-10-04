@@ -43,8 +43,9 @@ class BuildCommand : Callable<Int> {
         val args = arrayOf("package")
         val result = CommandHelper.runMavenCli(args, projectDir)
         if (result == 0) {
-            val outputPath =
-                (outputDir?.toPath() ?: Path.of(".")).resolve("agent.jar")
+            val outputDir = (outputDir?.toPath() ?: Path.of("."))
+            Files.createDirectories(outputDir)
+            val outputPath = outputDir.resolve("agent.jar")
             Files.copy(
                 projectDir.resolve("target")
                     .resolve("agent-jar-with-dependencies.jar"),

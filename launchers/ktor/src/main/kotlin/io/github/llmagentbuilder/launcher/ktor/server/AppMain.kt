@@ -12,7 +12,6 @@ import io.ktor.server.plugins.defaultheaders.*
 import io.ktor.server.resources.*
 import io.ktor.server.routing.*
 
-
 object KtorLauncher {
     fun launch(chatAgent: ChatAgent) {
         embeddedServer(
