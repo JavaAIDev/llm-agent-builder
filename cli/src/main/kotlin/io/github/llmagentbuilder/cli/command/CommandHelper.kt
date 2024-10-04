@@ -1,55 +1,58 @@
 package io.github.llmagentbuilder.cli.command
 
 import io.github.llmagentbuilder.cli.GenerationConfig
-import io.github.llmagentbuilder.cli.MavenPomGenerator
+import io.github.llmagentbuilder.cli.MavenFilesGenerator
 import io.github.llmagentbuilder.core.AgentConfigLoader
-import org.apache.commons.lang3.SystemUtils
-import org.buildobjects.process.ProcBuilder
+import org.apache.maven.cli.MavenCli
 import org.slf4j.LoggerFactory
-import org.zeroturnaround.zip.ZipUtil
 import java.io.File
 import java.nio.file.Files
 import java.nio.file.Path
-import java.util.function.Consumer
 
 object CommandHelper {
     private val logger = LoggerFactory.getLogger(javaClass)
+    private val mavenCli = MavenCli()
 
     fun setupMavenProject(configFile: File): Path {
         val projectDir = Files.createTempDirectory("agent_app_")
         Files.createDirectories(projectDir)
         logger.info("Create project in directory : ${projectDir.toAbsolutePath()}")
-        RunCommand::class.java.getResourceAsStream("/maven.zip")?.use {
-            ZipUtil.unpack(it, projectDir.toFile())
-        }
         val config = AgentConfigLoader.load(configFile)
-        val pom = MavenPomGenerator.generate(
+        val pom = MavenFilesGenerator.generatePom(
             GenerationConfig(), config
         )
-        Files.writeString(
-            projectDir.resolve("pom.xml"),
-            pom
+        writeFile(projectDir, "pom.xml", pom)
+        val assemblyDescriptor =
+            MavenFilesGenerator.generateAssemblyDescriptor()
+        writeFile(
+            projectDir.resolve("src").resolve("assembly"),
+            "agent-jar.xml",
+            assemblyDescriptor
         )
         return projectDir
     }
 
-    private fun mavenCommandBuilder(projectDir: Path): ProcBuilder {
-        val command = if (SystemUtils.IS_OS_WINDOWS) "run-maven.bat" else "mvnw"
-        return ProcBuilder(
-            projectDir.resolve(command).normalize().toAbsolutePath().toString()
+    private fun writeFile(dir: Path, filename: String, content: String) {
+        Files.createDirectories(dir)
+        Files.writeString(
+            dir.resolve(filename),
+            content
         )
-            .withWorkingDirectory(projectDir.toFile())
-            .withOutputStream(System.out)
-            .withNoTimeout()
     }
 
-    fun runMavenCommand(
+    fun runMavenCli(
+        args: Array<String>,
         projectDir: Path,
-        pbCustomizer: Consumer<ProcBuilder>
     ): Int {
-        val pb = mavenCommandBuilder(projectDir)
-        pbCustomizer.accept(pb)
-        logger.info("Run command : ${pb.commandLine}")
-        return pb.run().exitValue
+        val baseDir = projectDir.toAbsolutePath().toString()
+        System.setProperty("maven.multiModuleProjectDirectory", baseDir)
+        val commonArgs = arrayOf<String>()
+        return mavenCli.doMain(
+            commonArgs + args,
+            baseDir,
+            System.out,
+            System.err
+        )
     }
+
 }

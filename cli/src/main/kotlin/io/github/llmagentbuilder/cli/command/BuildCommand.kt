@@ -40,9 +40,8 @@ class BuildCommand : Callable<Int> {
             file.toPath(),
             resourcesDir.resolve("agent.yaml")
         )
-        val result = CommandHelper.runMavenCommand(projectDir) { pb ->
-            pb.withArgs("package")
-        }
+        val args = arrayOf("package")
+        val result = CommandHelper.runMavenCli(args, projectDir)
         if (result == 0) {
             val outputPath =
                 (outputDir?.toPath() ?: Path.of(".")).resolve("agent.jar")

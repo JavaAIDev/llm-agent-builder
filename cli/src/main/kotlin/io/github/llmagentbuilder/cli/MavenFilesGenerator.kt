@@ -10,10 +10,13 @@ import java.io.FileReader
 import java.nio.file.Path
 import java.util.*
 
-object MavenPomGenerator {
+object MavenFilesGenerator {
     private val handlebars = Handlebars(ClassPathTemplateLoader("/template"))
 
-    fun generate(config: GenerationConfig, agentConfig: AgentConfig): String {
+    fun generatePom(
+        config: GenerationConfig,
+        agentConfig: AgentConfig
+    ): String {
         val template = handlebars.compile("pom.xml")
         val pom = template.apply(
             mapOf(
@@ -63,6 +66,11 @@ object MavenPomGenerator {
         }
         return deps.toList()
     }
+
+    fun generateAssemblyDescriptor(): String {
+        val template = handlebars.compile("agent-jar-assembly.xml")
+        return template.apply(mapOf<String, Any?>())
+    }
 }
 
 fun main(args: Array<String>) {
@@ -78,7 +86,7 @@ fun main(args: Array<String>) {
                 configFile.toFile()
             )
         )
-    MavenPomGenerator.generate(
+    MavenFilesGenerator.generatePom(
         GenerationConfig(), config
     )
 }
