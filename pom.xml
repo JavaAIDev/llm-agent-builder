@@ -11,7 +11,6 @@
   <name>LLM Agent Builder</name>
   <modules>
     <module>core</module>
-    <module>spring</module>
     <module>tool-builders</module>
     <module>launchers</module>
     <module>agent-components</module>
