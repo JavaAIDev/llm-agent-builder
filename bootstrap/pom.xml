@@ -10,7 +10,7 @@
   </parent>
 
   <artifactId>bootstrap</artifactId>
-  <name>Agent Boostrap</name>
+  <name>LLM Agent Boostrap</name>
 
   <properties>
     <maven.compiler.source>21</maven.compiler.source>

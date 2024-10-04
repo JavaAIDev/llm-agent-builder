@@ -10,6 +10,7 @@
   </parent>
 
   <artifactId>agent-tool</artifactId>
+  <name>LLM Agent Tool</name>
 
   <properties>
     <maven.compiler.source>21</maven.compiler.source>

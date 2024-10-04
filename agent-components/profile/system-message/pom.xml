@@ -10,6 +10,7 @@
   </parent>
 
   <artifactId>agent-profile-system-message</artifactId>
+  <name>Agent Profile :: System Message</name>
 
   <properties>
     <maven.compiler.source>21</maven.compiler.source>

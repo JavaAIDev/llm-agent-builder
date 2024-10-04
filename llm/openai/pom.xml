@@ -10,7 +10,7 @@
   </parent>
 
   <artifactId>llm-openai</artifactId>
-  <name>LLM :: OpenAI</name>
+  <name>LLM Adapter :: OpenAI</name>
 
   <properties>
     <maven.compiler.source>21</maven.compiler.source>

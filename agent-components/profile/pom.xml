@@ -10,6 +10,7 @@
   </parent>
 
   <artifactId>agent-profile</artifactId>
+  <name>LLM Agent Profile</name>
   <packaging>pom</packaging>
   <modules>
     <module>system-message</module>

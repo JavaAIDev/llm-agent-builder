@@ -10,6 +10,7 @@
   </parent>
 
   <artifactId>planner-executor</artifactId>
+  <name>Agent Planner :: Executor</name>
 
   <properties>
     <maven.compiler.source>21</maven.compiler.source>

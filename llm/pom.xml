@@ -10,7 +10,7 @@
   </parent>
 
   <artifactId>llm</artifactId>
-  <name>LLM</name>
+  <name>LLM Adapter</name>
   <packaging>pom</packaging>
   <modules>
     <module>openai</module>
