@@ -56,7 +56,7 @@ internal const val defaultUserTextTemplate = """
 
 class ReActJsonPromptAdvisor : CallAroundAdvisor {
     override fun getName(): String {
-        return "ReAct Json Planner - Prompt"
+        return javaClass.simpleName
     }
 
     override fun getOrder(): Int {

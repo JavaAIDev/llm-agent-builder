@@ -1,7 +1,7 @@
 package io.github.llmagentbuilder.bootstrap
 
 import io.github.llmagentbuilder.agent.profile.systemmessage.SystemMessageProfileAdvisor
-import io.github.llmagentbuilder.agent.tool.AgentToolContextAdvisor
+import io.github.llmagentbuilder.agent.tool.AgentToolInfoAdvisor
 import io.github.llmagentbuilder.core.*
 import io.github.llmagentbuilder.core.tool.AgentToolFunctionCallbackContext
 import io.github.llmagentbuilder.core.tool.AgentToolsProviderFactory
@@ -40,17 +40,20 @@ object AgentBootstrap {
         val agentToolsProvider =
             AgentToolsProviderFactory.create(agentConfig.tools ?: listOf())
         advisors.addLast(
-            AgentToolContextAdvisor(
+            AgentToolInfoAdvisor(
                 agentToolsProvider.get()
             )
         )
         advisors.addLast(SimpleLoggerAdvisor())
+        val observationEnabled = agentConfig.observation?.enabled == true
+        val observationRegistry =
+            if (observationEnabled) ObservationRegistry.create() else ObservationRegistry.NOOP
         val functionCallbackContext =
             AgentToolFunctionCallbackContext(
                 agentToolsProvider,
+                observationRegistry,
             )
-        val observationRegistry = ObservationRegistry.create()
-        if (agentConfig.observation?.enabled == true) {
+        if (observationEnabled) {
             OpenTelemetryPlugin().install(agentConfig, observationRegistry)
         }
         val llmConfigs = agentConfig.llm
@@ -77,7 +80,11 @@ object AgentBootstrap {
             .mapNotNull {
                 val config =
                     plannerConfigs?.get(it.configKey()) as? Map<String, Any?>
-                it.providePlanner(chatClientBuilder, config)
+                it.providePlanner(
+                    chatClientBuilder,
+                    config,
+                    observationRegistry,
+                )
             }
             .firstOrNull()?.also {
                 logger.info("Loaded Planner $it")

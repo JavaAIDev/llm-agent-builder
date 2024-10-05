@@ -38,7 +38,7 @@ internal const val defaultUserTextTemplate = """
 
 class ReActPromptAdvisor : CallAroundAdvisor {
     override fun getName(): String {
-        return "ReAct Planner - Prompt"
+        return javaClass.simpleName
     }
 
     override fun getOrder(): Int {

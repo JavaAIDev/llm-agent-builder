@@ -47,9 +47,20 @@ class TracingConfig {
     var exporter: TracingExporterConfig? = null
 }
 
+class MetricsExporterConfig {
+    lateinit var endpoint: String
+    var headers: Map<String, String>? = null
+}
+
+class MetricsConfig {
+    var enabled: Boolean? = false
+    var exporter: MetricsExporterConfig? = null
+}
+
 class ObservationConfig {
     var enabled: Boolean? = false
     var tracing: TracingConfig? = null
+    var metrics: MetricsConfig? = null
 }
 
 class AgentConfig {

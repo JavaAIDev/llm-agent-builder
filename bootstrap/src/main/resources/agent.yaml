@@ -12,9 +12,17 @@ planner:
   reActJson:
     enabled: true
 observation:
+  enabled: true
   tracing:
+    enabled: true
     exporter:
       endpoint: "https://api.honeycomb.io/v1/traces"
+      headers:
+        "x-honeycomb-team": "{{env.HONEYCOMB_API_KEY}}"
+  metrics:
+    enabled: true
+    exporter:
+      endpoint: "https://api.honeycomb.io/v1/metrics"
       headers:
         "x-honeycomb-team": "{{env.HONEYCOMB_API_KEY}}"
 tools:

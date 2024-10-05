@@ -55,7 +55,7 @@ internal const val defaultUserTextTemplate = """
 
 class StructuredChatPromptAdvisor : CallAroundAdvisor {
     override fun getName(): String {
-        return "StructuredChat Planner - Prompt"
+        return javaClass.simpleName
     }
 
     override fun getOrder(): Int {

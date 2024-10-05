@@ -1,9 +1,10 @@
 package io.github.llmagentbuilder.plugin.observation.opentelemetry
 
-import io.github.llmagentbuilder.core.AgentConfig
-import io.github.llmagentbuilder.core.EvaluationHelper
-import io.github.llmagentbuilder.core.ObservationPlugin
+import io.github.llmagentbuilder.core.*
+import io.micrometer.core.instrument.Clock
 import io.micrometer.observation.ObservationRegistry
+import io.micrometer.registry.otlp.OtlpConfig
+import io.micrometer.registry.otlp.OtlpMeterRegistry
 import io.micrometer.tracing.handler.DefaultTracingObservationHandler
 import io.micrometer.tracing.otel.bridge.EventListener
 import io.micrometer.tracing.otel.bridge.OtelCurrentTraceContext
@@ -14,22 +15,40 @@ import io.opentelemetry.exporter.otlp.http.trace.OtlpHttpSpanExporter
 import io.opentelemetry.sdk.resources.Resource
 import io.opentelemetry.sdk.trace.SdkTracerProvider
 import io.opentelemetry.sdk.trace.export.BatchSpanProcessor
+import org.springframework.ai.chat.observation.ChatModelMeterObservationHandler
 
 class OpenTelemetryPlugin : ObservationPlugin {
     override fun install(
         agentConfig: AgentConfig,
-        observationRegistry: ObservationRegistry
+        observationRegistry: ObservationRegistry,
     ) {
         val builder = Resource.builder()
         builder.put("service.name", agentConfig.metadata?.name)
+        val resource = builder.build()
+        agentConfig.observation?.tracing?.let {
+            applyTracingConfig(it, observationRegistry, resource)
+        }
+        agentConfig.observation?.metrics?.let {
+            applyMetricsConfig(it, observationRegistry)
+        }
+    }
+
+    private fun applyTracingConfig(
+        tracingConfig: TracingConfig,
+        observationRegistry: ObservationRegistry,
+        resource: Resource,
+    ) {
+        if (tracingConfig.enabled != true) {
+            return
+        }
         val exporterBuilder = OtlpHttpSpanExporter.builder()
-        agentConfig.observation?.tracing?.exporter?.let {
+        tracingConfig.exporter?.let {
             exporterBuilder.setEndpoint(it.endpoint)
             it.headers?.entries?.forEach { (k, v) ->
                 exporterBuilder.addHeader(k, EvaluationHelper.evaluate(v))
             }
         }
-        val resource = builder.build()
+
         val tracer = SdkTracerProvider.builder()
             .setResource(resource)
             .addSpanProcessor(
@@ -49,6 +68,37 @@ class OpenTelemetryPlugin : ObservationPlugin {
         )
         val handler = DefaultTracingObservationHandler(otelTracer)
         observationRegistry.observationConfig().observationHandler(handler)
+    }
+
+    private fun applyMetricsConfig(
+        metricsConfig: MetricsConfig,
+        observationRegistry: ObservationRegistry,
+    ) {
+        if (metricsConfig.enabled != true) {
+            return
+        }
+        metricsConfig.exporter?.let {
+
+            val otlpConfig = object : OtlpConfig {
+                override fun get(key: String): String? {
+                    return null
+                }
+
+                override fun url(): String {
+                    return it.endpoint
+                }
+
+                override fun headers(): Map<String, String> {
+                    return it.headers?.mapValues { (_, v) ->
+                        EvaluationHelper.evaluate(v)
+                    } ?: mapOf()
+                }
+            }
+            val meterRegistry = OtlpMeterRegistry(otlpConfig, Clock.SYSTEM)
+            val handler = ChatModelMeterObservationHandler(meterRegistry)
+            observationRegistry.observationConfig().observationHandler(handler)
+        }
+
     }
 
     private class OTelEventPublisher(private val listeners: List<EventListener>) :

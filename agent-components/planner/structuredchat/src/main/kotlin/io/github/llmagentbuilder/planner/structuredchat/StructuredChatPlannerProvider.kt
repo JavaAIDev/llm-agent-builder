@@ -3,6 +3,7 @@ package io.github.llmagentbuilder.planner.structuredchat
 import io.github.llmagentbuilder.core.MapToObject
 import io.github.llmagentbuilder.core.Planner
 import io.github.llmagentbuilder.core.PlannerProvider
+import io.micrometer.observation.ObservationRegistry
 import org.springframework.ai.chat.client.ChatClient
 
 class StructuredChatPlannerProvider : PlannerProvider {
@@ -12,7 +13,8 @@ class StructuredChatPlannerProvider : PlannerProvider {
 
     override fun providePlanner(
         chatClientBuilder: ChatClient.Builder,
-        config: Map<String, Any?>?
+        config: Map<String, Any?>?,
+        observationRegistry: ObservationRegistry?,
     ): Planner? {
         val plannerConfig =
             MapToObject.toObject<StructuredChatPlannerConfig>(config)
@@ -22,6 +24,6 @@ class StructuredChatPlannerProvider : PlannerProvider {
         val chatClient =
             chatClientBuilder.defaultAdvisors(StructuredChatPromptAdvisor())
                 .build()
-        return StructuredChatPlanner(chatClient)
+        return StructuredChatPlanner(chatClient, observationRegistry)
     }
 }

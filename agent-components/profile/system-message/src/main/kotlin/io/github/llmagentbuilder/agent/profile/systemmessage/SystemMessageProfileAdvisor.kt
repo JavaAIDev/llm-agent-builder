@@ -11,7 +11,7 @@ class SystemMessageProfileAdvisor(
     private val systemMessageParams: Map<String, Any>? = mapOf()
 ) : CallAroundAdvisor {
     override fun getName(): String {
-        return "Profile - System Message"
+        return javaClass.simpleName
     }
 
     override fun getOrder(): Int {

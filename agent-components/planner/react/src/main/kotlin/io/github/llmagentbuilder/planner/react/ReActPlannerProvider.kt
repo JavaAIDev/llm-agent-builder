@@ -3,6 +3,7 @@ package io.github.llmagentbuilder.planner.react
 import io.github.llmagentbuilder.core.MapToObject
 import io.github.llmagentbuilder.core.Planner
 import io.github.llmagentbuilder.core.PlannerProvider
+import io.micrometer.observation.ObservationRegistry
 import org.springframework.ai.chat.client.ChatClient
 
 class ReActPlannerProvider : PlannerProvider {
@@ -12,7 +13,8 @@ class ReActPlannerProvider : PlannerProvider {
 
     override fun providePlanner(
         chatClientBuilder: ChatClient.Builder,
-        config: Map<String, Any?>?
+        config: Map<String, Any?>?,
+        observationRegistry: ObservationRegistry?,
     ): Planner? {
         val plannerConfig = MapToObject.toObject<ReActPlannerConfig>(config)
         if (plannerConfig?.enabled == false) {
@@ -20,6 +22,6 @@ class ReActPlannerProvider : PlannerProvider {
         }
         val chatClient = chatClientBuilder.defaultAdvisors(ReActPromptAdvisor())
             .build()
-        return ReActPlanner(chatClient)
+        return ReActPlanner(chatClient, observationRegistry)
     }
 }

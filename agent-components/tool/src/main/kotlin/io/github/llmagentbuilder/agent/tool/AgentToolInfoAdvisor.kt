@@ -10,10 +10,10 @@ import org.springframework.core.Ordered
 const val SYSTEM_PARAM_TOOL_NAMES = "tool_names"
 const val SYSTEM_PARAM_TOOLS = "tools"
 
-class AgentToolContextAdvisor(private val tools: Map<String, AgentTool<*, *>>) :
+class AgentToolInfoAdvisor(private val tools: Map<String, AgentTool<*, *>>) :
     CallAroundAdvisor {
     override fun getName(): String {
-        return "AgentTool"
+        return javaClass.simpleName
     }
 
     override fun getOrder(): Int {
