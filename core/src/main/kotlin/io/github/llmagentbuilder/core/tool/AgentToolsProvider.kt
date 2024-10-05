@@ -10,6 +10,7 @@ import io.github.llmagentbuilder.core.observation.DefaultAgentToolExecutionObser
 import io.micrometer.observation.ObservationRegistry
 import org.slf4j.LoggerFactory
 import org.springframework.ai.model.function.FunctionCallback
+import org.springframework.ai.model.function.FunctionCallbackContext
 import org.springframework.ai.model.function.FunctionCallbackWrapper
 import org.springframework.core.GenericTypeResolver
 import java.util.*
@@ -35,7 +36,7 @@ class AgentToolWrappersProvider(
             InstrumentedFunctionCallbackWrapper(
                 FunctionCallbackWrapper.builder(tool)
                     .withName(tool.name())
-                    .withSchemaType(FunctionCallbackWrapper.Builder.SchemaType.JSON_SCHEMA)
+                    .withSchemaType(FunctionCallbackContext.SchemaType.JSON_SCHEMA)
                     .withDescription(tool.description())
                     .withInputType(
                         types?.get(0)

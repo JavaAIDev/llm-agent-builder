@@ -50,7 +50,9 @@ object AgentBootstrap {
                 agentToolsProvider,
             )
         val observationRegistry = ObservationRegistry.create()
-        OpenTelemetryPlugin().install(agentConfig, observationRegistry)
+        if (agentConfig.observation?.enabled == true) {
+            OpenTelemetryPlugin().install(agentConfig, observationRegistry)
+        }
         val llmConfigs = agentConfig.llm
         val chatModel = ServiceLoader.load(ChatModelProvider::class.java)
             .stream()
