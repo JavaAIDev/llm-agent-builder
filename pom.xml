@@ -17,6 +17,7 @@
     <module>bootstrap</module>
     <module>llm</module>
     <module>cli</module>
+    <module>observation</module>
   </modules>
 
   <description>LLM Agent Builder</description>
@@ -57,6 +58,7 @@
     <jackson.version>2.16.1</jackson.version>
     <micrometer.version>1.12.4</micrometer.version>
     <micrometer-tracing.version>1.2.4</micrometer-tracing.version>
+    <handlebars.version>4.4.0</handlebars.version>
   </properties>
 
   <build>
@@ -289,6 +291,11 @@
         <version>${micrometer-tracing.version}</version>
         <type>pom</type>
         <scope>import</scope>
+      </dependency>
+      <dependency>
+        <groupId>com.github.jknack</groupId>
+        <artifactId>handlebars</artifactId>
+        <version>${handlebars.version}</version>
       </dependency>
     </dependencies>
   </dependencyManagement>

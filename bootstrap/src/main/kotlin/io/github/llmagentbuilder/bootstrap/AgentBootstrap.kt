@@ -6,6 +6,8 @@ import io.github.llmagentbuilder.core.*
 import io.github.llmagentbuilder.core.tool.AgentToolFunctionCallbackContext
 import io.github.llmagentbuilder.core.tool.AgentToolsProviderFactory
 import io.github.llmagentbuilder.launcher.ktor.server.KtorLauncher
+import io.github.llmagentbuilder.plugin.observation.opentelemetry.OpenTelemetryPlugin
+import io.micrometer.observation.ObservationRegistry
 import org.slf4j.LoggerFactory
 import org.springframework.ai.chat.client.ChatClient
 import org.springframework.ai.chat.client.advisor.MessageChatMemoryAdvisor
@@ -47,6 +49,8 @@ object AgentBootstrap {
             AgentToolFunctionCallbackContext(
                 agentToolsProvider,
             )
+        val observationRegistry = ObservationRegistry.create()
+        OpenTelemetryPlugin().install(agentConfig, observationRegistry)
         val llmConfigs = agentConfig.llm
         val chatModel = ServiceLoader.load(ChatModelProvider::class.java)
             .stream()
@@ -60,8 +64,9 @@ object AgentBootstrap {
             .firstOrNull()?.also {
                 logger.info("Loaded ChatModel $it")
             } ?: throw RuntimeException("No ChatModel found")
-        val chatClientBuilder = ChatClient.builder(chatModel)
-            .defaultAdvisors(advisors)
+        val chatClientBuilder =
+            ChatClient.builder(chatModel, observationRegistry, null)
+                .defaultAdvisors(advisors)
         val plannerConfigs = agentConfig.planner
         val planner = ServiceLoader.load(PlannerProvider::class.java)
             .stream()
@@ -82,9 +87,10 @@ object AgentBootstrap {
             metadata?.description,
             metadata?.usageInstruction,
             agentToolsProvider,
+            UUID.randomUUID().toString(),
+            observationRegistry,
         )
         KtorLauncher.launch(chatAgent)
-//        JdkHttpSyncLauncher().launch(chatAgent, agentToolsProvider)
     }
 
     private fun profileAdvisor(agentConfig: AgentConfig): Advisor? {

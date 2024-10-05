@@ -1,5 +1,5 @@
 metadata:
-  name: Test agent
+  name: TestAgent
 llm:
   openai:
     enabled: true
@@ -11,6 +11,12 @@ memory:
 planner:
   reActJson:
     enabled: true
+observation:
+  tracing:
+    exporter:
+      endpoint: "https://api.honeycomb.io/v1/traces"
+      headers:
+        "x-honeycomb-team": "{{env.HONEYCOMB_API_KEY}}"
 tools:
   - id: writeLocalFile
     config:

@@ -1,5 +1,6 @@
 package io.github.llmagentbuilder.core
 
+import com.github.jknack.handlebars.Handlebars
 import org.yaml.snakeyaml.LoaderOptions
 import org.yaml.snakeyaml.Yaml
 import org.yaml.snakeyaml.constructor.Constructor
@@ -36,6 +37,21 @@ class AgentMetadata {
     var usageInstruction: String? = null
 }
 
+class TracingExporterConfig {
+    lateinit var endpoint: String
+    var headers: Map<String, String>? = null
+}
+
+class TracingConfig {
+    var enabled: Boolean? = false
+    var exporter: TracingExporterConfig? = null
+}
+
+class ObservationConfig {
+    var enabled: Boolean? = false
+    var tracing: TracingConfig? = null
+}
+
 class AgentConfig {
     var metadata: AgentMetadata? = null
     var profile: ProfileConfig? = null
@@ -43,6 +59,7 @@ class AgentConfig {
     var llm: Map<String, Any?>? = null
     var planner: Map<String, Any?>? = null
     var tools: List<ToolConfig>? = null
+    var observation: ObservationConfig? = null
 }
 
 object AgentConfigLoader {
@@ -61,5 +78,17 @@ object AgentConfigLoader {
                 LoaderOptions()
             )
         ).load(reader)
+    }
+}
+
+object EvaluationHelper {
+    private val handlebars = Handlebars()
+
+    fun evaluate(input: String): String {
+        return handlebars.compileInline(input).apply(
+            mapOf(
+                "env" to System.getenv(),
+            )
+        )
     }
 }
