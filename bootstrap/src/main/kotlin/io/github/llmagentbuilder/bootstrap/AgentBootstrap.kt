@@ -12,8 +12,9 @@ import org.slf4j.LoggerFactory
 import org.springframework.ai.chat.client.ChatClient
 import org.springframework.ai.chat.client.advisor.MessageChatMemoryAdvisor
 import org.springframework.ai.chat.client.advisor.SimpleLoggerAdvisor
-import org.springframework.ai.chat.client.advisor.api.Advisor
+import org.springframework.ai.chat.client.advisor.api.*
 import org.springframework.ai.chat.memory.InMemoryChatMemory
+import org.springframework.core.Ordered
 import java.io.InputStream
 import java.nio.file.Path
 import java.util.*
@@ -45,6 +46,28 @@ object AgentBootstrap {
             )
         )
         advisors.addLast(SimpleLoggerAdvisor())
+
+        val providedSystemParams = mutableMapOf<String, Any>()
+        val providedUserParams = mutableMapOf<String, Any>()
+        ServiceLoader.load(PromptParamsProvider::class.java)
+            .stream()
+            .map { it.get() }
+            .asSequence()
+            .forEach {
+                it.provideSystemParams()?.run {
+                    providedSystemParams.putAll(this)
+                }
+                it.provideUserParams()?.run {
+                    providedUserParams.putAll(this)
+                }
+            }
+
+        advisors.add(
+            PromptParamsAdvisor(
+                providedSystemParams,
+                providedUserParams
+            )
+        )
         val observationEnabled = agentConfig.observation?.enabled == true
         val observationRegistry =
             if (observationEnabled) ObservationRegistry.create() else ObservationRegistry.NOOP
@@ -112,5 +135,34 @@ object AgentBootstrap {
         return if (agentConfig.memory?.inMemory?.enabled == true) {
             MessageChatMemoryAdvisor(InMemoryChatMemory())
         } else null
+    }
+
+    private class PromptParamsAdvisor(
+        private val providedSystemParams: Map<String, Any>,
+        private val providedUserParams: Map<String, Any>
+    ) : CallAroundAdvisor {
+        override fun getOrder(): Int {
+            return Ordered.HIGHEST_PRECEDENCE + 100
+        }
+
+        override fun getName(): String {
+            return javaClass.simpleName
+        }
+
+        override fun aroundCall(
+            advisedRequest: AdvisedRequest,
+            chain: CallAroundAdvisorChain
+        ): AdvisedResponse {
+            val systemParams = HashMap(advisedRequest.systemParams ?: mapOf())
+            systemParams.putAll(providedSystemParams)
+            val userParams = HashMap(advisedRequest.userParams ?: mapOf())
+            userParams.putAll(providedUserParams)
+            val request = AdvisedRequest.from(advisedRequest)
+                .withSystemParams(systemParams)
+                .withUserParams(userParams)
+                .build()
+            return chain.nextAroundCall(request)
+        }
+
     }
 }
