@@ -122,7 +122,7 @@ object AgentBootstrap {
             UUID.randomUUID().toString(),
             observationRegistry,
         )
-        KtorLauncher.launch(chatAgent)
+        KtorLauncher.launch(chatAgent, agentConfig.launch)
     }
 
     private fun profileAdvisor(agentConfig: AgentConfig): Advisor? {

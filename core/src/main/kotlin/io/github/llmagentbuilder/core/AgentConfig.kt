@@ -63,6 +63,21 @@ class ObservationConfig {
     var metrics: MetricsConfig? = null
 }
 
+class LaunchConfig {
+    var server: ServerConfig? = null
+    val feature: FeatureConfig? = null
+}
+
+class ServerConfig {
+    var host: String? = "localhost"
+    var port: Int? = 8080
+}
+
+class FeatureConfig {
+    var devUiEnabled: Boolean? = true
+}
+
+
 class AgentConfig {
     var metadata: AgentMetadata? = null
     var profile: ProfileConfig? = null
@@ -71,6 +86,7 @@ class AgentConfig {
     var planner: Map<String, Any?>? = null
     var tools: List<ToolConfig>? = null
     var observation: ObservationConfig? = null
+    var launch: LaunchConfig? = null
 }
 
 object AgentConfigLoader {
