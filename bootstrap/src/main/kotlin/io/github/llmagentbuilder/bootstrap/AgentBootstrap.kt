@@ -133,6 +133,7 @@ object AgentBootstrap {
 
     private fun inMemoryMessageHistoryAdvisor(agentConfig: AgentConfig): Advisor? {
         return if (agentConfig.memory?.inMemory?.enabled == true) {
+            logger.info("Enable in-memory message history")
             MessageChatMemoryAdvisor(InMemoryChatMemory())
         } else null
     }
