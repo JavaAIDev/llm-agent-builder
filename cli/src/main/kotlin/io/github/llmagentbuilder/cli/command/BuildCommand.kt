@@ -54,7 +54,7 @@ class BuildCommand : Callable<Int> {
             val outputPath = outputDir.resolve("agent.jar")
             Files.copy(
                 projectDir.resolve("target")
-                    .resolve("agent-jar-with-dependencies.jar"),
+                    .resolve("agent.jar"),
                 outputPath,
                 StandardCopyOption.REPLACE_EXISTING
             )

@@ -22,13 +22,6 @@ object CommandHelper {
             GenerationConfig(), config
         )
         writeFile(projectDir, "pom.xml", pom)
-        val assemblyDescriptor =
-            MavenFilesGenerator.generateAssemblyDescriptor()
-        writeFile(
-            projectDir.resolve("src").resolve("assembly"),
-            "agent-jar.xml",
-            assemblyDescriptor
-        )
         return projectDir
     }
 

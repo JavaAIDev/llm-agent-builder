@@ -3,6 +3,7 @@ package io.github.llmagentbuilder.cli
 import com.github.jknack.handlebars.Handlebars
 import com.github.jknack.handlebars.io.ClassPathTemplateLoader
 import io.github.llmagentbuilder.core.AgentConfig
+import io.github.llmagentbuilder.core.VERSION
 import org.yaml.snakeyaml.LoaderOptions
 import org.yaml.snakeyaml.Yaml
 import org.yaml.snakeyaml.constructor.Constructor
@@ -27,7 +28,7 @@ object MavenFilesGenerator {
                 "springAiVersion" to (config.springAiVersion
                     ?: "1.0.0-SNAPSHOT"),
                 "llmAgentBuilderVersion" to (config.llmAgentBuilderVersion
-                    ?: "0.2.0"),
+                    ?: VERSION),
                 "dependencies" to collectDependencies(agentConfig),
 
                 )
@@ -67,10 +68,6 @@ object MavenFilesGenerator {
         return deps.toList()
     }
 
-    fun generateAssemblyDescriptor(): String {
-        val template = handlebars.compile("agent-jar-assembly.xml")
-        return template.apply(mapOf<String, Any?>())
-    }
 }
 
 fun main(args: Array<String>) {
