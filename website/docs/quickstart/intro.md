@@ -2,27 +2,26 @@
 
 ## Prerequisites
 
-To create your first LLM agent, you need:
+To create your first LLM agent, you'll need:
 
 - API key to access a LLM service with function calling support.
-- Some tools for the agent to use
+- Some tools for the agent to use.
 
 Following LLM services are supported:
 
 - OpenAI
-- Mistral AI
-- Aliyun Dashscope
 
 For tools, there are some shared tools:
 
 - Read local file
 - Write local file
 - Extract web page content
-- Execute Python code
+- Execute Python / Java code
+- Run SQL query
 
 It's also very easy to create custom tools.
 
-## Create Spring Boot Project
+## Create Agents using CLI
 
 Create a Spring Boot project with `spring-boot-starter-web` starter.
 
