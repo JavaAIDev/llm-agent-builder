@@ -9,7 +9,7 @@ import kotlin.system.exitProcess
 @CommandLine.Command(
     name = "llm-agent-builder",
     mixinStandardHelpOptions = true,
-    version = ["0.3.0"],
+    version = ["0.3.1"],
     description = ["Build LLM agents"],
     subcommands = [RunCommand::class, BuildCommand::class],
 )
