@@ -6,7 +6,7 @@
   <parent>
     <groupId>io.github.llmagentbuilder</groupId>
     <artifactId>tool-builders</artifactId>
-    <version>0.3.3</version>
+    <version>0.3.4</version>
   </parent>
 
   <artifactId>tool-builder-openapi</artifactId>
