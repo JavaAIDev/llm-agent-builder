@@ -1,7 +1,11 @@
-name: Publish package to the Maven Central Repository
+name: Publish and Release
+permissions:
+  contents: write
+
 on:
-  release:
-    types: [ created ]
+  push:
+    tags:
+      - v[0-9]+.*
 jobs:
   publish:
     runs-on: ubuntu-latest
@@ -23,3 +27,27 @@ jobs:
           MAVEN_USERNAME: ${{ secrets.OSSRH_USERNAME }}
           MAVEN_PASSWORD: ${{ secrets.OSSRH_TOKEN }}
           MAVEN_GPG_PASSPHRASE: ${{ secrets.MAVEN_GPG_PASSPHRASE }}
+      - name: Upload binary
+        uses: actions/upload-artifact@v4
+        with:
+          name: cli
+          path: |
+            cli/target/cli-jar-with-dependencies.jar
+          retention-days: 1
+      - uses: actions/download-artifact@v4
+        with:
+          name: cli
+
+      - name: Rename files
+        run: |
+          mkdir release-files
+          mv cli-jar-with-dependencies.jar release-files/llm-agent-builder-cli.jar
+
+      - name: Create a Github Release
+        uses: ncipollo/release-action@v1
+        with:
+          token: "${{ secrets.GITHUB_TOKEN }}"
+          prerelease: false
+          body: ${{ github.ref_name }}
+          artifacts: "release-files/*"
+          generateReleaseNotes: true

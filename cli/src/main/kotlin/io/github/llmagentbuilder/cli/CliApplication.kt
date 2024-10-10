@@ -4,26 +4,22 @@ import io.github.llmagentbuilder.cli.command.BuildCommand
 import io.github.llmagentbuilder.cli.command.RunCommand
 import picocli.CommandLine
 import java.io.File
-import java.util.concurrent.Callable
 import kotlin.system.exitProcess
 
 @CommandLine.Command(
     name = "llm-agent-builder",
     mixinStandardHelpOptions = true,
-    version = ["0.2.0"],
+    version = ["0.3.0"],
     description = ["Build LLM agents"],
     subcommands = [RunCommand::class, BuildCommand::class],
 )
-class CliApplication : Callable<Void> {
+class CliApplication {
     @CommandLine.Option(
         names = ["-c", "--config"],
-        description = ["agent config file"]
+        description = ["agent config file"],
+        required = true,
     )
     lateinit var configFile: File
-
-    override fun call(): Void? {
-        return null
-    }
 }
 
 fun main(args: Array<String>): Unit =
