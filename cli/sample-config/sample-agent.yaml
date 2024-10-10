@@ -1,0 +1,28 @@
+metadata:
+  name: TestAgent
+llm:
+  openai:
+    enabled: true
+profile:
+  system: You are a helpful assistant.
+memory:
+  inMemory:
+    enabled: true
+planner:
+  reActJson:
+    enabled: true
+tools:
+  - id: writeLocalFile
+    config:
+      basePath: "file-output"
+    dependency:
+      groupId: "io.github.llmagentbuilder"
+      artifactId: "tool-write-local-file"
+      version: "0.2.2"
+  - id: readLocalFile
+    config:
+      basePath: "file-input"
+    dependency:
+      groupId: "io.github.llmagentbuilder"
+      artifactId: "tool-read-local-file"
+      version: "0.2.2"

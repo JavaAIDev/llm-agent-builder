@@ -1,6 +1,5 @@
 package io.github.llmagentbuilder.cli.command
 
-import io.github.llmagentbuilder.cli.CliApplication
 import org.slf4j.LoggerFactory
 import picocli.CommandLine
 import java.io.File
@@ -13,8 +12,12 @@ enum class BuildOutputType { jar }
 
 @CommandLine.Command(name = "build", description = ["Build an agent"])
 class BuildCommand : Callable<Int> {
-    @CommandLine.ParentCommand
-    private val parent: CliApplication? = null
+    @CommandLine.Option(
+        names = ["-c", "--config"],
+        description = ["agent config file"],
+        required = true,
+    )
+    lateinit var configFile: File
 
     @CommandLine.Option(
         names = ["-type", "--output-type"],
@@ -30,14 +33,17 @@ class BuildCommand : Callable<Int> {
 
     private val logger = LoggerFactory.getLogger(javaClass)
 
-    override fun call(): Int? {
-        val file = parent?.configFile ?: return null
-        val projectDir = CommandHelper.setupMavenProject(file)
+    override fun call(): Int {
+        logger.info(
+            "Build an agent from config file: {}",
+            configFile.toPath().normalize().toAbsolutePath()
+        )
+        val projectDir = CommandHelper.setupMavenProject(configFile)
         val resourcesDir =
             projectDir.resolve("src").resolve("main").resolve("resources")
         Files.createDirectories(resourcesDir)
         Files.copy(
-            file.toPath(),
+            configFile.toPath(),
             resourcesDir.resolve("agent.yaml")
         )
         val args = arrayOf("package")

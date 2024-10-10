@@ -76,28 +76,19 @@
   </dependencies>
 
   <build>
+    <finalName>${project.artifactId}</finalName>
     <plugins>
       <plugin>
-        <artifactId>maven-assembly-plugin</artifactId>
-        <version>3.7.1</version>
+        <groupId>org.springframework.boot</groupId>
+        <artifactId>spring-boot-maven-plugin</artifactId>
+        <version>3.3.4</version>
         <configuration>
-          <finalName>cli</finalName>
-          <descriptors>
-            <descriptor>src/assembly/cli.xml</descriptor>
-          </descriptors>
-          <archive>
-            <manifest>
-              <mainClass>io.github.llmagentbuilder.cli.CliApplicationKt
-              </mainClass>
-            </manifest>
-          </archive>
+          <mainClass>io.github.llmagentbuilder.cli.CliApplicationKt</mainClass>
         </configuration>
         <executions>
           <execution>
-            <id>make-assembly</id>
-            <phase>package</phase>
             <goals>
-              <goal>single</goal>
+              <goal>repackage</goal>
             </goals>
           </execution>
         </executions>

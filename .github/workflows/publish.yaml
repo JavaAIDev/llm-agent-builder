@@ -32,7 +32,7 @@ jobs:
         with:
           name: cli
           path: |
-            cli/target/cli-jar-with-dependencies.jar
+            cli/target/cli.jar
           retention-days: 1
       - uses: actions/download-artifact@v4
         with:
@@ -41,7 +41,7 @@ jobs:
       - name: Rename files
         run: |
           mkdir release-files
-          mv cli-jar-with-dependencies.jar release-files/llm-agent-builder-cli.jar
+          mv cli.jar release-files/llm-agent-builder-cli.jar
 
       - name: Create a Github Release
         uses: ncipollo/release-action@v1

@@ -3,7 +3,6 @@ package io.github.llmagentbuilder.cli
 import io.github.llmagentbuilder.cli.command.BuildCommand
 import io.github.llmagentbuilder.cli.command.RunCommand
 import picocli.CommandLine
-import java.io.File
 import kotlin.system.exitProcess
 
 @CommandLine.Command(
@@ -13,14 +12,7 @@ import kotlin.system.exitProcess
     description = ["Build LLM agents"],
     subcommands = [RunCommand::class, BuildCommand::class],
 )
-class CliApplication {
-    @CommandLine.Option(
-        names = ["-c", "--config"],
-        description = ["agent config file"],
-        required = true,
-    )
-    lateinit var configFile: File
-}
+class CliApplication
 
 fun main(args: Array<String>): Unit =
     exitProcess(CommandLine(CliApplication()).execute(*args))
