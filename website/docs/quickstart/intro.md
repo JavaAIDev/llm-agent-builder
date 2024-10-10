@@ -23,130 +23,56 @@ It's also very easy to create custom tools.
 
 ## Create Agents using CLI
 
-Create a Spring Boot project with `spring-boot-starter-web` starter.
+The easiest way to create agents is using the command line tool.
 
-Add dependency of LLM Agent Builder Spring Boot starter.
+Download the CLI jar (`llm-agent-builder-cli.jar`) from [release page](https://github.com/LLMAgentBuilder/llm-agent-builder/releases).
 
-```xml
-<dependency>
-  <groupId>io.github.llmagentbuilder</groupId>
-  <artifactId>spring-boot-starter</artifactId>
-  <version>${llm-agent-builder.version}</version>
-</dependency>
+CLI has a sub-command `build` to build an agent from a config file.
+
+```yaml title="Agent config file"
+metadata:
+  name: TestAgent
+llm:
+  openai:
+    enabled: true
+profile:
+  system: You are a helpful assistant.
+memory:
+  inMemory:
+    enabled: true
+planner:
+  reActJson:
+    enabled: true
+tools:
+  - id: writeLocalFile
+    config:
+      basePath: "file-output"
+    dependency:
+      groupId: "io.github.llmagentbuilder"
+      artifactId: "tool-write-local-file"
+      version: "0.2.2"
+  - id: readLocalFile
+    config:
+      basePath: "file-input"
+    dependency:
+      groupId: "io.github.llmagentbuilder"
+      artifactId: "tool-read-local-file"
+      version: "0.2.2"
 ```
 
-Add dependency of Spring AI LLM integration. Aliyun Dashscope is used below. You can change to OpenAI or Mistral AI.
+The table below shows configurations.
 
-```xml
-<dependency>
-  <groupId>io.github.alexcheng1982</groupId>
-  <artifactId>spring-ai-dashscope-spring-boot-starter</artifactId>
-  <version>${dashscope-client.version}</version>
-</dependency>
-```
+| Configuration Key | Description                |
+| ----------------- | -------------------------- |
+| `metadata`        | Agent metadata             |
+| `llm`             | LLM used for planning      |
+| `profile`         | Agent profile              |
+| `memory`          | Memory                     |
+| `planner`         | Agent planner              |
+| `tools`           | Tools                      |
+| `launch`          | Agent server launch config |
 
-Add LLM adapter dependency for the selected LLM. `llm-dashscope` is for Dashscope.
-
-```xml
-<dependency>
-  <groupId>io.github.llmagentbuilder</groupId>
-  <artifactId>llm-dashscope</artifactId>
-  <version>${llm-agent-builder.version}</version>
-</dependency>
-```
-
-If shared tools are used, add dependencies of these tools.
-
-```xml
-<dependency>
-  <groupId>io.github.llmagentbuilder</groupId>
-  <artifactId>tool-python-code-execution</artifactId>
-  <version>${toolkit-code-execution.version}</version>
-</dependency>
-```
-
-Optionally add `spring-dev` module to expose agent info.
-
-```xml
-<dependency>
-  <groupId>io.github.llmagentbuilder</groupId>
-  <artifactId>spring-dev</artifactId>
-  <version>${llm-agent-builder.version}</version>
-</dependency>
-```
-
-:::info Agent Info
-Agent info REST API can be accessed at `/api/_agent/info`.
-:::
-
-## Configure Agent
-
-Configure the agent using prefix `io.github.llmagentbuilder.chatagent`.
-
-| Configuration Key  | Description                |
-| ------------------ | -------------------------- |
-| `name`             | Agent name                 |
-| `description`      | Agent description          |
-| `usageInstruction` | Usage instruction for user |
-| `reActJson`        | ReAct planner              |
-| `memory`           | Memory                     |
-| `tools`            | Tools                      |
-| `tools.config`     | Tools configuration        |
-
-```yaml
-io:
-  github:
-    llmagentbuilder:
-      chatagent:
-        name: CSV Processor
-        description: Process CSV files
-        usageInstruction: What you want to do with the CSV file?
-        reActJson:
-          systemInstructions: |
-            Process CSV files.
-        memory:
-          enabled: false
-        tools:
-          config:
-            readLocalFile:
-              basePath: test_data/input
-            writeLocalFile:
-              basePath: test_data/output
-            executePythonCode:
-              workingDirectory: test_data/input
-```
-
-## Spring Application
-
-The Spring Boot application should import two configurations:
-
-- `AgentControllerConfiguration`: Enable Agent controller REST API endpoint `/api/chat`.
-- `AgentDevConfiguration`: Enable Agent Info REST API endpoint `/api/_agent/info`.
-
-```java
-@SpringBootApplication
-@Import({AgentDevConfiguration.class, AgentControllerConfiguration.class})
-public class CsvProcessorApplication {
-
-  public static void main(String[] args) {
-    SpringApplication.run(CsvProcessorApplication.class, args);
-  }
-}
-```
-
-You can now use any REST client to interact with the agent.
-
-## Use streamlit ChatAgent UI
-
-A streamlit based [ChatAgent UI](https://github.com/LLMAgentBuilder/llm-agent-builder/tree/main/chat-agent-ui) is created to interact with the agent.
-
-Run the UI.
-
-```sh
-streamlit run ChatAgentUI.py
-```
-
-You can interact with a running agent using this UI.
+By default the agent server starts at port `8080`. It provides a built-in UI. You can interact with a running agent using this UI.
 
 ## Examples
 
