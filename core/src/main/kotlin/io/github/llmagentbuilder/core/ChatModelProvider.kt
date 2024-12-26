@@ -1,13 +1,13 @@
 package io.github.llmagentbuilder.core
 
 import org.springframework.ai.chat.model.ChatModel
-import org.springframework.ai.model.function.FunctionCallbackContext
+import org.springframework.ai.model.function.FunctionCallbackResolver
 
 interface ChatModelProvider {
     fun configKey(): String
 
     fun provideChatModel(
-        functionCallbackContext: FunctionCallbackContext,
+        functionCallbackResolver: FunctionCallbackResolver,
         config: Map<String, Any?>? = null,
     ): ChatModel?
 }

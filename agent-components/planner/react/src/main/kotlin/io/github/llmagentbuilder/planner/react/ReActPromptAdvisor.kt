@@ -49,21 +49,20 @@ class ReActPromptAdvisor : CallAroundAdvisor {
         advisedRequest: AdvisedRequest,
         chain: CallAroundAdvisorChain
     ): AdvisedResponse {
-        val systemParams = HashMap(advisedRequest.systemParams ?: mapOf())
+        val systemParams = HashMap(advisedRequest.systemParams)
         systemParams["system_instruction"] = advisedRequest.systemText ?: ""
-        val userParams = HashMap(advisedRequest.userParams ?: mapOf())
-        userParams["user_input"] = advisedRequest.userText ?: ""
+        val userParams = HashMap(advisedRequest.userParams)
+        userParams["user_input"] = advisedRequest.userText
         val chatOptions = ChatOptionsHelper.buildChatOptions(
             advisedRequest.chatOptions,
             ChatOptionsConfigurer.ChatOptionsConfig(listOf("\\nObservation"))
         )
-        val request = AdvisedRequest.from(advisedRequest)
-            .withSystemText(defaultSystemTextTemplate)
-            .withSystemParams(systemParams)
-            .withUserText(defaultUserTextTemplate)
-            .withUserParams(userParams)
-            .withChatOptions(chatOptions)
-            .build()
-        return chain.nextAroundCall(request)
+        val builder = AdvisedRequest.from(advisedRequest)
+            .systemText(defaultSystemTextTemplate)
+            .systemParams(systemParams)
+            .userText(defaultUserTextTemplate)
+            .userParams(userParams)
+        chatOptions?.let { builder.chatOptions(it) }
+        return chain.nextAroundCall(builder.build())
     }
 }

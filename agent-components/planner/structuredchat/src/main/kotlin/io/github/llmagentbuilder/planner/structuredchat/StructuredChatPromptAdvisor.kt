@@ -66,15 +66,15 @@ class StructuredChatPromptAdvisor : CallAroundAdvisor {
         advisedRequest: AdvisedRequest,
         chain: CallAroundAdvisorChain
     ): AdvisedResponse {
-        val systemParams = HashMap(advisedRequest.systemParams ?: mapOf())
+        val systemParams = HashMap(advisedRequest.systemParams)
         systemParams["system_instruction"] = advisedRequest.systemText ?: ""
-        val userParams = HashMap(advisedRequest.userParams ?: mapOf())
-        userParams["user_input"] = advisedRequest.userText ?: ""
+        val userParams = HashMap(advisedRequest.userParams)
+        userParams["user_input"] = advisedRequest.userText
         val request = AdvisedRequest.from(advisedRequest)
-            .withSystemText(defaultSystemTextTemplate)
-            .withSystemParams(systemParams)
-            .withUserText(defaultUserTextTemplate)
-            .withUserParams(userParams)
+            .systemText(defaultSystemTextTemplate)
+            .systemParams(systemParams)
+            .userText(defaultUserTextTemplate)
+            .userParams(userParams)
             .build()
         return chain.nextAroundCall(request)
     }

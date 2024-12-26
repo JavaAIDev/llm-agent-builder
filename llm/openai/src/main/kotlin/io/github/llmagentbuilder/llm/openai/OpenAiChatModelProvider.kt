@@ -4,7 +4,7 @@ import io.github.llmagentbuilder.core.ChatModelProvider
 import io.github.llmagentbuilder.core.MapToObject
 import org.apache.commons.lang3.StringUtils
 import org.springframework.ai.chat.model.ChatModel
-import org.springframework.ai.model.function.FunctionCallbackContext
+import org.springframework.ai.model.function.FunctionCallbackResolver
 import org.springframework.ai.openai.OpenAiChatModel
 import org.springframework.ai.openai.OpenAiChatOptions
 import org.springframework.ai.openai.api.OpenAiApi
@@ -16,7 +16,7 @@ class OpenAiChatModelProvider : ChatModelProvider {
     }
 
     override fun provideChatModel(
-        functionCallbackContext: FunctionCallbackContext,
+        functionCallbackResolver: FunctionCallbackResolver,
         config: Map<String, Any?>?,
     ): ChatModel? {
         val openAiConfig = MapToObject.toObject<OpenAiConfig>(config)
@@ -33,8 +33,8 @@ class OpenAiChatModelProvider : ChatModelProvider {
             openAiConfig?.model ?: OpenAiApi.ChatModel.GPT_3_5_TURBO.value
         val chatModel = OpenAiChatModel(
             OpenAiApi(apiKey),
-            OpenAiChatOptions.builder().withModel(model).build(),
-            functionCallbackContext,
+            OpenAiChatOptions.builder().model(model).build(),
+            functionCallbackResolver,
             RetryTemplate.defaultInstance()
         )
         return chatModel

@@ -9,9 +9,8 @@ import io.github.llmagentbuilder.core.observation.AgentToolExecutionObservationD
 import io.github.llmagentbuilder.core.observation.DefaultAgentToolExecutionObservationConvention
 import io.micrometer.observation.ObservationRegistry
 import org.slf4j.LoggerFactory
+import org.springframework.ai.model.function.DefaultFunctionCallbackBuilder
 import org.springframework.ai.model.function.FunctionCallback
-import org.springframework.ai.model.function.FunctionCallbackContext
-import org.springframework.ai.model.function.FunctionCallbackWrapper
 import org.springframework.core.GenericTypeResolver
 import java.util.*
 import java.util.function.Supplier
@@ -34,39 +33,38 @@ class AgentToolWrappersProvider(
                     AgentTool::class.java
                 )
             InstrumentedFunctionCallbackWrapper(
-                FunctionCallbackWrapper.builder(tool)
-                    .withName(tool.name())
-                    .withSchemaType(FunctionCallbackContext.SchemaType.JSON_SCHEMA)
-                    .withDescription(tool.description())
-                    .withInputType(
+                DefaultFunctionCallbackBuilder().function(tool.name(), tool)
+                    .schemaType(FunctionCallback.SchemaType.JSON_SCHEMA)
+                    .description(tool.description())
+                    .inputType(
                         types?.get(0)
                             ?: throw IllegalArgumentException("Bad type")
                     )
-                    .withObjectMapper(objectMapper)
+                    .objectMapper(objectMapper)
                     .build(), observationRegistry
             )
         }
     }
 
-    private class InstrumentedFunctionCallbackWrapper<I, O>(
-        private val functionCallbackWrapper: FunctionCallbackWrapper<I, O>,
+    private class InstrumentedFunctionCallbackWrapper(
+        private val functionCallback: FunctionCallback,
         private val observationRegistry: ObservationRegistry? = null
     ) :
         FunctionCallback {
         override fun getName(): String {
-            return functionCallbackWrapper.name
+            return functionCallback.name
         }
 
         override fun getDescription(): String {
-            return functionCallbackWrapper.description
+            return functionCallback.description
         }
 
         override fun getInputTypeSchema(): String {
-            return functionCallbackWrapper.inputTypeSchema
+            return functionCallback.inputTypeSchema
         }
 
         override fun call(functionInput: String): String {
-            val action = { functionCallbackWrapper.call(functionInput) }
+            val action = { functionCallback.call(functionInput) }
             return observationRegistry?.let { registry ->
                 instrumentedCall(functionInput, action, registry)
             } ?: action.invoke()

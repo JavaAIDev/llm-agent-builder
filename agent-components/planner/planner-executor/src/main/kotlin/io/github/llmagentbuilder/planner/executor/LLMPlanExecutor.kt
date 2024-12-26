@@ -39,7 +39,7 @@ open class LLMPlanExecutor(
                 spec.text(userInput).param("agent_scratchpad", thoughts)
             }
             .call().content()
-        if (response.isEmpty()) {
+        if (response?.isEmpty() != false) {
             return ActionPlanningResult.finish(
                 AgentFinish.fromOutput(
                     "No response from LLM",
