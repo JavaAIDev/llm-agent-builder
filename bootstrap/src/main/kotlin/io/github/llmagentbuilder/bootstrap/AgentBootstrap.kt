@@ -3,7 +3,7 @@ package io.github.llmagentbuilder.bootstrap
 import io.github.llmagentbuilder.agent.profile.systemmessage.SystemMessageProfileAdvisor
 import io.github.llmagentbuilder.agent.tool.AgentToolInfoAdvisor
 import io.github.llmagentbuilder.core.*
-import io.github.llmagentbuilder.core.tool.AgentToolFunctionCallbackContext
+import io.github.llmagentbuilder.core.tool.AgentToolFunctionCallbackResolver
 import io.github.llmagentbuilder.core.tool.AgentToolsProviderFactory
 import io.github.llmagentbuilder.launcher.ktor.server.KtorLauncher
 import io.github.llmagentbuilder.plugin.observation.opentelemetry.OpenTelemetryPlugin
@@ -54,6 +54,7 @@ object AgentBootstrap {
             .map { it.get() }
             .asSequence()
             .forEach {
+                logger.info("Found PromptParamsProvider: {}", it.javaClass.name)
                 it.provideSystemParams()?.run {
                     providedSystemParams.putAll(this)
                 }
@@ -72,7 +73,7 @@ object AgentBootstrap {
         val observationRegistry =
             if (observationEnabled) ObservationRegistry.create() else ObservationRegistry.NOOP
         val functionCallbackContext =
-            AgentToolFunctionCallbackContext(
+            AgentToolFunctionCallbackResolver(
                 agentToolsProvider,
                 observationRegistry,
             )
@@ -154,13 +155,13 @@ object AgentBootstrap {
             advisedRequest: AdvisedRequest,
             chain: CallAroundAdvisorChain
         ): AdvisedResponse {
-            val systemParams = HashMap(advisedRequest.systemParams ?: mapOf())
+            val systemParams = HashMap(advisedRequest.systemParams)
             systemParams.putAll(providedSystemParams)
-            val userParams = HashMap(advisedRequest.userParams ?: mapOf())
+            val userParams = HashMap(advisedRequest.userParams)
             userParams.putAll(providedUserParams)
             val request = AdvisedRequest.from(advisedRequest)
-                .withSystemParams(systemParams)
-                .withUserParams(userParams)
+                .systemParams(systemParams)
+                .userParams(userParams)
                 .build()
             return chain.nextAroundCall(request)
         }

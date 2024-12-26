@@ -26,16 +26,14 @@ class AgentToolInfoAdvisor(private val tools: Map<String, AgentTool<*, *>>) :
     ): AdvisedResponse {
         val toolNames = tools.keys
         val toolsDescription = renderTools(tools.values)
-        val systemParams = HashMap(advisedRequest.systemParams ?: mapOf())
+        val systemParams = HashMap(advisedRequest.systemParams)
         systemParams[SYSTEM_PARAM_TOOLS] = toolsDescription
         systemParams[SYSTEM_PARAM_TOOL_NAMES] = toolNames.joinToString(", ")
         val functionNames =
-            (HashSet(
-                advisedRequest.functionNames ?: listOf()
-            ) + tools.keys).toList()
+            (HashSet(advisedRequest.functionNames) + tools.keys).toList()
         val request = AdvisedRequest.from(advisedRequest)
-            .withFunctionNames(functionNames)
-            .withSystemParams(systemParams)
+            .functionNames(functionNames)
+            .systemParams(systemParams)
             .build()
         return chain.nextAroundCall(request)
     }

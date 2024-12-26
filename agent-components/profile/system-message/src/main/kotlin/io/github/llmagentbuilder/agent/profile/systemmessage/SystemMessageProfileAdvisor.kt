@@ -23,11 +23,11 @@ class SystemMessageProfileAdvisor(
         chain: CallAroundAdvisorChain
     ): AdvisedResponse {
         val systemParams =
-            (advisedRequest.systemParams ?: mapOf()) + (systemMessageParams
+            advisedRequest.systemParams + (systemMessageParams
                 ?: mapOf())
         val request = AdvisedRequest.from(advisedRequest)
-            .withSystemText(systemMessage)
-            .withSystemParams(systemParams)
+            .systemText(systemMessage)
+            .systemParams(systemParams)
             .build()
         return chain.nextAroundCall(request)
     }

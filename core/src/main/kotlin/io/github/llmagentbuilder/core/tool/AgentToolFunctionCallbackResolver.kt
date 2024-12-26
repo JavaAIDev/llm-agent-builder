@@ -5,7 +5,7 @@ import org.slf4j.LoggerFactory
 import org.springframework.ai.model.function.DefaultFunctionCallbackResolver
 import org.springframework.ai.model.function.FunctionCallback
 
-class AgentToolFunctionCallbackContext(
+class AgentToolFunctionCallbackResolver(
     agentToolsProvider: AgentToolsProvider,
     observationRegistry: ObservationRegistry? = null,
 ) :

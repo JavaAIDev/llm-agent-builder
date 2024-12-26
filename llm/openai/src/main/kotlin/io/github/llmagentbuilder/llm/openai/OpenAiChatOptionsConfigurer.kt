@@ -16,9 +16,7 @@ class OpenAiChatOptionsConfigurer : ChatOptionsConfigurer {
         val stops = config.stopSequence ?: listOf()
         return chatOptions?.let {
             OpenAiChatOptions.Builder(it as OpenAiChatOptions)
-                .withStop(
-                    (it.stopSequences ?: listOf()) + stops
-                ).build()
-        } ?: OpenAiChatOptions.builder().withStop(stops).build()
+                .stop((it.stopSequences ?: listOf()) + stops).build()
+        } ?: OpenAiChatOptions.builder().stop(stops).build()
     }
 }

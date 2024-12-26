@@ -24,9 +24,7 @@ interface AgentTool<REQUEST, RESPONSE> : Function<REQUEST, RESPONSE> {
 }
 
 interface ConfigurableAgentTool<REQUEST, RESPONSE, CONFIG> :
-    AgentTool<REQUEST, RESPONSE> {
-
-}
+    AgentTool<REQUEST, RESPONSE>
 
 class ExceptionTool : AgentTool<String, String> {
     override fun name(): String {

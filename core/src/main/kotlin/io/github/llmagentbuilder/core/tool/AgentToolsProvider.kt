@@ -49,8 +49,7 @@ class AgentToolWrappersProvider(
     private class InstrumentedFunctionCallbackWrapper(
         private val functionCallback: FunctionCallback,
         private val observationRegistry: ObservationRegistry? = null
-    ) :
-        FunctionCallback {
+    ) : FunctionCallback {
         override fun getName(): String {
             return functionCallback.name
         }
