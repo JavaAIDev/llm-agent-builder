@@ -3,7 +3,7 @@ package io.github.llmagentbuilder.launcher.ktor.server
 import io.github.llmagentbuilder.core.ChatAgent
 import io.github.llmagentbuilder.core.FeatureConfig
 import io.github.llmagentbuilder.core.LaunchConfig
-import io.github.llmagentbuilder.launcher.ktor.server.apis.AgentApi
+import io.github.llmagentbuilder.launcher.ktor.server.apis.agentApi
 import io.github.llmagentbuilder.launcher.ktor.server.apis.devUI
 import io.ktor.serialization.jackson.*
 import io.ktor.server.application.*
@@ -48,11 +48,11 @@ fun Application.module(
     }
     install(
         Compression,
-        ApplicationCompressionConfiguration()
+        applicationCompressionConfiguration()
     )
     install(Resources)
-    install(Routing) {
-        AgentApi(chatAgent)
+    routing {
+        agentApi(chatAgent)
         if (featureConfig?.devUiEnabled != false) {
             devUI()
         }

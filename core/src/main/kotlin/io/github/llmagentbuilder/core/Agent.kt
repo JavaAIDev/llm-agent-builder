@@ -91,10 +91,13 @@ interface Agent<in REQUEST : AgentRequest, out RESPONSE> {
     fun call(request: REQUEST): RESPONSE
 }
 
-data class ChatAgentRequest(val input: String, val memoryId: String? = null) :
+data class ChatAgentRequest(
+    val input: String,
+    val conversationId: String? = null
+) :
     AgentRequest {
     override fun toMap(): Map<String, Any> {
-        return mapOf("input" to input) + (memoryId?.let { mapOf("memory_id" to it) }
+        return mapOf("input" to input) + (conversationId?.let { mapOf("conversation_id" to it) }
             ?: mapOf())
     }
 }
