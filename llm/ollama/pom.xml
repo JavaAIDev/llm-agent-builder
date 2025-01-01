@@ -5,22 +5,28 @@
   <modelVersion>4.0.0</modelVersion>
   <parent>
     <groupId>io.github.llmagentbuilder</groupId>
-    <artifactId>llm-agent-builder</artifactId>
+    <artifactId>llm</artifactId>
     <version>0.4.2</version>
   </parent>
 
-  <artifactId>llm</artifactId>
-  <name>LLM Adapter</name>
-  <packaging>pom</packaging>
-  <modules>
-    <module>openai</module>
-    <module>ollama</module>
-  </modules>
+  <artifactId>llm-ollama</artifactId>
+  <name>LLM Adapter :: Ollama</name>
 
   <properties>
+    <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
     <maven.compiler.source>21</maven.compiler.source>
     <maven.compiler.target>21</maven.compiler.target>
-    <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
   </properties>
 
+  <dependencies>
+    <dependency>
+      <groupId>org.springframework.ai</groupId>
+      <artifactId>spring-ai-ollama</artifactId>
+    </dependency>
+    <dependency>
+      <groupId>io.github.llmagentbuilder</groupId>
+      <artifactId>core</artifactId>
+      <version>${project.version}</version>
+    </dependency>
+  </dependencies>
 </project>

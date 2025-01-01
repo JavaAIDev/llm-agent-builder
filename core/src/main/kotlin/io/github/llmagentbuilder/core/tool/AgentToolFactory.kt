@@ -9,7 +9,6 @@ import java.util.function.Supplier
  */
 interface AgentToolFactory<out T : AgentTool<*, *>> {
     /**
-     * @param T Agent tool type
      * @return Agent tool
      */
     fun create(): T
@@ -21,7 +20,6 @@ interface AgentToolFactory<out T : AgentTool<*, *>> {
 interface ConfigurableAgentToolFactory<CONFIG, out T : ConfigurableAgentTool<*, *, CONFIG>> :
     AgentToolFactory<T> {
     /**
-     * @param T Agent tool type
      * @param config Tool configuration object
      * @return Agent tool
      */
