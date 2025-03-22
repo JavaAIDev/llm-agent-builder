@@ -25,7 +25,8 @@ It's also very easy to create custom tools.
 
 The easiest way to create agents is using the command line tool.
 
-Download the CLI jar (`llm-agent-builder-cli.jar`) from [release page](https://github.com/LLMAgentBuilder/llm-agent-builder/releases).
+Download the CLI jar (`llm-agent-builder-cli.jar`)
+from [release page](https://github.com/LLMAgentBuilder/llm-agent-builder/releases).
 
 CLI has a sub-command `build` to build an agent from a config file.
 
@@ -48,14 +49,14 @@ tools:
     config:
       basePath: "file-output"
     dependency:
-      groupId: "io.github.llmagentbuilder"
+      groupId: "com.javaaidev.llmagentbuilder"
       artifactId: "tool-write-local-file"
       version: "0.2.2"
   - id: readLocalFile
     config:
       basePath: "file-input"
     dependency:
-      groupId: "io.github.llmagentbuilder"
+      groupId: "com.javaaidev.llmagentbuilder"
       artifactId: "tool-read-local-file"
       version: "0.2.2"
 ```
@@ -63,7 +64,7 @@ tools:
 The table below shows configurations.
 
 | Configuration Key | Description                |
-| ----------------- | -------------------------- |
+|-------------------|----------------------------|
 | `metadata`        | Agent metadata             |
 | `llm`             | LLM used for planning      |
 | `profile`         | Agent profile              |
@@ -72,7 +73,8 @@ The table below shows configurations.
 | `tools`           | Tools                      |
 | `launch`          | Agent server launch config |
 
-By default the agent server starts at port `8080`. It provides a built-in UI. You can interact with a running agent using this UI.
+By default the agent server starts at port `8080`. It provides a built-in UI. You can interact with
+a running agent using this UI.
 
 ## Examples
 

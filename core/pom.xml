@@ -46,11 +46,13 @@
               <source>import java.nio.file.Files
               import java.nio.file.Path
 
-              Files.writeString(Path.of(project.basedir.toPath().normalize().toAbsolutePath().toString(), "src", "main", "kotlin", "io", "github", "llmagentbuilder", "core", "Version.kt"), '''
-package io.github.llmagentbuilder.core
+              Files.writeString(Path.of(project.basedir.toPath().normalize().toAbsolutePath().toString(),
+                "src", "main", "kotlin", "com", "javaaidev", "llmagentbuilder", "core", "Version.kt"),
+                '''
+                package com.javaaidev.llmagentbuilder.core
 
-const val VERSION = "${project.version}"
-''')
+                const val VERSION = "${project.version}"
+                ''')
               </source>
             </configuration>
           </execution>
