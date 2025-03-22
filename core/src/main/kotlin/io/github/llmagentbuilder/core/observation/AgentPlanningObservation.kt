@@ -1,6 +1,7 @@
 package io.github.llmagentbuilder.core.observation
 
 import com.fasterxml.jackson.databind.ObjectMapper
+import io.github.llmagentbuilder.core.ChatAgentRequest
 import io.github.llmagentbuilder.core.executor.ActionPlanningResult
 import io.micrometer.common.KeyValue
 import io.micrometer.common.KeyValues
@@ -43,8 +44,8 @@ enum class AgentPlanningObservationDocumentation : ObservationDocumentation {
     }
 }
 
-class AgentPlanningObservationContext(val input: Map<String, Any>) :
-    RequestReplySenderContext<Map<String, Any>, ActionPlanningResult>({ _, _, _ ->
+class AgentPlanningObservationContext(val input: ChatAgentRequest) :
+    RequestReplySenderContext<ChatAgentRequest, ActionPlanningResult>({ _, _, _ ->
         run {}
     }) {
     init {

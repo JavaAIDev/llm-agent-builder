@@ -3,7 +3,6 @@ package io.github.llmagentbuilder.core
 import io.github.llmagentbuilder.core.executor.AgentExecutor
 import io.github.llmagentbuilder.core.tool.AgentToolWrappersProvider
 import io.github.llmagentbuilder.core.tool.AgentToolsProvider
-import io.github.llmagentbuilder.core.tool.AutoDiscoveredAgentToolsProvider
 import io.micrometer.observation.ObservationRegistry
 import org.slf4j.LoggerFactory
 
@@ -15,7 +14,7 @@ object AgentFactory {
         name: String? = null,
         description: String? = null,
         usageInstruction: String? = null,
-        agentToolsProvider: AgentToolsProvider? = null,
+        agentToolsProvider: AgentToolsProvider,
         id: String? = null,
         observationRegistry: ObservationRegistry? = null,
     ): ChatAgent {
@@ -23,7 +22,7 @@ object AgentFactory {
         val executor = createAgentExecutor(
             agentName,
             planner,
-            agentToolsProvider ?: AutoDiscoveredAgentToolsProvider,
+            agentToolsProvider,
             observationRegistry
         )
         return ExecutableChatAgent(
@@ -42,16 +41,16 @@ object AgentFactory {
         }
     }
 
-    fun <REQUEST : AgentRequest, RESPONSE> create(
+    fun <RESPONSE> create(
         name: String,
         description: String,
         usageInstruction: String,
         planner: Planner,
         responseFactory: (Map<String, Any>) -> RESPONSE,
-        agentToolsProvider: AgentToolsProvider = AutoDiscoveredAgentToolsProvider,
+        agentToolsProvider: AgentToolsProvider,
         id: String? = null,
         observationRegistry: ObservationRegistry? = null,
-    ): Agent<REQUEST, RESPONSE> {
+    ): Agent<ChatAgentRequest, RESPONSE> {
         val executor = createAgentExecutor(
             name,
             planner,
@@ -86,7 +85,7 @@ object AgentFactory {
         )
     }
 
-    private open class ExecutableAgent<REQUEST : AgentRequest, RESPONSE>(
+    private open class ExecutableAgent<RESPONSE>(
         private val name: String,
         private val description: String,
         private val usageInstruction: String,
@@ -95,7 +94,7 @@ object AgentFactory {
         private val id: String? = null,
         private val observationRegistry: ObservationRegistry? = null,
     ) :
-        Agent<REQUEST, RESPONSE> {
+        Agent<ChatAgentRequest, RESPONSE> {
         private val logger = LoggerFactory.getLogger("AgentExecutor")
 
         override fun id(): String {
@@ -114,13 +113,13 @@ object AgentFactory {
             return usageInstruction
         }
 
-        override fun call(request: REQUEST): RESPONSE {
+        override fun call(request: ChatAgentRequest): RESPONSE {
             logger.info(
                 "Start executing agent [{}] with request [{}]",
                 name(),
                 request
             )
-            val response = responseFactory(executor.call(request.toMap()))
+            val response = responseFactory(executor.call(request))
             logger.info(
                 "Finished executing agent [{}] with response [{}]",
                 name(),
@@ -138,7 +137,7 @@ object AgentFactory {
         usageInstruction: String,
         id: String? = null,
         observationRegistry: ObservationRegistry? = null,
-    ) : ExecutableAgent<ChatAgentRequest, ChatAgentResponse>(
+    ) : ExecutableAgent<ChatAgentResponse>(
         name,
         description,
         usageInstruction,

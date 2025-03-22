@@ -27,8 +27,8 @@ object AgentInfoBuilder {
             agent.usageInstruction(),
             agentToolsProvider.get().values.map { tool ->
                 AgentToolInfo(
-                    tool.name(),
-                    tool.description(),
+                    tool.name,
+                    tool.description,
                 )
             }
         )

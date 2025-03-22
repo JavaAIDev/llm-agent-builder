@@ -30,7 +30,7 @@ class OpenAiChatModelProvider : ChatModelProvider {
             throw RuntimeException("OpenAI API key is required.")
         }
         val model =
-            openAiConfig?.model ?: OpenAiApi.ChatModel.GPT_3_5_TURBO.value
+            openAiConfig?.model ?: OpenAiApi.ChatModel.GPT_4_O_MINI.value
         val chatModel = OpenAiChatModel(
             OpenAiApi(apiKey),
             OpenAiChatOptions.builder().model(model).build(),

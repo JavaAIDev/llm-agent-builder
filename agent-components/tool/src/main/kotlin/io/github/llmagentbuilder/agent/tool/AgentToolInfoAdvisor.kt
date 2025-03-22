@@ -1,6 +1,6 @@
 package io.github.llmagentbuilder.agent.tool
 
-import io.github.llmagentbuilder.core.tool.AgentTool
+import com.javaaidev.easyllmtools.llmtoolspec.Tool
 import org.springframework.ai.chat.client.advisor.api.AdvisedRequest
 import org.springframework.ai.chat.client.advisor.api.AdvisedResponse
 import org.springframework.ai.chat.client.advisor.api.CallAroundAdvisor
@@ -10,7 +10,7 @@ import org.springframework.core.Ordered
 const val SYSTEM_PARAM_TOOL_NAMES = "tool_names"
 const val SYSTEM_PARAM_TOOLS = "tools"
 
-class AgentToolInfoAdvisor(private val tools: Map<String, AgentTool<*, *>>) :
+class AgentToolInfoAdvisor(private val tools: Map<String, Tool<*, *>>) :
     CallAroundAdvisor {
     override fun getName(): String {
         return javaClass.simpleName
@@ -38,9 +38,9 @@ class AgentToolInfoAdvisor(private val tools: Map<String, AgentTool<*, *>>) :
         return chain.nextAroundCall(request)
     }
 
-    private fun renderTools(tools: Collection<AgentTool<*, *>>): String {
+    private fun renderTools(tools: Collection<Tool<*, *>>): String {
         return tools.joinToString("\n") {
-            "${it.name()}: ${it.description()}"
+            "${it.name}: ${it.description}"
         }
     }
 }

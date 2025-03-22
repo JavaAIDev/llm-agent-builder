@@ -1,7 +1,7 @@
 package io.github.llmagentbuilder.cli
 
 data class MavenCoordinate(
-    val groupId: String = "io.github.llmagentbuilder",
+    val groupId: String = "com.javaaidev.llmagentbuilder",
     val artifactId: String,
     val version: String = "\${llmagentbuilder.version}",
 )

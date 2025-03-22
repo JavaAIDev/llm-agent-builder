@@ -1,41 +1,22 @@
 package io.github.llmagentbuilder.core.tool
 
-import java.util.function.Function
+import com.javaaidev.easyllmtools.llmtoolspec.Tool
+import java.lang.reflect.Type
 
-/**
- * Agent tool
- */
-interface AgentTool<REQUEST, RESPONSE> : Function<REQUEST, RESPONSE> {
-
-    /**
-     * ID of the agent tool
-     */
-    fun id(): String = javaClass.name.replace(".", "_")
-
-    /**
-     * Name of the agent tool, will be passed to LLM
-     */
-    fun name(): String
-
-    /**
-     * Description of the agent tool, will be passed to LLM
-     */
-    fun description(): String
-}
-
-interface ConfigurableAgentTool<REQUEST, RESPONSE, CONFIG> :
-    AgentTool<REQUEST, RESPONSE>
-
-class ExceptionTool : AgentTool<String, String> {
-    override fun name(): String {
+class ExceptionTool : Tool<String, String> {
+    override fun getName(): String {
         return "_Exception"
     }
 
-    override fun description(): String {
+    override fun getDescription(): String {
         return "Exception tool"
     }
 
-    override fun apply(t: String): String {
+    override fun getRequestType(): Type {
+        return String::class.java
+    }
+
+    override fun call(t: String): String {
         return t
     }
 

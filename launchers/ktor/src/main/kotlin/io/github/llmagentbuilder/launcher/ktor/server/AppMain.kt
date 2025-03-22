@@ -1,5 +1,6 @@
 package io.github.llmagentbuilder.launcher.ktor.server
 
+import com.fasterxml.jackson.databind.DeserializationFeature
 import io.github.llmagentbuilder.core.ChatAgent
 import io.github.llmagentbuilder.core.FeatureConfig
 import io.github.llmagentbuilder.core.LaunchConfig
@@ -44,7 +45,9 @@ fun Application.module(
     }
     install(DefaultHeaders)
     install(ContentNegotiation) {
-        jackson()
+        jackson {
+            disable(DeserializationFeature.FAIL_ON_UNKNOWN_PROPERTIES)
+        }
     }
     install(
         Compression,

@@ -26,7 +26,7 @@ object MavenFilesGenerator {
                 "artifactId" to (config.artifactId
                     ?: "app_${UUID.randomUUID().toString().replace("-", "")}"),
                 "springAiVersion" to (config.springAiVersion
-                    ?: "1.0.0-SNAPSHOT"),
+                    ?: "1.0.0-M5"),
                 "llmAgentBuilderVersion" to (config.llmAgentBuilderVersion
                     ?: VERSION),
                 "dependencies" to collectDependencies(agentConfig),

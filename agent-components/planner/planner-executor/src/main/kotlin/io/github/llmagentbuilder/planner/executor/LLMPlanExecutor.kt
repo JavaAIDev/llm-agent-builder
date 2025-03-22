@@ -1,8 +1,6 @@
 package io.github.llmagentbuilder.planner.executor
 
-import io.github.llmagentbuilder.core.AgentFinish
-import io.github.llmagentbuilder.core.IntermediateAgentStep
-import io.github.llmagentbuilder.core.Planner
+import io.github.llmagentbuilder.core.*
 import io.github.llmagentbuilder.core.executor.ActionPlanningResult
 import io.github.llmagentbuilder.core.observation.AgentPlanningObservationContext
 import io.github.llmagentbuilder.core.observation.AgentPlanningObservationDocumentation
@@ -17,7 +15,7 @@ open class LLMPlanExecutor(
     private val observationRegistry: ObservationRegistry? = null,
 ) : Planner {
     override fun plan(
-        inputs: Map<String, Any>,
+        inputs: ChatAgentRequest,
         intermediateSteps: List<IntermediateAgentStep>
     ): ActionPlanningResult {
         val action = { internalPlan(inputs, intermediateSteps) }
@@ -27,11 +25,13 @@ open class LLMPlanExecutor(
     }
 
     private fun internalPlan(
-        inputs: Map<String, Any>,
+        inputs: ChatAgentRequest,
         intermediateSteps: List<IntermediateAgentStep>
     ): ActionPlanningResult {
         val userInput =
-            (inputs["input"] as? String)
+            inputs.messages.filterIsInstance<ThreadUserMessage>()
+                .lastOrNull()?.content?.filterIsInstance<TextContentPart>()
+                ?.joinToString("\n") { it.text }
                 ?: throw RuntimeException("Invalid input")
         val thoughts = constructScratchpad(intermediateSteps)
         val response = chatClient.prompt()
@@ -52,7 +52,7 @@ open class LLMPlanExecutor(
     }
 
     private fun instrumentedPlan(
-        input: Map<String, Any>,
+        input: ChatAgentRequest,
         action: () -> ActionPlanningResult,
         registry: ObservationRegistry
     ): ActionPlanningResult {

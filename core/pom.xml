@@ -99,6 +99,10 @@ const val VERSION = "${project.version}"
       <groupId>com.github.jknack</groupId>
       <artifactId>handlebars</artifactId>
     </dependency>
+    <dependency>
+      <groupId>com.javaaidev.easyllmtools</groupId>
+      <artifactId>llm-tool-spec</artifactId>
+    </dependency>
 
     <dependency>
       <groupId>uk.org.webcompere</groupId>

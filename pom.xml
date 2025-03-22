@@ -58,6 +58,8 @@
     <micrometer.version>1.12.4</micrometer.version>
     <micrometer-tracing.version>1.2.4</micrometer-tracing.version>
     <handlebars.version>4.4.0</handlebars.version>
+    <agentic-patterns.version>0.2.0</agentic-patterns.version>
+    <easy-llm-tools.version>0.1.5</easy-llm-tools.version>
   </properties>
 
   <build>
@@ -295,6 +297,11 @@
         <groupId>com.github.jknack</groupId>
         <artifactId>handlebars</artifactId>
         <version>${handlebars.version}</version>
+      </dependency>
+      <dependency>
+        <groupId>com.javaaidev.easyllmtools</groupId>
+        <artifactId>llm-tool-spec</artifactId>
+        <version>${easy-llm-tools.version}</version>
       </dependency>
     </dependencies>
   </dependencyManagement>

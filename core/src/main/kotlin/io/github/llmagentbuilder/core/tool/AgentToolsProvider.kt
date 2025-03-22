@@ -2,6 +2,10 @@ package io.github.llmagentbuilder.core.tool
 
 import com.fasterxml.jackson.databind.ObjectMapper
 import com.fasterxml.jackson.module.kotlin.KotlinModule
+import com.javaaidev.easyllmtools.llmtoolspec.ConfigurableToolFactory
+import com.javaaidev.easyllmtools.llmtoolspec.Tool
+import com.javaaidev.easyllmtools.llmtoolspec.ToolFactory
+import com.javaaidev.easyllmtools.llmtoolspec.UnconfigurableToolFactory
 import io.github.llmagentbuilder.core.MapToObject
 import io.github.llmagentbuilder.core.ToolConfig
 import io.github.llmagentbuilder.core.observation.AgentToolExecutionObservationContext
@@ -9,14 +13,13 @@ import io.github.llmagentbuilder.core.observation.AgentToolExecutionObservationD
 import io.github.llmagentbuilder.core.observation.DefaultAgentToolExecutionObservationConvention
 import io.micrometer.observation.ObservationRegistry
 import org.slf4j.LoggerFactory
-import org.springframework.ai.model.function.DefaultFunctionCallbackBuilder
 import org.springframework.ai.model.function.FunctionCallback
 import org.springframework.core.GenericTypeResolver
 import java.util.*
 import java.util.function.Supplier
 import kotlin.streams.asSequence
 
-interface AgentToolsProvider : Supplier<Map<String, AgentTool<*, *>>>
+interface AgentToolsProvider : Supplier<Map<String, Tool<*, *>>>
 
 class AgentToolWrappersProvider(
     private val agentToolsProvider: AgentToolsProvider,
@@ -30,18 +33,10 @@ class AgentToolWrappersProvider(
             val types =
                 GenericTypeResolver.resolveTypeArguments(
                     tool.javaClass,
-                    AgentTool::class.java
+                    Tool::class.java
                 )
             InstrumentedFunctionCallbackWrapper(
-                DefaultFunctionCallbackBuilder().function(tool.name(), tool)
-                    .schemaType(FunctionCallback.SchemaType.JSON_SCHEMA)
-                    .description(tool.description())
-                    .inputType(
-                        types?.get(0)
-                            ?: throw IllegalArgumentException("Bad type")
-                    )
-                    .objectMapper(objectMapper)
-                    .build(), observationRegistry
+                ToolFunctionCallback(tool, objectMapper), observationRegistry
             )
         }
     }
@@ -102,10 +97,10 @@ class AgentToolWrappersProvider(
 
 class CompositeAgentToolsProvider(private val providers: List<AgentToolsProvider>) :
     AgentToolsProvider {
-    override fun get(): Map<String, AgentTool<*, *>> {
+    override fun get(): Map<String, Tool<*, *>> {
         return providers.flatMap { it.get().values }
-            .distinctBy { it.name() }
-            .associateBy { it.name() }
+            .distinctBy { it.name }
+            .associateBy { it.name }
     }
 }
 
@@ -113,54 +108,38 @@ object AgentToolsProviderFactory {
     private val logger = LoggerFactory.getLogger(javaClass)
 
     fun create(tools: List<ToolConfig>): AgentToolsProvider {
-        val (toConfig, noConfig) = ServiceLoader.load(AgentToolFactory::class.java)
+        val (noConfig, toConfig) = ServiceLoader.load(ToolFactory::class.java)
             .stream()
             .map { it.get() }
             .asSequence()
-            .partition { it is ConfigurableAgentToolFactory<*, *> }
-        val noConfigTools = noConfig.map { it.create() }
+            .partition { it is UnconfigurableToolFactory<*, *, *> }
+        val noConfigTools =
+            noConfig.map { (it as UnconfigurableToolFactory<*, *, *>).create() as Tool<*, *> }
         val toolsMap = tools.associateBy { it.id }.mapValues { it.value.config }
         val toConfigTools = toConfig.map {
             val toolId =
-                (it as ConfigurableAgentToolFactory<*, *>).toolId()
+                (it as ToolFactory).toolId()
             val types =
                 GenericTypeResolver.resolveTypeArguments(
                     it.javaClass,
-                    ConfigurableAgentToolFactory::class.java
+                    ConfigurableToolFactory::class.java
                 )
             val configType =
-                types?.get(0) ?: throw IllegalArgumentException("Invalid type")
+                types?.get(3) ?: throw IllegalArgumentException("Invalid type")
             val instance =
                 MapToObject.toObject(configType, toolsMap[toolId])
             val method = it.javaClass.getDeclaredMethod("create", configType)
-            method.invoke(it, instance) as AgentTool<*, *>
+            method.invoke(it, instance) as Tool<*, *>
         }
         val agentTools = (noConfigTools + toConfigTools)
-            .associateBy { it.name() }.also {
+            .associateBy { it.name }.also {
                 logger.info("Found agent tools {}", it.keys)
-            };
+            }
         return object : AgentToolsProvider {
-            override fun get(): Map<String, AgentTool<*, *>> {
+            override fun get(): Map<String, Tool<*, *>> {
                 return agentTools
             }
         }
     }
 }
 
-object AutoDiscoveredAgentToolsProvider : AgentToolsProvider {
-    private val logger = LoggerFactory.getLogger(javaClass)
-    private val agentTools: Map<String, AgentTool<*, *>> by lazy {
-        ServiceLoader.load(AgentToolFactory::class.java)
-            .stream()
-            .map { it.get() }
-            .map { it.create() }
-            .asSequence()
-            .associateBy { it.name() }.also {
-                logger.info("Found agent tools {}", it.keys)
-            }
-    }
-
-    override fun get(): Map<String, AgentTool<*, *>> {
-        return agentTools
-    }
-}

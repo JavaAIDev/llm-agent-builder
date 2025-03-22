@@ -54,14 +54,14 @@ data class AgentExecutor(
 ) {
     private val logger = LoggerFactory.getLogger(javaClass)
 
-    fun call(input: Map<String, Any>): Map<String, Any> {
+    fun call(input: ChatAgentRequest): Map<String, Any> {
         val action = { internalCall(input) }
         return observationRegistry?.let { registry ->
             instrumentedCall(input, action, registry)
         } ?: action.invoke()
     }
 
-    private fun internalCall(input: Map<String, Any>): Map<String, Any> {
+    private fun internalCall(input: ChatAgentRequest): Map<String, Any> {
         val intermediateSteps = mutableListOf<IntermediateAgentStep>()
         var iterations = 0
         var timeElapsed = 0L
@@ -93,7 +93,7 @@ data class AgentExecutor(
     }
 
     private fun instrumentedCall(
-        input: Map<String, Any>,
+        input: ChatAgentRequest,
         action: () -> Map<String, Any>,
         registry: ObservationRegistry
     ): Map<String, Any> {
@@ -130,7 +130,7 @@ data class AgentExecutor(
     }
 
     private fun takeNextStep(
-        inputs: Map<String, Any>,
+        inputs: ChatAgentRequest,
         nameToToolMap: Map<String, FunctionCallback>,
         intermediateSteps: List<IntermediateAgentStep>
     ): NextStep {
@@ -147,18 +147,19 @@ data class AgentExecutor(
         if (values.last() is AgentFinish) {
             return NextStep(finish = values.last() as AgentFinish)
         } else {
-            return NextStep(steps = values.filterIsInstance<AgentStep>()
-                .map {
-                    IntermediateAgentStep(
-                        it.action,
-                        Objects.toString(it.observation)
-                    )
-                })
+            return NextStep(
+                steps = values.filterIsInstance<AgentStep>()
+                    .map {
+                        IntermediateAgentStep(
+                            it.action,
+                            Objects.toString(it.observation)
+                        )
+                    })
         }
     }
 
     private fun iterateNextStep(
-        inputs: Map<String, Any>,
+        inputs: ChatAgentRequest,
         nameToToolMap: Map<String, FunctionCallback>,
         intermediateSteps: List<IntermediateAgentStep>
     ): MutableList<Plannable> {
@@ -179,7 +180,7 @@ data class AgentExecutor(
             logger.error("Output parsing error for input: {}", inputs, e)
             val text = e.llmOutput()
             var observation = parsingErrorHandler?.apply(e) ?: e.observation()
-            observation = ExceptionTool().apply(observation)
+            observation = ExceptionTool().call(observation)
             result.add(AgentFinish.fromOutput(observation, text))
         }
         return result
@@ -209,7 +210,7 @@ data class AgentExecutor(
             return AgentStep(agentAction, observation)
         } else {
             logger.info("Tool ${agentAction.tool} not found")
-            val observation = InvalidTool().apply(
+            val observation = InvalidTool().call(
                 InvalidToolInput(
                     agentAction.tool,
                     nameToToolMap.keys,

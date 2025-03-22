@@ -35,7 +35,7 @@ data class IntermediateAgentStep(
 
 interface Planner {
     fun plan(
-        inputs: Map<String, Any>,
+        inputs: ChatAgentRequest,
         intermediateSteps: List<IntermediateAgentStep>
     ): ActionPlanningResult
 
@@ -61,7 +61,7 @@ interface AgentRequest {
 /**
  * LLM based agent
  */
-interface Agent<in REQUEST : AgentRequest, out RESPONSE> {
+interface Agent<in REQUEST, out RESPONSE> {
     /**
      * ID of the agent
      *
@@ -89,25 +89,6 @@ interface Agent<in REQUEST : AgentRequest, out RESPONSE> {
      * Call the agent and get the response
      */
     fun call(request: REQUEST): RESPONSE
-}
-
-data class ChatAgentRequest(
-    val input: String,
-    val conversationId: String? = null
-) :
-    AgentRequest {
-    override fun toMap(): Map<String, Any> {
-        return mapOf("input" to input) + (conversationId?.let { mapOf("conversation_id" to it) }
-            ?: mapOf())
-    }
-}
-
-data class ChatAgentResponse(val output: String) {
-    companion object {
-        fun fromMap(map: Map<String, Any>): ChatAgentResponse {
-            return ChatAgentResponse(map["output"]?.toString() ?: "")
-        }
-    }
 }
 
 interface ChatAgent : Agent<ChatAgentRequest, ChatAgentResponse>

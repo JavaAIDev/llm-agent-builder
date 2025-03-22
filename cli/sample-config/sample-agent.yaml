@@ -7,22 +7,13 @@ profile:
   system: You are a helpful assistant.
 memory:
   inMemory:
-    enabled: true
+    enabled: false
 planner:
-  reActJson:
+  simple:
     enabled: true
 tools:
-  - id: writeLocalFile
-    config:
-      basePath: "file-output"
+  - id: GetWeather
     dependency:
-      groupId: "io.github.llmagentbuilder"
-      artifactId: "tool-write-local-file"
-      version: "0.2.2"
-  - id: readLocalFile
-    config:
-      basePath: "file-input"
-    dependency:
-      groupId: "io.github.llmagentbuilder"
-      artifactId: "tool-read-local-file"
-      version: "0.2.2"
+      groupId: "com.javaaidev.easyllmtools.tools"
+      artifactId: "get-weather"
+      version: "0.1.5"

@@ -1,5 +1,6 @@
 package io.github.llmagentbuilder.core.observation
 
+import io.github.llmagentbuilder.core.ChatAgentRequest
 import io.micrometer.common.KeyValue
 import io.micrometer.common.KeyValues
 import io.micrometer.common.docs.KeyName
@@ -50,9 +51,9 @@ enum class AgentExecutionObservationDocumentation :
 
 class AgentExecutionObservationContext(
     val agentName: String,
-    val input: Map<String, Any>
+    val input: ChatAgentRequest
 ) :
-    RequestReplySenderContext<Map<String, Any>, Map<String, Any>>({ _, _, _ ->
+    RequestReplySenderContext<ChatAgentRequest, Map<String, Any>>({ _, _, _ ->
         run {}
     }) {
     init {
