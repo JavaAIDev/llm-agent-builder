@@ -130,7 +130,7 @@ const config: Config = {
             },
             {
               label: "GitHub",
-              href: "https://github.com/LLMAgentBuilder/llm-agent-builder",
+              href: "https://github.com/JavaAIDev/llm-agent-builder",
             },
           ],
         },

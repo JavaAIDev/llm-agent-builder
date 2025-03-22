@@ -26,7 +26,7 @@ It's also very easy to create custom tools.
 The easiest way to create agents is using the command line tool.
 
 Download the CLI jar (`llm-agent-builder-cli.jar`)
-from [release page](https://github.com/LLMAgentBuilder/llm-agent-builder/releases).
+from [release page](https://github.com/JavaAIDev/llm-agent-builder/releases).
 
 CLI has a sub-command `build` to build an agent from a config file.
 
@@ -88,7 +88,7 @@ Tools used:
 - writeLocalFile
 - executePythonCode
 
-[GitHub repo](https://github.com/LLMAgentBuilder/example-csv-processor)
+[GitHub repo](https://github.com/JavaAIDev/example-csv-processor)
 
 ### Chinese Idioms Game
 
@@ -96,4 +96,4 @@ Tools used:
 
 Use custom tools.
 
-[GitHub repo](https://github.com/LLMAgentBuilder/example-chinese-idioms-game)
+[GitHub repo](https://github.com/JavaAIDev/example-chinese-idioms-game)
