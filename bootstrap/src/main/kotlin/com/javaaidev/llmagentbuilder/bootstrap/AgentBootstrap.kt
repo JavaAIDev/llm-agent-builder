@@ -2,12 +2,11 @@ package com.javaaidev.llmagentbuilder.bootstrap
 
 import com.javaaidev.llmagentbuilder.agent.profile.systemmessage.SystemMessageProfileAdvisor
 import com.javaaidev.llmagentbuilder.agent.tool.AgentToolInfoAdvisor
-import com.javaaidev.llmagentbuilder.core.AgentConfigLoader
-import com.javaaidev.llmagentbuilder.launcher.ktor.server.KtorLauncher
-import com.javaaidev.llmagentbuilder.plugin.observation.opentelemetry.OpenTelemetryPlugin
 import com.javaaidev.llmagentbuilder.core.*
 import com.javaaidev.llmagentbuilder.core.tool.AgentToolFunctionCallbackResolver
 import com.javaaidev.llmagentbuilder.core.tool.AgentToolsProviderFactory
+import com.javaaidev.llmagentbuilder.launcher.ktor.server.KtorLauncher
+import com.javaaidev.llmagentbuilder.plugin.observation.opentelemetry.OpenTelemetryPlugin
 import io.micrometer.observation.ObservationRegistry
 import org.slf4j.LoggerFactory
 import org.springframework.ai.chat.client.ChatClient
@@ -32,7 +31,7 @@ object AgentBootstrap {
         bootstrap(AgentConfigLoader.load(configFileStream))
     }
 
-    fun bootstrap(agentConfig: com.javaaidev.llmagentbuilder.core.AgentConfig) {
+    fun bootstrap(agentConfig: AgentConfig) {
         val advisors = listOf(
             this::profileAdvisor,
             this::inMemoryMessageHistoryAdvisor
@@ -127,13 +126,13 @@ object AgentBootstrap {
         KtorLauncher.launch(chatAgent, agentConfig.launch)
     }
 
-    private fun profileAdvisor(agentConfig: com.javaaidev.llmagentbuilder.core.AgentConfig): Advisor? {
+    private fun profileAdvisor(agentConfig: AgentConfig): Advisor? {
         return agentConfig.profile?.system?.run {
             SystemMessageProfileAdvisor(this)
         }
     }
 
-    private fun inMemoryMessageHistoryAdvisor(agentConfig: com.javaaidev.llmagentbuilder.core.AgentConfig): Advisor? {
+    private fun inMemoryMessageHistoryAdvisor(agentConfig: AgentConfig): Advisor? {
         return if (agentConfig.memory?.inMemory?.enabled == true) {
             logger.info("Enable in-memory message history")
             MessageChatMemoryAdvisor(InMemoryChatMemory())
